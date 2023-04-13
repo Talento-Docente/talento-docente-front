@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Decalotype-LightItalic
+font link: https://hanken.co/product/decalotype/
+font author: Hanken Design Co.
+font author site: https://hanken.co/
+Slogan Font: Aleo-Light.otf
+
+icon designer: Doub.co
+icon designer link: /doub
+        
+{"bg":"#003FBA","icon":"#34A1E5","font":"#ffffff","slogan":"#ffffff"}
+      
