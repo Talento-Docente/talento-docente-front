@@ -1,22 +1,61 @@
+/** External dependencies */
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+
+/** Internal dependencies */
+/** Routes */
+import EstablishmentRoutes from '@/router/establishment.routes'
+import EmploymentRoutes from '@/router/employment.routes'
+import ApplicantRoutes from '@/router/applicant.routes'
+import PostulationRoutes from '@/router/postulation.routes'
+import TestRoutes from '@/router/test.routes'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: '',
+      name: 'BlankLayout',
+      redirect: '/login',
+      component: () => import('@/components/layouts/BlankLayout.vue'),
+      children: [
+
+        {
+          path: 'login',
+          name: 'Login',
+          component: () => import('@/views/auth/LoginView.vue'),
+          meta: {
+            requiredAuth: false
+          },
+        },
+      ]
     },
+
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/portal',
+      name: 'PortalLayout',
+      redirect: '/home',
+      component: () => import('@/components/layouts/PortalLayout.vue'),
+      children: [
+        {
+          path: 'home',
+          name: 'Home',
+          component: () => import('@/views/HomeView.vue'),
+          meta: {
+            requiredAuth: true
+          },
+        },
+
+        EstablishmentRoutes,
+        EmploymentRoutes,
+        ApplicantRoutes,
+        PostulationRoutes,
+        TestRoutes
+
+      ]
     }
+
   ]
 })
 

@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script lang="ts">
 </script>
 
 <template lang="pug">
-.main Prueba
+.test Pruebas
 </template>
