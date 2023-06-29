@@ -57,5 +57,13 @@ export const establishmentStore = defineStore('establishment', {
       const { data } = response
       return data
     },
+    /**
+    * Eliminar establecimiento por ID
+    * */
+    async destroyEstablishment(establishmentId: number) {
+      const response = await establishmentServices.destroy(establishmentId)
+      const { data } = response
+      return data
+    },
   },
 })

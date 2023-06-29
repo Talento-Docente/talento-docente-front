@@ -37,6 +37,9 @@ export default defineComponent({
     if (method && id) {
       this.selectedEstablishmentId = parseInt(`${id}`, 10)
       this.selectedMethod = method
+      if (method === 'delete') {
+        this.deleteEstablishment()
+      }
       if (method === 'update') {
         this.getEstablishment()
       }
@@ -72,9 +75,23 @@ export default defineComponent({
       }
     },
 
+    async deleteEstablishment() {
+        try {
+          if (this.selectedMethod === 'delete') {
+          console.log("id: 1")
+          const response = await this.establishmentStore.destroyEstablishment(this.selectedEstablishmentId)
+        }
+          
+        } catch (error) {
+          console.log("Error: ",error)
+        }
+      },
+
+
     async onFinish(values: any) {
       try {
         this.loadingSave = true
+        
         if (this.selectedMethod === 'new') {
           const response = await this.establishmentStore.createEstablishment(values)
           if (response.status !== 'success') {

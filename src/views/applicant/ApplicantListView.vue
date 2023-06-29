@@ -136,5 +136,12 @@ export default defineComponent({
           )
             edit-outlined
             span Editar
+          
+          a-button(
+            type="outline-success",
+            @click="() => $router.push({ name: 'ApplicantViewer', params: { method: 'view',id: `${record.id}` }})"
+          )
+            edit-outlined
+            span Ver
 
 </template>

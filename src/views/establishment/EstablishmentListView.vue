@@ -115,5 +115,13 @@ export default defineComponent({
           )
             edit-outlined
             span Editar
+        template(v-if="column.dataIndex === 'action'")
+          a-button(
+            type="danger",
+            @click="() => $router.push({ name: 'EstablishmentForm', params: { method: 'delete', id: `${record.id}` }})"
+          )
+            edit-outlined
+            span Borrar
+          
 
 </template>
