@@ -72,6 +72,18 @@ export default defineComponent({
       } finally {
         this.loadingEstablishment = false
       }
+    },
+    async destroyElement(id:any){
+      try {
+        this.loadingEstablishment = true
+        await this.establishmentStore.destroyEstablishment(id)
+        await this.init()
+        
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        this.loadingEstablishment = false
+      }
     }
   }
 
@@ -118,7 +130,7 @@ export default defineComponent({
         template(v-if="column.dataIndex === 'action'")
           a-button(
             type="danger",
-            @click="() => $router.push({ name: 'EstablishmentForm', params: { method: 'delete', id: `${record.id}` }})"
+            @click="destroyElement(record.id)"
           )
             edit-outlined
             span Borrar
