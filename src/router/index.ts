@@ -43,7 +43,7 @@ const router = createRouter({
           name: 'Home',
           component: () => import('@/views/HomeView.vue'),
           meta: {
-            requiredAuth: false
+            requiredAuth: true
           },
         },
 
