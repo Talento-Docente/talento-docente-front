@@ -81,7 +81,7 @@ export default defineComponent({
           if (response.status !== 'success') {
             message.error('Error al guardar información')
           } else {
-            message.success('Actualización exitosa')
+            message.success('Creación exitosa')
             this.back()
           }
         } else {

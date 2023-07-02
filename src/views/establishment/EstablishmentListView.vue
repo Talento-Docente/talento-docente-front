@@ -7,13 +7,14 @@ import { defineComponent, ref } from 'vue'
 import { establishmentStore } from '@/stores/establshment.store'
 
 /** Interfaces */
-import type { TableColumnsType } from 'ant-design-vue'
+import { message, type TableColumnsType } from 'ant-design-vue'
 
 /** Icons */
 import {
   EditOutlined,
   SearchOutlined,
-  PlusOutlined
+  PlusOutlined,
+  LoadingOutlined
 } from '@ant-design/icons-vue';
 
 /** Constants */
@@ -55,7 +56,13 @@ export default defineComponent({
     establishmentStore: establishmentStore(),
 
     /** Loader */
-    loadingEstablishment: false
+    loadingEstablishment: false,
+
+     /** Const */
+    selectedEstablishmentId: ref<number>(0),
+    modalText: ref<string>('Esta seguro de eliminar el establecimiento?'),
+    visible: ref<boolean>(false),
+    confirmLoading: ref<boolean>(false),
   }),
 
   mounted () {
@@ -76,14 +83,42 @@ export default defineComponent({
     async destroyElement(id:any){
       try {
         this.loadingEstablishment = true
-        await this.establishmentStore.destroyEstablishment(id)
+        const response = await this.establishmentStore.destroyEstablishment(id)
         await this.init()
-        
+        if (response.status !== 'success') {
+            message.error('Error al Borrar')
+          } else {
+            message.success('Borrado exitoso!')
+          }
       } catch (error) {
         console.log({ error })
       } finally {
         this.loadingEstablishment = false
       }
+    },
+    //Modal Activator
+    showModal(id:any) {
+      this.visible = true;
+      this.selectedEstablishmentId = parseInt(id)
+    },
+    //Modal function call before press 'Delete'
+    handleOk() {
+      this.loadingEstablishment = true
+      // this.modalText= 'Eliminando Establecimiento'
+      this.confirmLoading= true
+      setTimeout(async () => {
+        try {
+        await this.destroyElement(this.selectedEstablishmentId)
+        this.visible = false
+        this.confirmLoading = false
+        } catch (error) {
+          console.log(error)
+        }finally {
+        this.loadingEstablishment = false
+        }
+        
+      }, 2000);
+      // this.modalText= 'Desea eliminar el establecimiento?'
     }
   }
 
@@ -130,10 +165,20 @@ export default defineComponent({
         template(v-if="column.dataIndex === 'action'")
           a-button(
             type="danger",
-            @click="destroyElement(record.id)"
+            @click="showModal(record.id)"
           )
             edit-outlined
             span Borrar
+        template(v-if="column.dataIndex === 'action'")
+          a-modal(title="Eliminar Establecimiento" 
+          centered 
+          v-model:visible="visible" 
+          :confirm-Loading="confirmLoading" 
+          @ok="handleOk()"
+          okText="Eliminar"
+          okType="danger"
+          )
+            p(v-if="!confirmLoading") {{ modalText }}
+            a-spin(v-if="confirmLoading" tip="Eliminando establecimiento") ㅤㅤㅤㅤㅤ
           
-
 </template>
