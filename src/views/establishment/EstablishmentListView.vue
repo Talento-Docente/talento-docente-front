@@ -14,7 +14,8 @@ import {
   EditOutlined,
   SearchOutlined,
   PlusOutlined,
-  LoadingOutlined
+  LoadingOutlined,
+  DeleteOutlined
 } from '@ant-design/icons-vue';
 
 /** Constants */
@@ -45,7 +46,8 @@ export default defineComponent({
   components: {
     EditOutlined,
     SearchOutlined,
-    PlusOutlined
+    PlusOutlined,
+    DeleteOutlined,
   },
 
   data: () => ({
@@ -167,8 +169,9 @@ export default defineComponent({
             type="danger",
             @click="showModal(record.id)"
           )
-            edit-outlined
+            DeleteOutlined
             span Borrar
+
         template(v-if="column.dataIndex === 'action'")
           a-modal(title="Eliminar Establecimiento" 
           centered 

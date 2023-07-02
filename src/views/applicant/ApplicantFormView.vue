@@ -207,7 +207,7 @@ export default defineComponent({
         }
 
       } catch (error) {
-        console.log({ error })
+        console.log(error )
         message.error('Error al guardar información')
 
       } finally {

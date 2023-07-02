@@ -21,9 +21,9 @@ export default {
       }
     },
     {
-      path: "applicant/:method/:id",
-      name: "ApplicantViewer",
-      component: () => import("@/views/applicant/ApplicantViewer.vue"),
+      path: "show/:id",
+      name: "ApplicantShow",
+      component: () => import("@/views/applicant/ApplicantShow.vue"),
       meta: {
         requiredAuth: true
       }

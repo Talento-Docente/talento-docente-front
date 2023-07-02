@@ -13,7 +13,8 @@ import type { TableColumnsType } from 'ant-design-vue'
 import {
   EditOutlined,
   SearchOutlined,
-  PlusOutlined
+  PlusOutlined,
+  IdcardOutlined
 } from '@ant-design/icons-vue';
 
 /** Constants */
@@ -49,7 +50,8 @@ export default defineComponent({
   components: {
     EditOutlined,
     SearchOutlined,
-    PlusOutlined
+    PlusOutlined,
+    IdcardOutlined
   },
 
   data: () => ({
@@ -139,9 +141,9 @@ export default defineComponent({
           
           a-button(
             type="outline-success",
-            @click="() => $router.push({ name: 'ApplicantViewer', params: { method: 'view',id: `${record.id}` }})"
+            @click="() => $router.push({ name: 'ApplicantShow', params: { id: `${record.id}` }})"
           )
-            edit-outlined
-            span Ver
+            IdcardOutlined
+            span Ver Perfil
 
 </template>

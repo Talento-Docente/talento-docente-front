@@ -95,12 +95,10 @@ export default defineComponent({
   }),
 
   mounted () {
-    const { method, id } = this.$route.params
-    if (method && id) {
+    const { id } = this.$route.params
+    if (id) {
       this.selectedApplicantId = parseInt(`${id}`, 10)
-      this.selectedMethod = method
-      if (method === 'view') {
-        console.log("mounted if")
+      if (this.selectedApplicantId) {
         this.getApplicant()
       }
     } else {
@@ -113,7 +111,7 @@ export default defineComponent({
     async init () {
       try {
         this.loadingApplicant = true
-        await this.applicantStore.getApplicants()
+        await this.getApplicant()
       } catch (error) {
         console.log({ error })
       } finally {
@@ -152,9 +150,33 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.applicant-list
-  .title.font-size__h3 Postulantes
+.applicant-show
+  .title.font-size__h3 Perfil de Postulante
+    template(v-if="form.user.picture")
+      div(class="space-align-block")
+        a-space(align="center")
+          a-avatar(:src="form.user.picturePreview" alt="avatar" :size="150")
+    a-descriptions(title="Informacion de Postulante" bordered)
+      a-descriptions-item(label="Nombre") {{form.user.first_name}}
+      a-descriptions-item(label="Apellido Paterno") {{form.user.last_name}}
+      a-descriptions-item(label="Apellido Materno") {{form.user.second_last_name}}
+      a-descriptions-item(label="RUT") {{form.user.dni}}
+      a-descriptions-item(label="Fecha de Nacimiento" :span="2") {{form.user.birthday}}
 
-  
+      a-descriptions-item(label="Numero de telefono") {{ form.phone }}
+      a-descriptions-item(label="Correo Electronico" :span="2")
+        a-badge(status="processing" :text="form.user.email") 
+      a-descriptions-item(label="Youtube")
+        //- Revisar el link
+        a(:href="form.youtube" target="_blank") {{ form.youtube }}
+      a-descriptions-item(label="LinkedIn")
+        a(:href="form.linkedin" target="_blank") {{ form.linkedin }}
+      a-descriptions-item(label="Twitter")
+        a(:href="form.twitter" target="_blank") {{ form.twitter }}
+      a-descriptions-item(label="Experiencia Profesional" :span="3")
+        //- texto de prueba
+        p Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+        template(v-if="form.curriculum")
+            a(:href="form.curriculumPreview", target="_blank") Ver CV
 
 </template>
