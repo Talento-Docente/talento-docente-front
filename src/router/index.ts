@@ -9,27 +9,35 @@ import ApplicantRoutes from '@/router/applicant.routes'
 import PostulationRoutes from '@/router/postulation.routes'
 import TestRoutes from '@/router/test.routes'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-
+    //JobsApp => Jobs Applicant
     {
       path: '',
       name: 'BlankLayout',
-      redirect: '/login',
-      component: () => import('@/components/layouts/BlankLayout.vue'),
+      redirect: '/jobsapp',
+      component: () => import('@/components/layouts/NavbarTopLandingLayout.vue'),
       children: [
 
         {
-          path: 'login',
-          name: 'Login',
-          component: () => import('@/views/auth/LoginView.vue'),
+          path: '/jobsapp',
+          name: 'JobsApp',
+          component: () => import('@/views/landing/JobsApplicantView.vue'),
           meta: {
             requiredAuth: false
           },
         },
       ]
+    },
+
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/auth/LoginView.vue'),
+      meta: {
+      requiredAuth: false
+      },
     },
 
     {
