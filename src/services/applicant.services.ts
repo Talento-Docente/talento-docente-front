@@ -33,7 +33,7 @@ export function create(data: ApplicantInterface) {
     method: 'post',
     data: valuesFormData,
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 500000
+    timeout: 900000
   });
 }
 

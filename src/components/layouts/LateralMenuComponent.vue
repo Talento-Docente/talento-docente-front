@@ -58,7 +58,7 @@ export default defineComponent({
 a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
   .logo
   a-menu(v-model:selectedKeys="selectedKeys" theme="dark" mode="inline")
-    a-menu-item(key="1", @click="() => $router.push({ name: 'Home' })")
+    a-menu-item(key="1", @click="() => $router.push({ name: 'JobsApp' })")
       home-outlined
       span Dashboard
 
