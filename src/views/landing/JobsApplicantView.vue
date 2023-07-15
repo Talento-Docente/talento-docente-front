@@ -12,7 +12,6 @@ import { applicantStore } from '@/stores/applicant.store'
   IdcardOutlined
   } from '@ant-design/icons-vue'
 
-
   export default defineComponent({
     components: {
       SettingOutlined,
@@ -71,15 +70,15 @@ import { applicantStore } from '@/stores/applicant.store'
               template(#title)
                 span {{ item.user.first_name }} {{item.user.last_name  }}
               template(#description)
-                span {{item.user.id}}
+                span {{item.id}}
               template(#avatar)
                 a-avatar(:src="item.user.picture")
             template(#actions)
-              IdcardOutlined
-                a(
-                type="outline-success",
-                @click="() => $router.push({ name: 'ApplicantShow', params: { id: `${item.user.id}`-1 }})"
-                )
+              a-button(
+              type="outline-success",
+              @click="() => $router.push({ name: 'ApplicantShow', params: { id: `${item.id}` }})"
+              )
+                IdcardOutlined
                 span Ver Perfil
               ellipsis-outlined(key="ellipsis")
     
