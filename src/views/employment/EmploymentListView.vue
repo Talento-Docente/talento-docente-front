@@ -14,62 +14,71 @@ import {
   PlusOutlined,
   LoadingOutlined,
   DownOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  EyeOutlined
 } from '@ant-design/icons-vue';
 
+/**Testing */
 interface DataItem {
-  job: string | null
-  description: string | null
-  tag: string[] | string[]
-  loc: string | null
-  estab:string | null
-  img: string | null
+    id: number | null
+    job: string | null
+    description: string | null
+    tag: string[] | string[]
+    loc: string | null
+    estab:string | null
+    img: string | null
 
 }
 
-/** Constants */
+/** Constants Testing */
 const COLUMNSFILTER = ref(["LENGUAJE","MATEMATICA","HISTORIA","INGLES"])
 const COLUMNSREGION = ref(["SANTIAGO","VALPARAISO","VIÑA DEL MAR","RANCAGUA","CURICO","COPIAPO"])
 const COLUMNSGRADE = ref(["PRE-PARVULO","PARVULO","BASICO","MEDIA"])
-const COLUMNSJOBS : DataItem[]= [{
-    job:"Sub-Director",
-    description:"Se busca Docente con experiencia de al menos 5 años",
-    tag:["ingles","Matematica","Lenguaje","Administracion"],
-    loc:"Santiago",
-    estab:"Colegio San Mariano",
-    img:"https://randomuser.me/api/portraits/med/men/50.jpg"
+const COLUMNSJOBS : DataItem[]= [
+    {
+        id:1,
+        job:"Sub-Director",
+        description:"Se busca Docente con experiencia de al menos 5 años",
+        tag:["ingles","Matematica","Lenguaje","Administracion"],
+        loc:"Santiago",
+        estab:"Colegio San Mariano",
+        img:"https://randomuser.me/api/portraits/med/men/50.jpg"
     },
     {
-    job:"Docente en Matematicas",
-    description:"Se busca docente experto en matematicas con experiencia de 2 años",
-    tag:["Matematica"],
-    loc:"Valparaiso",
-    estab:"Colegio Gran Santiago",
-    img:"https://randomuser.me/api/portraits/med/women/50.jpg"
+        id:2,
+        job:"Docente en Matematicas",
+        description:"Se busca docente experto en matematicas con experiencia de 2 años",
+        tag:["Matematica"],
+        loc:"Valparaiso",
+        estab:"Colegio Gran Santiago",
+        img:"https://randomuser.me/api/portraits/med/women/50.jpg"
     },
     {
-    job:"Docente en lenguaje",
-    description:"Se busca docente",
-    tag:["Lenguaje"],
-    loc:"Talca",
-    estab:"Colegio Politecnico de Talca",
-    img:"https://randomuser.me/api/portraits/med/women/5.jpg"
+        id:3,
+        job:"Docente en lenguaje",
+        description:"Se busca docente",
+        tag:["Lenguaje"],
+        loc:"Talca",
+        estab:"Colegio Politecnico de Talca",
+        img:"https://randomuser.me/api/portraits/med/women/5.jpg"
     },
     {
-    job:"Docente / flexibilidad",
-    description:"Se busca docente con conocimientos en todas las materias",
-    tag:["ingles","Matematica","Lenguaje"],
-    loc:"Quilicura",
-    estab:"Instituto Comercial Francisco Hernandez",
-    img:"https://randomuser.me/api/portraits/med/men/39.jpg"
+        id:4,
+        job:"Docente / flexibilidad",
+        description:"Se busca docente con conocimientos en todas las materias",
+        tag:["ingles","Matematica","Lenguaje"],
+        loc:"Quilicura",
+        estab:"Instituto Comercial Francisco Hernandez",
+        img:"https://randomuser.me/api/portraits/med/men/39.jpg"
     },
     {
-    job:"Auxiliar de Inspección",
-    description:"Se solicita personal para la supervision y tareas de asistente/inspector",
-    tag:["ingles","Matematica","Lenguaje","Administracion","auxiliar"],
-    loc:"Conchalí",
-    estab:"Colegio Nuevo Amanecer de Conchalí",
-    img:"https://randomuser.me/api/portraits/med/women/51.jpg"
+        id:5,
+        job:"Auxiliar de Inspección",
+        description:"Se solicita personal para la supervision y tareas de asistente/inspector",
+        tag:["ingles","Matematica","Lenguaje","Administracion","auxiliar"],
+        loc:"Conchalí",
+        estab:"Colegio Nuevo Amanecer de Conchalí",
+        img:"https://randomuser.me/api/portraits/med/women/51.jpg"
     },
 ]
 export default defineComponent({
@@ -80,6 +89,7 @@ export default defineComponent({
     PlusOutlined,
     DownOutlined,
     DeleteOutlined,
+    EyeOutlined
   },
 
   data: () => ({
@@ -115,8 +125,8 @@ export default defineComponent({
                             a-checkbox
                                 span {{ materia }}
                 a-button(type="primary")
-                    down-outlined
                     span Especialidad
+                    down-outlined
         a-col
             a-dropdown
                 template(#overlay)
@@ -125,8 +135,9 @@ export default defineComponent({
                             a-checkbox
                                 span {{ city }}
                 a-button(type="primary")
-                    down-outlined
                     span Localidad
+                    down-outlined
+
         a-col
             a-dropdown
                 template(#overlay)
@@ -135,14 +146,14 @@ export default defineComponent({
                             a-checkbox
                                 span {{ grade }}
                 a-button(type="primary")
-                    down-outlined
                     span Grado Academico
+                    down-outlined
 
     a-row(:gutter="[20, 20]").margin-top__20
 
       a-col(:xl="{ span: 6 }")
         a-form-item(label="Filtrar:")
-          a-input(placeholder="Especialidad, Localidad, Grado...")
+          a-input(placeholder="Especialidad, Localidad, Grado, Tag...")
 
       a-col
         a-form-item
@@ -159,7 +170,8 @@ export default defineComponent({
     .list.margin-top__20
         a-list(
             item-layout="horizontal"
-            :data-source="columnsJobs")
+            :data-source="columnsJobs"
+            hovable)
             //- template(#loadMore)
             //-     div(v-if="!initLoading && !loading"
             //-         :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }")
@@ -169,10 +181,12 @@ export default defineComponent({
                 a-list-item
 
                     template(#actions)
-                        a() 
-                            span edit
-                        a()
-                            span more
+                        a-button(shape="round")
+                            edit-outlined 
+                            span Editar
+                        a-button(shape="round" type="danger")
+                            delete-outlined 
+                            span Borrar
                     a-skeleton(avatar :title="false" :loading="false" active)
                         a-list-item-meta
                             
