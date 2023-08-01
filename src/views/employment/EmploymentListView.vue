@@ -93,7 +93,7 @@ export default defineComponent({
   },
 
   data: () => ({
-    /** Table */
+    /** List */
     columnsf: COLUMNSFILTER,
     columnsCiudad:COLUMNSREGION,
     columnsGrade:COLUMNSGRADE,
@@ -114,7 +114,7 @@ export default defineComponent({
 
 <template lang="pug">
 .employment
-    .title.font-size__h3 Empleos para ti
+    .title.font-size__h3 Empleos
     .filter.margin-top__30
     a-row(:gutter="[20, 20]")
         a-col
@@ -193,7 +193,7 @@ export default defineComponent({
                             template(#description)
                                 div
                                     a-typography-text {{ item.description }}
-                                span {{ item.estab }} -
+                                span {{ item.estab }} -ㅤ
                                 span {{ item.loc }}
 
                             template(#title)
