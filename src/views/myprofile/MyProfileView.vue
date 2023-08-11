@@ -43,24 +43,24 @@ export default defineComponent({
   a-descriptions(
     title="Mi Informacion Personal" 
     bordered 
-    :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }").margin-top__20
+    ).margin-top__20
 
     template(#extra)
       a-button(type="primary" @click="toPostulation()" ) Mis Postulaciones
     
-    a-descriptions-item(label="Nombres :") Mariano stefan 
-    a-descriptions-item(label="Apellido Paterno :") Briceño
-    a-descriptions-item(label="Apellido Materno :") Gonzales
+    a-descriptions-item(label="Nombres :" :span="1") Mariano stefan 
+    a-descriptions-item(label="Apellido Paterno :" :span="1") Briceño
+    a-descriptions-item(label="Apellido Materno :" :span="1") Gonzales
 
-    a-descriptions-item(label="Rut :") 15.546.654-6
-    a-descriptions-item(label="Fecha de Nacimiento :") 05-10-1986 
-    a-descriptions-item(label="Correo :") Marianobriceno@gmail.com
+    a-descriptions-item(label="Rut :" :span="1") 15.546.654-6
+    a-descriptions-item(label="Fecha de Nacimiento :" :span="1") 05-10-1986 
+    a-descriptions-item(label="Correo :" :span="1") Marianobriceno@gmail.com
 
-    a-descriptions-item(label="LinkeIn:")
+    a-descriptions-item(label="LinkeIn:" :span="1")
         a Ver Perfil
-    a-descriptions-item(label="Youtube :") 
+    a-descriptions-item(label="Youtube :" :span="1") 
       a youtube.com/ProfeMariano 
-    a-descriptions-item(label="Twitter :")
+    a-descriptions-item(label="Twitter :" :span="1")
       a @marianoProfe
 
     a-descriptions-item(label="Experiencia Profesional" :span="3")
