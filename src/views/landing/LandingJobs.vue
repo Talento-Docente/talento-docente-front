@@ -5,6 +5,7 @@ import { defineComponent } from "vue";
 /** Internal dependencies */
 /** Store */
 import { employmentStore } from "@/stores/employment.store"
+import { authStore } from "@/stores/auth.store";
 
 /** Icon */
 import { AntDesignOutlined } from '@ant-design/icons-vue';
@@ -23,7 +24,8 @@ export default defineComponent({
   data() {
     return {
       /** Store */
-      employmentStore: employmentStore()
+      employmentStore: employmentStore(),
+      authStore: authStore()
     };
   },
 

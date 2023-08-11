@@ -159,7 +159,6 @@ export default defineComponent({
       template(#bodyCell="{ column, record, text }")
         template(v-if="column.dataIndex === 'action'")
           a-button(
-            shape="round"
             type="primary",
             @click="() => $router.push({ name: 'EstablishmentForm', params: { method: 'update', id: `${record.id}` }})"
           )
@@ -167,10 +166,9 @@ export default defineComponent({
             span Editar
         template(v-if="column.dataIndex === 'action'")
           a-button(
-            shape="round"
             type="danger",
             @click="showModal(record.id)"
-          )
+          ).margin-left__10
             DeleteOutlined
             span Borrar
 

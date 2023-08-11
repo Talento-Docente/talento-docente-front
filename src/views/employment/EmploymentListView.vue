@@ -137,7 +137,14 @@ export default defineComponent({
       template(#bodyCell="{ column, record, text }")
 
         template(v-if="column.dataIndex === 'status'")
-          span {{ $filters.employmentStatuses(text) }}
+          template(v-if="record.status === 'created'")
+            a-tag(color="green") {{ $filters.employmentStatuses(text) }}
+
+          template(v-if="record.status === 'in_progress'")
+            a-tag(color="orange") {{ $filters.employmentStatuses(text) }}
+
+          template(v-if="record.status === 'closed'")
+            a-tag(color="red") {{ $filters.employmentStatuses(text) }}
 
         template(v-if="column.dataIndex === 'employment_type'")
           span {{ $filters.employmentType(text) }}

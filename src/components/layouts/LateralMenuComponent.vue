@@ -91,7 +91,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
         span Administración
       template(#icon)
         appstore-outlined
-      a-menu-item(key="71")
+      a-menu-item(key="71"  @click="() => $router.push({ name: 'MyProfile' })")
         span Mi Perfil
 
       a-menu-item(key="72")

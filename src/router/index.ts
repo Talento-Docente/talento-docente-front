@@ -8,6 +8,7 @@ import EmploymentRoutes from '@/router/employment.routes'
 import ApplicantRoutes from '@/router/applicant.routes'
 import PostulationRoutes from '@/router/postulation.routes'
 import TestRoutes from '@/router/test.routes'
+import Admin from '@/router/admin.routes'
 
 
 const router = createRouter({
@@ -75,7 +76,8 @@ const router = createRouter({
         EmploymentRoutes,
         ApplicantRoutes,
         PostulationRoutes,
-        TestRoutes
+        TestRoutes,
+        Admin
 
       ]
     },
