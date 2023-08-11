@@ -10,7 +10,8 @@ import {
   UserOutlined,
   UserSwitchOutlined,
   SolutionOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  AppstoreOutlined
 
 } from '@ant-design/icons-vue';
 
@@ -28,7 +29,8 @@ export default defineComponent({
     UserOutlined,
     UserSwitchOutlined,
     SolutionOutlined,
-    LogoutOutlined
+    LogoutOutlined,
+    AppstoreOutlined
   },
 
   data: () => ({
@@ -56,7 +58,7 @@ export default defineComponent({
 
 <template lang="pug">
 a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
-  .logo
+  .logo(@click="() => $router.push({ name: 'Landing' })")
   a-menu(v-model:selectedKeys="selectedKeys" theme="dark" mode="inline")
     a-menu-item(key="1", @click="() => $router.push({ name: 'Home' })")
       home-outlined
@@ -74,17 +76,41 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       user-outlined
       span Postulantes
 
-    a-menu-item(key="5", @click="() => $router.push({ name: 'Postulation' })")
-      user-switch-outlined
-      span Postulaciones
+    //a-menu-item(key="5", @click="() => $router.push({ name: 'Postulation' })")
+    //  user-switch-outlined
+    //  span Postulaciones
 
-    a-menu-item(key="6", @click="() => $router.push({ name: 'Test' })")
-      solution-outlined
-      span Pruebas
+    //a-menu-item(key="6", @click="() => $router.push({ name: 'Test' })", :disabled="true")
+    //  solution-outlined
+    //  span Pruebas
+
+    a-menu-divider
+
+    a-sub-menu(key="admin")
+      template(#title)
+        span Administración
+      template(#icon)
+        appstore-outlined
+      a-menu-item(key="71")
+        span Mi Perfil
+
+      a-menu-item(key="72")
+        span Mi Empresa
+
+      a-menu-item(key="73")
+        span Reclutamiento
+
+      a-menu-item(key="74")
+        span Pruebas
+
+    //a-menu-item(key="7", @click="() => $router.push({ name: 'Admin' })")
+    //  appstore-outlined
+    //  span Administración
 
     a-divider
 
     a-menu-item(key="7", @click="logout")
       logout-outlined
       span Cerrar Sesión
+
 </template>

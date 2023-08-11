@@ -8,6 +8,7 @@ import router from './router'
 import 'ant-design-vue/dist/antd.css'
 // import './assets/main.css'
 import './style/main.less'
+import filters from  '@/filters'
 
 const app = createApp(App)
 
@@ -16,3 +17,7 @@ app.use(router)
 app.use(Antd)
 
 app.mount('#app')
+
+app.config.globalProperties.$filters = {
+  ...filters
+}

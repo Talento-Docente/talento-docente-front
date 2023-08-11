@@ -10,13 +10,13 @@ import { AUTH_KEY } from '@/constants/auth.constants'
 import authServices from '@/services/auth.services'
 
 /** Interfaces */
-import type { userInterface } from "@/interfaces/user.interface";
+import type { UserInterface } from "@/interfaces/user.interface";
 
 export const authStore = defineStore('auth', {
 
   state: () => ({
     isAuthenticated: false,
-    user: null as userInterface | null,
+    user: null as UserInterface | null,
     token: null as string | null,
   }),
 

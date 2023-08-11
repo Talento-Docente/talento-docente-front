@@ -15,15 +15,39 @@ const router = createRouter({
   routes: [
 
     {
-      path: '',
-      name: 'BlankLayout',
-      redirect: '/login',
+      path: '/',
+      name: 'Landing',
+      redirect: '/landing',
       component: () => import('@/components/layouts/BlankLayout.vue'),
       children: [
-
         {
-          path: 'login',
-          name: 'Login',
+          path: 'landing',
+          name: 'LandingPage',
+          component: () => import('@/views/landing/LandingSchema.vue'),
+          meta: {
+            requiredAuth: false
+          },
+        },
+      ]
+    },
+
+    {
+      path: '/login',
+      name: 'Login',
+      redirect: '/login/employees',
+      component: () => import('@/components/layouts/BlankLayout.vue'),
+      children: [
+        {
+          path: 'employees',
+          name: 'LoginEmployee',
+          component: () => import('@/views/auth/LoginView.vue'),
+          meta: {
+            requiredAuth: false
+          },
+        },
+        {
+          path: 'businesses',
+          name: 'LoginBusiness',
           component: () => import('@/views/auth/LoginView.vue'),
           meta: {
             requiredAuth: false
@@ -54,6 +78,12 @@ const router = createRouter({
         TestRoutes
 
       ]
+    },
+
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/errors/PageNotFound.vue')
     }
 
   ]
