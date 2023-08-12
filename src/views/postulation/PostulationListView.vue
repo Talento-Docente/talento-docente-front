@@ -180,7 +180,7 @@ export default defineComponent({
             a-button(
               shape="round"
               type="danger"
-            )
+            ).margin-left__10
               DeleteOutlined
               span Cancelar
 
