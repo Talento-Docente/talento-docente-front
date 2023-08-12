@@ -361,7 +361,7 @@ export default defineComponent({
                       CommentOutlined
                       span Mensajes
                     
-
+                  //-vistas de modal
                   div(v-if="key === 'postulation'")
                     h2 Habilidades Del postulante
                   
