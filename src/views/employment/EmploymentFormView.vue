@@ -5,7 +5,7 @@ import { message } from "ant-design-vue";
 
 /** Internal dependencies */
 /** Store */
-import { establishmentStore } from "@/stores/establshment.store";
+import { establishmentStore } from "@/stores/establishment.store";
 import { employmentStore } from "@/stores/employment.store";
 
 /** Interfaces */

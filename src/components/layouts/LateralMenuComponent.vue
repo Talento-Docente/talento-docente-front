@@ -91,7 +91,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
         span Administración
       template(#icon)
         appstore-outlined
-      a-menu-item(key="71"  @click="() => $router.push({ name: 'MyProfile' })")
+      a-menu-item(key="71", @click="() => $router.push({ name: 'MyProfile' })")
         span Mi Perfil
 
       a-menu-item(key="72" @click="() => $router.push({ name: 'MyCompany' })")
@@ -100,7 +100,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       a-menu-item(key="73" @click="() => $router.push({ name: 'Recruitment' })")
         span Reclutamiento
 
-      a-menu-item(key="74")
+      a-menu-item(key="tests", @click="() => $router.push({ name: 'Test' })")
         span Pruebas
 
     //a-menu-item(key="7", @click="() => $router.push({ name: 'Admin' })")
