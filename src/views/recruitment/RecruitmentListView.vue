@@ -73,7 +73,8 @@ export default defineComponent({
 
       /** Store */
       flowStore : flowStore(),
-      establishmentStore:establishmentStore()
+      establishmentStore:establishmentStore(),
+
 
     }),
 

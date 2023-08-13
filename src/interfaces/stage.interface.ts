@@ -1,5 +1,6 @@
 export interface StageInterface {
     id?: number | null
+    flow_id?: number | null
     name: string | null
     order_number: number | null
     description: string | null
