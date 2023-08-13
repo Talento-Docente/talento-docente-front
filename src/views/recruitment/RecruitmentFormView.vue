@@ -184,15 +184,16 @@ export default defineComponent({
 
                 a-card-meta
                   template(#description)
-                    a-form-item(
-                      label="Descripción"
-                      name="description"
-                      :rules="[{ required: true, message: 'Ingrese descripción' }]"
-                    )
-                      a-textarea(v-model:value="stage.description" auto-size)
-                    a-card().margin-top__20
-                      a-avatar.margin-right__5
-                      span Postulante
+                    a-form(:model="stage")
+                      a-form-item(
+                        label="Descripción"
+                        name="description"
+                        :rules="[{ required: true, message: 'Ingrese descripción', min: 1}]"
+                      )
+                        a-textarea(v-model:value="stage.description" auto-size)
+                      a-card().margin-top__20
+                        a-avatar.margin-right__5
+                        span Postulante
 
 
 </template>
