@@ -13,7 +13,7 @@ export const EMPLOYMENT_TYPES = [
 export const QUALIFICATIONS = [
   { key: 'practice', value: 'Practica' },
   { key: 'junior', value: 'Junior (1 año)' },
-  { key: 'semi_junior', value: 'Semi-Junior (Más de 1 año)' },
+  { key: 'semi_senior', value: 'Semi-Senior (Más de 1 año)' },
   { key: 'senior', value: 'Senior (4 o más)' }
 ]
 

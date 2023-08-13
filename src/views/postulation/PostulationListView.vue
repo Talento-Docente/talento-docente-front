@@ -5,7 +5,7 @@ import { defineComponent, ref } from 'vue'
 /** Internal dependencies */
 
 /** Interfaces */
-import type {TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from 'ant-design-vue';
 
 /** Icons */
 import {
@@ -104,11 +104,11 @@ export default defineComponent({
   }),
 
   mounted () {
-    
+
   },
 
   methods: {
-   
+
 
   }
 
@@ -136,7 +136,7 @@ export default defineComponent({
           a-button()
             span Estado de postulacion
             down-outlined
-      
+
       a-col
         a-form-item
           a-button( type="primary")
@@ -157,15 +157,15 @@ export default defineComponent({
         template(v-if="column.dataIndex === 'status'")
 
           div(v-if="record.status === 'Enviado'")
-            a-tag(color="green") 
+            a-tag(color="green")
               span {{ record.status }}
-          
+
           div(v-if="record.status === 'En proceso'")
-            a-tag(color="blue") 
+            a-tag(color="blue")
               span {{ record.status }}
-          
+
           div(v-if="record.status === 'Cancelada'")
-            a-tag(color="red") 
+            a-tag(color="red")
               span {{ record.status }}
 
         template(v-if="column.dataIndex === 'action'")
@@ -176,7 +176,7 @@ export default defineComponent({
             )
               edit-outlined
               span Editar
-                
+
             a-button(
               shape="round"
               type="danger"
