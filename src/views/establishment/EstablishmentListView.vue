@@ -4,7 +4,7 @@ import { defineComponent, ref } from 'vue'
 
 /** Internal dependencies */
 /** Store */
-import { establishmentStore } from '@/stores/establshment.store'
+import { establishmentStore } from '@/stores/establishment.store'
 
 /** Interfaces */
 import { message, type TableColumnsType } from 'ant-design-vue'
@@ -118,7 +118,7 @@ export default defineComponent({
         }finally {
         this.loadingEstablishment = false
         }
-        
+
       }, 2000);
       // this.modalText= 'Desea eliminar el establecimiento?'
     }
@@ -173,16 +173,16 @@ export default defineComponent({
             span Borrar
 
         template(v-if="column.dataIndex === 'action'")
-          a-modal(title="Eliminar Establecimiento" 
-          centered 
-          v-model:visible="visible" 
-          :confirm-Loading="confirmLoading" 
+          a-modal(title="Eliminar Establecimiento"
+          centered
+          v-model:visible="visible"
+          :confirm-Loading="confirmLoading"
           @ok="handleOk()"
           okText="Eliminar"
           okType="danger"
           )
             p(v-if="!confirmLoading") {{ modalText }}
             a-spin(v-if="confirmLoading" tip="Eliminando establecimiento")
-              span 
-          
+              span
+
 </template>
