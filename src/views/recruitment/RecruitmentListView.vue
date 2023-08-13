@@ -8,7 +8,7 @@ import type { FlowInterface } from "@/interfaces/flow.interface";
 
 /** Store */
 import { flowStore } from '@/stores/flow.store'
-import { establishmentStore } from "@/stores/establshment.store";
+import { establishmentStore } from "@/stores/establishment.store";
 
 import type { TableColumnsType } from 'ant-design-vue'
 
@@ -51,38 +51,39 @@ export default defineComponent({
 
   },
 
-    data: () => ({
-      /** Table */
-      columns: COLUMNS,
+  data: () => ({
+    /** Table */
+    columns: COLUMNS,
 
-      /** Modal */
-      open:false,
-      
-      /** Form Modal */
-      form: reactive<FlowInterface>({
-        establishment_id: null,
-        name: null,
-        description: null
-      }),
+    /** Modal */
+    open:false,
 
-      /** Loader */
-      loadingFlow: false,
-      loadingSave: false,
-      loadingDelete: false,
-      loadingSend:false,
-
-      /** Store */
-      flowStore : flowStore(),
-      establishmentStore:establishmentStore(),
-
-
+    /** Form Modal */
+    form: reactive<FlowInterface>({
+      establishment_id: null,
+      name: null,
+      description: null,
+      stages: []
     }),
 
-    mounted() {
-      this.init()
-    },
+    /** Loader */
+    loadingFlow: false,
+    loadingSave: false,
+    loadingDelete: false,
+    loadingSend:false,
 
-    methods: {
+    /** Store */
+    flowStore : flowStore(),
+    establishmentStore:establishmentStore(),
+
+
+  }),
+
+  mounted() {
+    this.init()
+  },
+
+  methods: {
     async init () {
       try {
         this.loadingFlow = true
@@ -104,12 +105,12 @@ export default defineComponent({
         const response = await this.flowStore.createFlow(this.form);
         const { flow, status } = response
         if(status !== "success") {
-            message.error("Error al guardar información");
-          } else {
-            message.success("Creado con exito !");
-          }
+          message.error("Error al guardar información");
+        } else {
+          message.success("Creado con exito !");
+        }
       }catch (error) {
-        console.log({error})
+        console.log({ error })
       }
       this.loadingSave= false
       this.open= false
@@ -120,14 +121,14 @@ export default defineComponent({
       this.loadingDelete= true
       try {
         const response = await this.flowStore.destroyFlow(flowId)
-        const {status} = response
+        const { status } = response
         if(status !== "success") {
-            message.error("Error al Eliminar");
-          } else {
-            message.success("Borrado con exito !");
-          }
+          message.error("Error al Eliminar");
+        } else {
+          message.success("Borrado con exito !");
+        }
       } catch (error) {
-        console.log({error})
+        console.log({ error })
       }finally{
         this.loadingDelete= false
         this.init()
@@ -141,7 +142,7 @@ export default defineComponent({
         this.loadingSend = false
       }
     }
-    }
+  }
 
 });
 
@@ -202,7 +203,7 @@ export default defineComponent({
                   :footer="null")
           template(#title)
             span Crear flujo de reclutamiento
-          
+
           div
             a-form(:model="form" @finish="onFinish")
 
@@ -226,7 +227,7 @@ export default defineComponent({
                 :rules="[{ required: true, message: 'Ingrese una descripcion', min: 5}]")
 
                 a-textarea(v-model:value="form.description" auto-size)
-                
+
               a-form-item
                 a-row(justify="end")
                   a-col
