@@ -1,6 +1,7 @@
 <script lang="ts">
 /** External dependencies */
 import { defineComponent, reactive, ref } from "vue";
+import type { FormInstance } from 'ant-design-vue';
 
 /** Internal dependencies */
 /** Store */
@@ -9,6 +10,7 @@ import { establishmentStore } from "@/stores/establishment.store";
 
 /** Interfaces */
 import { message, type TableColumnsType } from 'ant-design-vue'
+import type { TestInterface } from "@/interfaces/test.interface"
 
 /** Icons */
 import {
@@ -17,7 +19,6 @@ import {
   PlusOutlined,
   DeleteOutlined
 } from '@ant-design/icons-vue';
-import type { TestInterface } from "@/interfaces/test.interface"
 
 /** Constants */
 import { TIME_TYPES } from '@/constants/test.constants'
@@ -48,6 +49,7 @@ const COLUMNS = ref<TableColumnsType>([
     dataIndex: 'action'
   }
 ])
+
 export default defineComponent({
 
   components: {
@@ -90,6 +92,13 @@ export default defineComponent({
     TIME_TYPES
   }),
 
+  setup () {
+    const refFormCreate =  ref<FormInstance>()
+    return {
+      refFormCreate
+    }
+  },
+
   mounted () {
     this.init()
   },
@@ -122,23 +131,18 @@ export default defineComponent({
     },
 
     async saveTest () {
-
       try {
-        this.loadingCreate = false
-        const values = {
-          name: this.formCreate.name,
-          description: this.formCreate.description,
-          time_value: this.formCreate.time_value,
-          time_type: this.formCreate.time_type,
-          establishment_id: this.formCreate.establishment_id,
-        }
-        const response = await this.testStore.createTest(values)
-        if (response.status !== 'success') {
-          message.error('Error al guardar información')
-        } else {
-          message.success('Creación exitosa')
-          this.clearFormModalCreate()
-          this.$router.push({ name: 'TestForm', params: { method: 'update', id: response.test.id } })
+        if (this.refFormCreate) {
+          this.loadingCreate = false
+          const values = await this.refFormCreate.validateFields()
+          const response = await this.testStore.createTest(values)
+          if (response.status !== 'success') {
+            message.error('Error al guardar información')
+          } else {
+            message.success('Creación exitosa')
+            this.clearFormModalCreate()
+            this.$router.push({ name: 'TestForm', params: { method: 'update', id: response.test.id } })
+          }
         }
       } catch (error) {
         console.log({ error })
@@ -149,17 +153,14 @@ export default defineComponent({
       }
     },
 
-    //Modal Activator
     showModal(id:any) {
       this.visible = true;
       this.selectedTestId = parseInt(id)
     },
 
-    //Modal function call before press 'Delete'
     handleOk() {
       this.loadingTest = true
-      // this.modalText= 'Eliminando Establecimiento'
-      this.confirmLoading= true
+      this.confirmLoading = true
       setTimeout(async () => {
         try {
           await this.destroyElement(this.selectedTestId)
@@ -167,12 +168,10 @@ export default defineComponent({
           this.confirmLoading = false
         } catch (error) {
           console.log(error)
-        }finally {
+        } finally {
           this.loadingTest = false
         }
-
       }, 2000);
-      // this.modalText= 'Desea eliminar el establecimiento?'
     },
 
     async destroyElement(id:any){
@@ -198,7 +197,12 @@ export default defineComponent({
 
 <template lang="pug">
 .test-list
-  .title.font-size__h3 Pruebas
+  .title
+    a-row(align="middle")
+      a-col
+        a-button(type="primary", @click="() => $router.go(-1)").margin-right__10 Volver
+      a-col
+        .font-size__h3 Pruebas
 
   .filter.margin-top__30
     a-row(:gutter="[20, 20]")
@@ -274,8 +278,7 @@ export default defineComponent({
     @cancel="clearFormModalCreate()",
     okText="Guardar"
   )
-    a-form(:model="formCreate", @finish="saveTest", :label-col="labelCol" :wrapper-col="wrapperCol")
-
+    a-form(ref="refFormCreate", :model="formCreate", @finish="saveTest", :label-col="labelCol" :wrapper-col="wrapperCol")
       a-row
         a-col(:xl="{ span: 24 }")
           a-form-item(

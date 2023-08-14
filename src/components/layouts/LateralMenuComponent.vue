@@ -97,8 +97,8 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       a-menu-item(key="72" @click="() => $router.push({ name: 'MyCompany' })")
         span Mi Empresa
 
-      a-menu-item(key="73" @click="() => $router.push({ name: 'Recruitment' })")
-        span Reclutamiento
+      a-menu-item(key="73" @click="() => $router.push({ name: 'Flow' })")
+        span Flujos Reclutamiento
 
       a-menu-item(key="tests", @click="() => $router.push({ name: 'Test' })")
         span Pruebas

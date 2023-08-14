@@ -33,7 +33,7 @@ export default defineComponent({
       time_type: null,
       time_value: null
     }),
-    edit: false,
+    edit: true,
 
     /** Store */
     testStore: testStore(),
@@ -260,26 +260,6 @@ export default defineComponent({
               template(v-else)
                 span {{ formEdit.time_type }}
 
-            a-button(
-              v-if="!edit",
-              type="primary",
-              @click="() => edit = !edit"
-            ).float-right Editar
-
-            template(v-else)
-              .float-right
-                a-button(
-                  type="primary",
-                  :loading="loadingSave",
-                  @click="saveTest"
-                ).margin-right__10 Guardar
-
-                a-button(
-                  :loading="loadingSave",
-                  @click="() => edit = !edit",
-                  type="danger"
-                ) Cancelar
-
         a-col(:xl="{ span: 16 }")
           a-card
             a-collapse(v-model:active-key="questionActiveKey")
@@ -325,22 +305,5 @@ export default defineComponent({
 
             a-button(type="link", @click="addNewQuestion").margin-top__20.float-right
               span Añadir pregunta +
-
-
-              //a-form-item.margin-top__40
-              //  a-space
-              //    a-button(
-              //      type="primary",
-              //      html-type="submit",
-              //      :loading="loadingSave"
-              //    ) Guardar
-              //
-              //    a-button(
-              //      type="danger",
-              //      @click="back()",
-              //      :loading="loadingSave"
-              //    ) Cancelar
-
-  .actions
 
 </template>
