@@ -105,18 +105,23 @@ export default defineComponent({
         const response = await this.flowStore.createFlow(this.form);
         const { flow, status } = response
         if(status !== "success") {
-          message.error("Error al guardar información");
+          message.error("Error al guardar información")
         } else {
           message.success("Creado con exito !");
+          this.loadingSave= false
+          this.open= false
+          this.$router.push({ name: "RecruitmentForm", params: { method: 'new', id: flow.id } });
         }
       }catch (error) {
         console.log({ error })
       }
-      this.loadingSave= false
-      this.open= false
-      this.$router.push({ name: "RecruitmentForm", params: { method: 'new', id: '0' } });
+
     },
 
+    updateFlow(flowId:number) {
+      this.$router.push({ name: "RecruitmentForm", params: { method: 'update', id: flowId } });
+    },
+    
     async deleteFlow(flowId: any){
       this.loadingDelete= true
       try {
@@ -185,17 +190,19 @@ export default defineComponent({
               span Ver
 
             a-button(
-              type="primary").margin-left__10
+              type="primary"
+              @click=" updateFlow(record.id)").margin-left__10
               edit-outlined
               span Editar
 
             a-popconfirm(
+            disabled
             title="¿Estas seguro?",
             ok-text="Si",
             cancel-text="No",
             @confirm="() => deleteFlow(record.id)"
             )
-              a-button(type="danger", :loading="loadingDelete").margin-left__10
+              a-button(disabled type="danger", :loading="loadingDelete").margin-left__10
                 delete-outlined
                 span Eliminar
       div

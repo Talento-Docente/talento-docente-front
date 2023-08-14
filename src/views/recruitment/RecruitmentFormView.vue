@@ -60,7 +60,8 @@ export default defineComponent({
     orderNumber: ["1", "2", "3", "4", "5"],
 
     /** Loader */
-    loadingFlow: false
+    loadingFlow: false,
+    loadingUpdate: false,
   }),
 
   mounted() {
@@ -68,8 +69,10 @@ export default defineComponent({
     if (method && id) {
       this.selectedFlowId = parseInt(`${id}`, 10);
       this.selectedMethod = method;
-      if (method === "new") {
-        this.getFlow();
+      this.getFlow();
+      if (method === "update") {
+        this.loadingUpdate=true
+        console.log(this.loadingUpdate)
       }
     } else {
       message.error("Error al obtener información");
@@ -96,6 +99,18 @@ export default defineComponent({
       } finally {
         this.loadingFlow = false;
       }
+    },
+
+    updateflow(){
+
+    },
+
+    updateStages(){
+
+    },
+
+    getStage(){
+
     },
 
     addStage() {
