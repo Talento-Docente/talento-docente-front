@@ -109,30 +109,6 @@ a-row
 
 a-divider()
 
-//- template(v-if="formEstablishment.name")
-//-   a-row 
-//-     a-col(:span="10")
-//-       a-row(justify="center" align="middle")
-//-         a-col()
-//-           a-avatar( 
-//-               alt="avatar" :size="100")
-
-//-       a-row(justify="center" align="middle")
-//-         a-col()
-//-           h3 {{ formEstablishment.name }}
-//-       a-row 
-//-         a-col()
-//-           div
-//-             span Hola
-//-           div
-//-             span Hola
-//-           div
-//-             span Hola
-          
-
-//-     a-col(justify="center" :span="11" :offset="1")
-//-       span {{text}}
-
 template(v-if="formEstablishment.name")
 
   a-row(justify="center" align="middle")
