@@ -20,7 +20,7 @@ export const stageStore = defineStore('stage', {
 
   actions: {
     /**
-     * Obtención de etapa
+     * Obtención de stage
      **/
     async getStages(flowId:number, page: number = 1, pageSize: number = 10, searchBy: any = {}) {
       const response = await StageServices.index(flowId, page, pageSize, searchBy)
@@ -31,7 +31,7 @@ export const stageStore = defineStore('stage', {
     },
 
     /**
-    * Obtención de etapas por ID 
+    * Obtención de stage por ID 
     * */
     async getStage(flowId: number,stageId: number = 1) {
       const response = await StageServices.show(flowId,stageId)
@@ -41,7 +41,7 @@ export const stageStore = defineStore('stage', {
     },
 
     /**
-    * Creación de etapa
+    * Creación de stage
     * */
     async createStage(flowId:number ,stageData: StageInterface) {
       const response = await StageServices.create(flowId,stageData)

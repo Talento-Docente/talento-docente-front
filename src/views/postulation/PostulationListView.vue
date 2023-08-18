@@ -117,7 +117,8 @@ export default defineComponent({
 
 <template lang="pug">
 .postulation
-  .title.font-size__h3 Postulaciones
+  a-button(type="primary", @click="() => $router.go(-1)").margin-right__10 Volver
+  .title.font-size__h3.margin-top__20 Postulaciones
   .filter.margin-top__20
 
     a-row(:gutter="[20, 20]")
@@ -150,7 +151,7 @@ export default defineComponent({
 
       template(#bodyCell="{ column, record }")
         template(v-if="column.key === 'job'")
-          a-avatar(:src="record.img")
+          a-avatar()
           b ㅤ {{ record.job }}
 
           //- cambiar el por method para colores!!!!

@@ -12,6 +12,14 @@ export default {
         requiredAuth: true
       }
     },
+    {
+      path: "my_business",
+      name: "MyBusiness",
+      component: () => import("@/views/myBusiness/MyBusinessView.vue"),
+      meta: {
+        requiredAuth: true
+      }
+    },
 
     {
       path: 'tests',

@@ -94,7 +94,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       a-menu-item(key="71", @click="() => $router.push({ name: 'MyProfile' })")
         span Mi Perfil
 
-      a-menu-item(key="72" @click="() => $router.push({ name: 'MyCompany' })")
+      a-menu-item(key="72" @click="() => $router.push({ name: 'MyBusiness' })")
         span Mi Empresa
 
       a-menu-item(key="73" @click="() => $router.push({ name: 'Flow' })")
