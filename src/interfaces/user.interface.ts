@@ -1,8 +1,13 @@
 import type { PermissionInterface } from "@/interfaces/permission.interface";
+import type { ApplicantInterface } from "@/interfaces/applicant.interface";
 
 export interface UserInterface {
     id?: number | null
-    email: string | null
+    email: string
+    first_name: string
+    last_name: string
+    dni: string
+    birthday: Date | string
     provider?: string | null
     skip_password_validation?: boolean | null
     password?: string | null
@@ -12,15 +17,23 @@ export interface UserInterface {
     name?: string | null
     nickname?: string | null
     image?: string | null
-    first_name: string | null
-    last_name: string | null
-    second_last_name: string | null
-    dni: string | null
+    second_last_name?: string | null
     picture?: any
     picturePreview?: any
-    x?: any
-    birthday: Date | null
-    deleted_at?: Date | null
     role: String,
-    permissions: PermissionInterface[]
+    permissions: PermissionInterface[],
+    applicant: ApplicantInterface
+}
+
+export interface ProfileInterface {
+    first_name: string,
+    last_name: string,
+    email: string,
+    phone: string,
+    birthday: Date | string,
+    dni: string,
+    description: string,
+    youtube: string,
+    briefcase: string,
+    linkedin: string,
 }
