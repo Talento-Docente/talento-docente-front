@@ -1,8 +1,8 @@
-function cleanRut(rut) {
+function cleanRut(rut: string): string {
   return rut.replace(/[^0-9kK]+/g, '').toLowerCase();
 }
 
-function formatRut(rut) {
+function formatRut(rut: string) {
   if (rut.length > 1) {
     // eslint-disable-next-line no-param-reassign
     rut = `${rut.slice(0, -1)}-${rut.slice(-1)}`;
@@ -16,31 +16,28 @@ function formatRut(rut) {
   return rut;
 }
 
-export function validateRut(rut) {
+export function validateRut(rut: string) {
   const numberRut = cleanRut(rut).slice(0, -1);
   if (numberRut.length > 6) {
     const auxArray = [3, 2, 7, 6, 5, 4, 3, 2];
     let sum = 0;
 
     for (let i = numberRut.length - 1; i >= 0; i -= 1) {
-      // eslint-disable-next-line radix
       sum += parseInt(numberRut[i]) * auxArray[i];
     }
-    // eslint-disable-next-line no-mixed-operators
     switch (11 - sum % 11) {
     case 11:
-      return rut.slice(-1) === 0;
+      return String(rut).slice(-1) === '0';
     case 10:
-      return rut.slice(-1) === 'k';
+      return String(rut).slice(-1) === 'k';
     default:
-      // eslint-disable-next-line no-mixed-operators
-      return rut.slice(-1) === (11 - sum % 11);
+      return String(rut).slice(-1) === String(11 - sum % 11);
     }
   }
   return false;
 }
 
-export function checkRut(rutCompleto) {
+export function checkRut(rutCompleto: string) {
   let _rutCompleto = rutCompleto;
   if (rutCompleto.indexOf('-') <= -1) {
     _rutCompleto = `${rutCompleto.slice(0, -1)}-${rutCompleto.slice(-1)}`;
@@ -53,10 +50,10 @@ export function checkRut(rutCompleto) {
   const rut = tmp[0];
   if (digv === 'K') digv = 'k';
 
-  return (`${getDigit(rut)}` === `${digv}`);
+  return (`${getDigit(Number(rut))}` === `${digv}`);
 }
 
-export function getDigit(DT) {
+export function getDigit(DT: number) {
   let M = 0;
   let S = 1;
   let T = DT;
@@ -67,16 +64,15 @@ export function getDigit(DT) {
   return S ? S - 1 : 'k';
 }
 
-export function rutFilter(value) {
+export function rutFilter(value: string) {
   return formatRut(cleanRut(value));
 }
 
 export const rutDirective = {
 
-  bind(el, binding, vnode) {
+  bind(el: any, binding: { def: { data: any; }; }, vnode: { data: { directives: string | any[]; }; }) {
     const _self = binding.def.data;
 
-    // eslint-disable-next-line no-plusplus
     for (let i = vnode.data.directives.length - 1; i >= 0; i--) {
       if (vnode.data.directives[i].name === 'model') {
         _self.vueModel = vnode.data.directives[i].expression;
@@ -85,26 +81,23 @@ export const rutDirective = {
     }
   },
 
-  update(el, binding, vnode) {
+  update(el: { value: string; }, binding: { def: { data: any; }; }, vnode: { context: { [x: string]: null; }; }) {
     const _self = binding.def.data;
 
     if (_self.validateRut) {
-      // eslint-disable-next-line no-param-reassign
       el.value = formatRut(cleanRut(el.value));
       _self.inputValue = el.value;
 
       if (validateRut(el.value)) {
-        // eslint-disable-next-line no-param-reassign
+        // @ts-ignore
         vnode.context[_self.vueModel] = cleanRut(el.value);
         _self.validateRut = false;
       } else {
-        // eslint-disable-next-line no-param-reassign
         vnode.context[_self.vueModel] = null;
         _self.validateRut = false;
       }
     } else {
       _self.validateRut = true;
-      // eslint-disable-next-line no-param-reassign
       el.value = _self.inputValue;
     }
   },
@@ -121,10 +114,10 @@ export const rutDirective = {
  * @param rut
  * @returns {string}
  */
-export function addMiddleDash(rut) {
+export function addMiddleDash(rut: string): string {
   return `${rut.slice(0, -1)}-${rut.slice(-1)}`;
 }
 
-export function removeDotsAndDashesFromRut(value) {
+export function removeDotsAndDashesFromRut(value: string): string {
   return value && value.length ? value.replace(/[. ,:-]+/g, '').toLowerCase() : '';
 }

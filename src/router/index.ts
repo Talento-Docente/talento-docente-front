@@ -1,15 +1,21 @@
 /** External dependencies */
 import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 
 /** Internal dependencies */
+/** Stores */
+import { authStore } from "@/stores/auth.store"
+
+/** Interfaces */
+import type { RouteMetaInterface } from '@/interfaces/route_meta.interface'
+
 /** Routes */
 import EstablishmentRoutes from '@/router/establishment.routes'
 import EmploymentRoutes from '@/router/employment.routes'
 import ApplicantRoutes from '@/router/applicant.routes'
 import PostulationRoutes from '@/router/postulation.routes'
-import TestRoutes from '@/router/test.routes'
-import Admin from '@/router/admin.routes'
-import Flow from '@/router/flow.routes'
+import AdminRoute from '@/router/admin.routes'
+import FlowRoute from '@/router/flow.routes'
 
 
 const router = createRouter({
@@ -27,35 +33,31 @@ const router = createRouter({
           name: 'LandingPage',
           component: () => import('@/views/landing/LandingSchema.vue'),
           meta: {
-            requiredAuth: false
-          },
+            requiredAuth: false,
+            authRoute: false
+          } as RouteMetaInterface,
         },
       ]
     },
 
     {
-      path: '/login',
+      path: '/login/:login_type',
       name: 'Login',
-      redirect: '/login/employees',
-      component: () => import('@/components/layouts/BlankLayout.vue'),
-      children: [
-        {
-          path: 'employees',
-          name: 'LoginEmployee',
-          component: () => import('@/views/auth/LoginView.vue'),
-          meta: {
-            requiredAuth: false
-          },
-        },
-        {
-          path: 'businesses',
-          name: 'LoginBusiness',
-          component: () => import('@/views/auth/LoginView.vue'),
-          meta: {
-            requiredAuth: false
-          },
-        },
-      ]
+      component: () => import('@/views/auth/LoginView.vue'),
+      meta: {
+        requiredAuth: false,
+        authRoute: true
+      } as RouteMetaInterface,
+    },
+
+    {
+      path: '/register/:register_type',
+      name: 'Register',
+      component: () => import('@/views/auth/RegisterView.vue'),
+      meta: {
+        requiredAuth: false,
+        authRoute: true
+      } as RouteMetaInterface,
     },
 
     {
@@ -69,17 +71,17 @@ const router = createRouter({
           name: 'Home',
           component: () => import('@/views/HomeView.vue'),
           meta: {
-            requiredAuth: true
-          },
+            requiredAuth: true,
+            authRoute: false
+          } as RouteMetaInterface,
         },
 
         EstablishmentRoutes,
         EmploymentRoutes,
         ApplicantRoutes,
         PostulationRoutes,
-        TestRoutes,
-        Admin,
-        Flow
+        AdminRoute,
+        FlowRoute
 
       ]
     },
@@ -87,10 +89,38 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('@/views/errors/PageNotFound.vue')
+      redirect: '/'
+      // component: () => import('@/views/errors/PageNotFound.vue')
     }
 
-  ]
+  ] as RouteRecordRaw[]
+})
+
+function isAuthenticated() {
+  return authStore().isAuthenticated;
+}
+
+function requiredAuth(to: RouteLocationNormalized) {
+  const meta: RouteMetaInterface = <RouteMetaInterface><unknown>to.meta
+  return meta.requiredAuth
+}
+
+function authRoute(to: RouteLocationNormalized) {
+  const meta: RouteMetaInterface = <RouteMetaInterface><unknown>to.meta
+  return meta.authRoute
+}
+
+router.beforeEach(async (to, from, next) => {
+  if (requiredAuth(to) && !isAuthenticated()) {
+    next('/')
+  } else if (authRoute(to) && isAuthenticated()) {
+    next('/portal/home')
+  } else if (requiredAuth(to) && isAuthenticated()){
+    await authStore().getProfile()
+    next()
+  } else {
+    next()
+  }
 })
 
 export default router

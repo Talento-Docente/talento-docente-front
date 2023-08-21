@@ -20,6 +20,9 @@ import {
 import { menuStore } from '@/stores/menu.store'
 import { authStore } from '@/stores/auth.store'
 
+/** Constants */
+import { ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT, ROLE_APPLICANT } from '@/constants/user.constants'
+
 export default defineComponent({
 
   components: {
@@ -38,7 +41,12 @@ export default defineComponent({
 
     /** store */
     menuStore: menuStore(),
-    authStore: authStore()
+    authStore: authStore(),
+
+    /** Constants */
+    ROLE_SUPER_ADMIN,
+    ROLE_ESTABLISHMENT,
+    ROLE_APPLICANT
   }),
 
   methods: {
@@ -58,21 +66,27 @@ export default defineComponent({
 
 <template lang="pug">
 a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
+
   .logo(@click="() => $router.push({ name: 'Landing' })")
+    template(v-if="menuStore.collapsed")
+      .font-size__20.color__white.text-align__center TD
+    template(v-else)
+      .font-size__20.color__white.text-align__center Talento Docente
+
   a-menu(v-model:selectedKeys="selectedKeys" theme="dark" mode="inline")
     a-menu-item(key="1", @click="() => $router.push({ name: 'Home' })")
       home-outlined
       span Dashboard
 
-    a-menu-item(key="2", @click="() => $router.push({ name: 'Establishment' })")
+    a-menu-item(key="2", @click="() => $router.push({ name: 'Establishment' })", v-if="[ROLE_SUPER_ADMIN].indexOf(authStore.role) > -1")
       bank-outlined
       span Empresas
 
-    a-menu-item(key="3", @click="() => $router.push({ name: 'Employment' })")
+    a-menu-item(key="3", @click="() => $router.push({ name: 'Employment' })", v-if="[ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
       folder-outlined
       span Trabajos
 
-    a-menu-item(key="4", @click="() => $router.push({ name: 'Applicant' })")
+    a-menu-item(key="4", @click="() => $router.push({ name: 'Applicant' })", v-if="[ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
       user-outlined
       span Postulantes
 
@@ -94,13 +108,13 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       a-menu-item(key="71", @click="() => $router.push({ name: 'MyProfile' })")
         span Mi Perfil
 
-      a-menu-item(key="72" @click="() => $router.push({ name: 'MyBusiness' })")
+      a-menu-item(key="72" @click="() => $router.push({ name: 'MyBusiness' })", v-if="[ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
         span Mi Empresa
 
-      a-menu-item(key="73" @click="() => $router.push({ name: 'Flow' })")
+      a-menu-item(key="73" @click="() => $router.push({ name: 'Flow' })", v-if="[ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
         span Flujos Reclutamiento
 
-      a-menu-item(key="tests", @click="() => $router.push({ name: 'Test' })")
+      a-menu-item(key="tests", @click="() => $router.push({ name: 'Test' })", v-if="[ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
         span Pruebas
 
     //a-menu-item(key="7", @click="() => $router.push({ name: 'Admin' })")

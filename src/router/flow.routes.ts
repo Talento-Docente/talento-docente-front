@@ -1,3 +1,6 @@
+/** Interfaces */
+import type { RouteMetaInterface } from "@/interfaces/route_meta.interface"
+
 export default {
   path: 'flow',
   name: 'Flow',
@@ -9,16 +12,18 @@ export default {
       name: "Flow",
       component: () => import("@/views/flow/FlowListView.vue"),
       meta: {
-        requiredAuth: true
-      }
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface
     },
     {
       path: ":method/:id",
       name: "FlowForm",
       component: () => import("@/views/flow/FlowFormView.vue"),
       meta: {
-        requiredAuth: true
-      }
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface
     },
   ],
 }

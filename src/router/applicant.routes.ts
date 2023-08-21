@@ -1,3 +1,6 @@
+/** Interfaces */
+import type { RouteMetaInterface } from "@/interfaces/route_meta.interface"
+
 export default {
   path: "applicants",
   name: "Applicant",
@@ -9,16 +12,18 @@ export default {
       name: "ApplicantList",
       component: () => import("@/views/applicant/ApplicantListView.vue"),
       meta: {
-        requiredAuth: true
-      }
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface
     },
     {
       path: ":method/:id",
       name: "ApplicantForm",
       component: () => import("@/views/applicant/ApplicantFormView.vue"),
       meta: {
-        requiredAuth: true
-      }
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface
     }
   ]
 };

@@ -13,11 +13,11 @@ import { AntDesignOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
 
   components: {
+    AntDesignOutlined
   },
 
   setup() {
     return {
-      AntDesignOutlined
     };
   },
 
@@ -30,7 +30,7 @@ export default defineComponent({
   },
 
   async mounted() {
-    await this.employmentStore.getEmployments()
+    // await this.employmentStore.getEmployments()
   },
 
   methods: {}
@@ -102,7 +102,7 @@ export default defineComponent({
                       template(#avatar)
                         a-avatar(:size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }")
                           template(#icon)
-                            AntDesignOutlined
+                            ant-design-outlined
 
                       template(#title)
                         .font-size__30 {{ employment.title }}

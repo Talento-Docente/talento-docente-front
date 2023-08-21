@@ -1,6 +1,6 @@
 <script lang="ts">
 /** External dependencies */
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue';
 
 /** Internal dependencies */
@@ -22,6 +22,7 @@ export default defineComponent({
       }),
       labelCol: { style: { width: '150px' } },
       wrapperCol: { span: 24 },
+      loginType: ref<String>(''),
 
       /** Loader */
       loading: false
@@ -32,6 +33,11 @@ export default defineComponent({
     disabled() {
       return !(this.form.email && this.form.password)
     }
+  },
+
+  mounted () {
+    const { login_type } = this.$route.params
+    this.loginType = String(login_type)
   },
 
   methods: {
@@ -60,7 +66,7 @@ export default defineComponent({
     a-col(:xl="{ span: 8, offset: 8 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
       a-card
         .text-align__center
-          p.font-size__20 Talento Docente
+          p(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer Talento Docente
 
         a-form(:model="form", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
 
@@ -92,6 +98,11 @@ export default defineComponent({
               a-button(
                 type="link",
               ) Recuperar Contraseña
+
+              a-button(
+                type="link",
+                @click="() => $router.push({ name: 'Register', params: { register_type: loginType } })"
+              ) Registrate aquí
 
 
 

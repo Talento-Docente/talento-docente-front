@@ -1,3 +1,5 @@
+import type { PermissionInterface } from "@/interfaces/permission.interface";
+
 export interface UserInterface {
     id?: number | null
     email: string | null
@@ -19,4 +21,6 @@ export interface UserInterface {
     x?: any
     birthday: Date | null
     deleted_at?: Date | null
+    role: String,
+    permissions: PermissionInterface[]
 }

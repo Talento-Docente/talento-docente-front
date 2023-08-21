@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { establishmentStore } from "@/stores/establishment.store";
 import { employmentStore } from "@/stores/employment.store";
 import { flowStore } from "@/stores/flow.store";
+import { authStore } from "@/stores/auth.store";
 
 /** Interfaces */
 import type { EmploymentInterface } from "@/interfaces/employment.interface";
@@ -59,9 +60,9 @@ export default defineComponent({
     stagesActiveKey: null,
 
     /** Store */
-    establishmentStore: establishmentStore(),
     employmentStore: employmentStore(),
     flowStore: flowStore(),
+    authStore: authStore(),
 
     /** Loader */
     loadingEmployment: false,
@@ -78,7 +79,6 @@ export default defineComponent({
   mounted() {
     const { method, id } = this.$route.params;
     if (method && id) {
-      this.establishmentStore.getEstablishments();
       this.flowStore.getFlows();
       this.selectedEmploymentId = parseInt(`${id}`, 10);
       this.selectedMethod = method;
@@ -139,6 +139,7 @@ export default defineComponent({
 
     async onFinish(values: any) {
       try {
+        values.establishment_id = this.authStore.selectedEstablishmentId
         this.loadingSave = true;
         if (this.selectedMethod === "new") {
           const response = await this.employmentStore.createEmployment(values);
@@ -239,12 +240,6 @@ export default defineComponent({
 
       a-row
         a-col(:xl="{ span: 8 }", :lg="{ span: 12 }", :sm="{ span: 24 }")
-          a-form-item(
-            label="Establecimiento"
-            name="establishment_id"
-            :rules="[{ required: true, message: 'Seleccione un establecimiento' }]")
-            a-select(v-model:value="form.establishment_id")
-              a-select-option(v-for="establishment in establishmentStore.establishments", :value="establishment.id") {{ establishment.name }}
 
           a-form-item(
             label="Titulo"

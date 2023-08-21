@@ -1,5 +1,6 @@
 import { axios } from '@/utils/request';
 import config from '@/config';
+import type { SendRegisterInterface } from "@/interfaces/register.interface";
 
 export function login({ email, password }: { email: string, password: string }) {
   return axios({

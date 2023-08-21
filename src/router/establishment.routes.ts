@@ -1,3 +1,6 @@
+/** Interfaces */
+import type { RouteMetaInterface } from "@/interfaces/route_meta.interface"
+
 export default {
   path: 'establishments',
   name: 'Establishment',
@@ -9,16 +12,18 @@ export default {
       name: 'EstablishmentList',
       component: () => import('@/views/establishment/EstablishmentListView.vue'),
       meta: {
-        requiredAuth: true
-      },
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface,
     },
     {
       path: ':method/:id',
       name: 'EstablishmentForm',
       component: () => import('@/views/establishment/EstablishmentFormView.vue'),
       meta: {
-        requiredAuth: true
-      },
+        requiredAuth: true,
+        authRoute: false
+      } as RouteMetaInterface,
     }
   ],
 }

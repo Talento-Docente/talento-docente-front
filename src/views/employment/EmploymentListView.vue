@@ -1,10 +1,12 @@
 <script lang="ts">
 /** External dependencies */
 import { defineComponent, ref } from 'vue'
+import { message } from 'ant-design-vue'
 
 /** Internal dependencies */
 /** Store */
 import { employmentStore } from '@/stores/employment.store'
+import { authStore } from '@/stores/auth.store'
 
 /** Interfaces */
 import type { TableColumnsType } from 'ant-design-vue'
@@ -67,11 +69,20 @@ export default defineComponent({
 
     /** Store */
     employmentStore: employmentStore(),
+    authStore: authStore(),
 
     /** Loader */
     loadingEmployment: false,
     loadingDelete: false
   }),
+
+  watch: {
+    'authStore.selectedEstablishment'(value) {
+      if (value) {
+        this.init()
+      }
+    }
+  },
 
   mounted () {
     this.init()
@@ -83,7 +94,9 @@ export default defineComponent({
         this.loadingEmployment = true
         await this.employmentStore.getEmployments()
       } catch (error) {
+        this.employmentStore.clearStore()
         console.log({ error })
+        message.warn(String(error.message))
       } finally {
         this.loadingEmployment = false
       }

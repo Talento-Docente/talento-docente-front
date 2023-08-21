@@ -1,6 +1,7 @@
 /** External dependencies */
 import { defineStore } from 'pinia'
 import { useStorage } from "vue3-storage"
+import _ from 'lodash'
 
 /** Internal dependencies */
 /** Constants */
@@ -11,25 +12,50 @@ import authServices from '@/services/auth.services'
 
 /** Interfaces */
 import type { UserInterface } from "@/interfaces/user.interface";
+import type { PermissionInterface } from "@/interfaces/permission.interface"
+import type { EstablishmentInterface } from "@/interfaces/establishment.interface"
 
 export const authStore = defineStore('auth', {
 
+  persist: {
+    enabled: true
+  },
+
   state: () => ({
     isAuthenticated: false,
-    user: null as UserInterface | null,
+    user: {} as UserInterface,
+    registerUser: {} as UserInterface,
     token: null as string | null,
+    permissions: [] as PermissionInterface[],
+    selectedEstablishmentId: null as number | null,
+    selectedEstablishment: {} as EstablishmentInterface,
+    selectedPermission: {} as PermissionInterface,
   }),
 
-  // getters: {
-  //   isAuthenticated: (state) => state.isAuthenticated,
-  //   user: (state) => state.user,
-  // },
+  getters: {
+    role: (state) => state.user ? state.user.role : null,
+  },
 
   actions: {
+
     clearStore () {
       this.isAuthenticated = false
-      this.user = null
+      this.user = {} as UserInterface
+      this.registerUser = {} as UserInterface
       this.token = null
+      this.selectedEstablishmentId = null
+      this.selectedEstablishment = {} as EstablishmentInterface
+      this.selectedPermission = {} as PermissionInterface
+    },
+
+    selectEstablishment(selectedEstablishmentId: number) {
+      const foundPermission: PermissionInterface | undefined = _.find(this.permissions,  (permission: PermissionInterface) => {
+        return permission.establishment_id === selectedEstablishmentId
+      })
+      if (foundPermission) {
+        this.selectedPermission = foundPermission
+        this.selectedEstablishment = foundPermission.establishment
+      }
     },
 
     login(email: string, password: string) {
@@ -38,11 +64,16 @@ export const authStore = defineStore('auth', {
           .login({ email, password })
           .then((response) => {
             const { data } = response
-            console.log({ response })
 
-            this.user = data
+            this.user = data.data
+            this.permissions = this.user.permissions
             this.isAuthenticated = true
             this.token = response.headers[`${AUTH_KEY}`]
+
+            if (this.selectedEstablishmentId === null && this.permissions.length > 0) {
+              this.selectedEstablishmentId = this.permissions[0].establishment_id
+              this.selectEstablishment(this.permissions[0].establishment_id)
+            }
 
             /** Save token */
             const storage = useStorage()
@@ -82,8 +113,16 @@ export const authStore = defineStore('auth', {
       return new Promise((resolve, reject) => {
         authServices
           .profile()
-          .then(({ data }: { data: any }) => {
-            console.log({ data })
+          .then((response: { data: any }) => {
+            const { data } = response
+            this.user = data.data
+            this.permissions = this.user.permissions
+
+            if (this.selectedEstablishmentId === null && this.permissions.length > 0) {
+              this.selectedEstablishmentId = this.permissions[0].establishment_id
+              this.selectEstablishment(this.permissions[0].establishment_id)
+            }
+
             resolve(data)
           })
           .catch((error: any) => {
