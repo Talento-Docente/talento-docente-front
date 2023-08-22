@@ -217,7 +217,7 @@ export default defineComponent({
         if (status === 'error') {
           aMessage.error(String(message))
         } else {
-          this.$router.push({ name: 'Login' })
+          this.$router.push({ name: 'Login', params: { login_type: this.registerType } })
           aMessage.success('Registro exitoso')
         }
       } catch (error) {
