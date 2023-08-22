@@ -2,8 +2,14 @@
 /** External dependencies */
 import { defineComponent } from "vue";
 import draggable from 'vuedraggable'
+
+/** Stores */
+import { authStore } from "@/stores/auth.store";
+import { employmentStore } from "@/stores/employment.store";
+
 /** Icons */
-import {FormOutlined,
+import {
+  FormOutlined,
   LineChartOutlined,
   CommentOutlined,
   LinkedinOutlined,
@@ -26,7 +32,7 @@ export default defineComponent({
     TwitterOutlined,
     AuditOutlined,
     MailOutlined
-    
+
   },
 
   setup() {
@@ -35,6 +41,13 @@ export default defineComponent({
 
   data() {
     return {
+      /** Loader */
+      loading: false,
+
+      /** Stores */
+      authStore: authStore(),
+      employmentStore: employmentStore(),
+
       /** Form */
       list1: [
         {
@@ -161,7 +174,8 @@ export default defineComponent({
         // value: this.activeNames
       },
       open:false,
-      //testing
+
+      /** Design */
       element:{},
       color: "#f3f3f3",
       tabListNoTitle: [
@@ -182,16 +196,36 @@ export default defineComponent({
     };
   },
 
-  mounted() {
+  async mounted() {
+    await this.init()
   },
 
   methods: {
+
+    async init () {
+      try {
+        this.loading = true
+        const { id } = this.$route.params
+        if (!id) {
+          throw Error('Not specific employment id')
+        }
+        await this.employmentStore.getEmployment(Number(id))
+      } catch (e) {
+        console.log({ e })
+        this.$router.push({ name: 'EmploymentList' })
+      } finally {
+        this.loading = false
+      }
+    },
+
     handleChange (value: any) {
       console.log({ value })
     },
+
     inputChanged (value: any) {
       console.log({ value })
     },
+
     log (value: any) {
       console.log({ value })
     },
@@ -200,10 +234,12 @@ export default defineComponent({
       this.open = true
       this.element=element
     },
+
     handleOk() {
       this.open=false
       this.element = {}
     },
+
     onTabChange(value: string, type: string){
       this.key = value
     }
@@ -221,9 +257,10 @@ export default defineComponent({
       h2 Proceso
 
       a-row(:gutter="[20, 20]")
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Nuevos Postulantes
+        a-col(v-for="stage in employmentStore.employment?.flow?.stages")
+          a-card(:bodyStyle="{ background: color }")
+            template(#title) {{ stage.name }}
+
             draggable(
               :list="list1",
               @change="log",
@@ -234,142 +271,142 @@ export default defineComponent({
                 a-card(hoverable @click="showModal(element)").margin-top__5
                   a-avatar.margin-right__5
                   span {{ element.name }}
-                
 
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Realiza test enviados
-            draggable(
-              :list="list2",
-              @change="log",
-              group="people",
-              item-key="id",
-            )
-              template(#item="{element}")
-                a-card(hoverable).margin-top__5
-                  span {{ element.name }}
 
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Primer Llamado
-            draggable(
-              :list="list3",
-              @change="log",
-              group="people",
-              item-key="id",
-            )
-              template(#item="{element}")
-                a-card(hoverable).margin-top__5
-                  span {{ element.name }}
+        //a-col(:span="4")
+        //  a-card(:bodyStyle="{background: color}")
+        //    template(#title) Realiza test enviados
+        //    draggable(
+        //      :list="list2",
+        //      @change="log",
+        //      group="people",
+        //      item-key="id",
+        //    )
+        //      template(#item="{element}")
+        //        a-card(hoverable).margin-top__5
+        //          span {{ element.name }}
+        //
+        //a-col(:span="4")
+        //  a-card(:bodyStyle="{background: color}")
+        //    template(#title) Primer Llamado
+        //    draggable(
+        //      :list="list3",
+        //      @change="log",
+        //      group="people",
+        //      item-key="id",
+        //    )
+        //      template(#item="{element}")
+        //        a-card(hoverable).margin-top__5
+        //          span {{ element.name }}
+        //
+        //a-col(:span="4")
+        //  a-card(:bodyStyle="{background: color}")
+        //    template(#title) Entrevista Psicologica
+        //    draggable(
+        //      :list="list4",
+        //      @change="log",
+        //      group="people",
+        //      item-key="id",
+        //    )
+        //      template(#item="{element}")
+        //        a-card(hoverable).margin-top__5
+        //          span {{ element.name }}
+        //
+        //a-col(:span="4")
+        //  a-card(:bodyStyle="{background: color}")
+        //    template(#title) Posibles Candidatos
+        //    draggable(
+        //      :list="list5",
+        //      @change="log",
+        //      group="people",
+        //      item-key="id",
+        //    )
+        //      template(#item="{element}")
+        //        a-card(hoverable).margin-top__5
+        //          span {{ element.name }}
+        //
+        //a-col(:span="4")
+        //  a-card(:bodyStyle="{background: color}")
+        //    template(#title) Contratado
+        //    draggable(
+        //      :list="list6",
+        //      @change="log",
+        //      group="people",
+        //      item-key="id",
+        //    )
+        //      template(#item="{element}")
+        //        a-card(hoverable).margin-top__5
+        //          span {{ element.name }}
 
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Entrevista Psicologica
-            draggable(
-              :list="list4",
-              @change="log",
-              group="people",
-              item-key="id",
-            )
-              template(#item="{element}")
-                a-card(hoverable).margin-top__5
-                  span {{ element.name }}
-
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Posibles Candidatos
-            draggable(
-              :list="list5",
-              @change="log",
-              group="people",
-              item-key="id",
-            )
-              template(#item="{element}")
-                a-card(hoverable).margin-top__5
-                  span {{ element.name }}
-
-        a-col(:span="4")
-          a-card(:bodyStyle="{background: color}")
-            template(#title) Contratado
-            draggable(
-              :list="list6",
-              @change="log",
-              group="people",
-              item-key="id",
-            )
-              template(#item="{element}")
-                a-card(hoverable).margin-top__5
-                  span {{ element.name }}
-        div
-          a-modal(v-model:visible="open"
-                  @ok="handleOk"
-                  width="1000px"
-                  :bodyStyle="{background: color}"
-                  :footer="null")
-
-            a-row().margin-top__20
-              a-col(:span="10")
-                div()
-                  a-row(:gutter="[16,8]")
-                    a-col
-                      a-avatar(:size="50")
-                    a-col
-                      h3 {{ element.name }}
-
-                div()
-                  a-typography-text(strong)
-                    span {{ element.description.titulo }}
-
-                div().margin-top__20
-                  MailOutlined
-                  span.margin-left__10 {{ element.description.correo }}
-                
-                div().margin-top__10
-                  PhoneOutlined
-                  span.margin-left__10 {{ element.description.telefono }}
-
-                div().margin-top__10
-                  TwitterOutlined
-                  a.margin-left__10 {{ element.description.twitter }}
-
-                div().margin-top__10
-                  LinkedinOutlined
-                  a.margin-left__10 {{ element.description.linkedin }}
-
-                div().margin-top__10
-                  AuditOutlined
-                  a().margin-left__10 Ver CV
-                
-
-                //- Modal Right side
-              a-col(:span="14")
-                a-card(:tab-list="tabListNoTitle"
-                  :active-tab-key="key"
-                  @tabChange="key => onTabChange(key, 'key')"
-                  :headStyle="{background: color}").margin-top__10
-                  //- icons
-                  template(#customTab="item")
-                    div(v-if="item.key === 'postulation'")
-                      FormOutlined
-                      span Postulaciones
-
-                    div(v-if="item.key === 'activities'")
-                      LineChartOutlined
-                      span Actividades
-
-                    div(v-if="item.key === 'inbox'")
-                      CommentOutlined
-                      span Mensajes
-                    
-                  //-vistas de modal
-                  div(v-if="key === 'postulation'")
-                    h2 Habilidades Del postulante
-                  
-                  div(v-else-if="key === 'activities'")
-                    h2 Actividades
-
-                  div(v-else-if="key === 'inbox'")
-                    h2 Mensajes
+  //a-modal(v-model:visible="open"
+  //        @ok="handleOk"
+  //        width="1000px"
+  //        :bodyStyle="{background: color}"
+  //        :footer="null")
+  //
+  //  a-row().margin-top__20
+  //    a-col(:span="10")
+  //      div()
+  //        a-row(:gutter="[16,8]")
+  //          a-col
+  //            a-avatar(:size="50")
+  //          a-col
+  //            h3 {{ element.name }}
+  //
+  //      div()
+  //        a-typography-text(strong)
+  //          span {{ element.description.titulo }}
+  //
+  //      div().margin-top__20
+  //        MailOutlined
+  //        span.margin-left__10 {{ element.description.correo }}
+  //
+  //      div().margin-top__10
+  //        PhoneOutlined
+  //        span.margin-left__10 {{ element.description.telefono }}
+  //
+  //      div().margin-top__10
+  //        TwitterOutlined
+  //        a.margin-left__10 {{ element.description.twitter }}
+  //
+  //      div().margin-top__10
+  //        LinkedinOutlined
+  //        a.margin-left__10 {{ element.description.linkedin }}
+  //
+  //      div().margin-top__10
+  //        AuditOutlined
+  //        a().margin-left__10 Ver CV
+  //
+  //
+  //      //- Modal Right side
+  //    a-col(:span="14")
+  //      a-card(:tab-list="tabListNoTitle"
+  //        :active-tab-key="key"
+  //        @tabChange="key => onTabChange(key, 'key')"
+  //        :headStyle="{background: color}").margin-top__10
+  //        //- icons
+  //        template(#customTab="item")
+  //          div(v-if="item.key === 'postulation'")
+  //            FormOutlined
+  //            span Postulaciones
+  //
+  //          div(v-if="item.key === 'activities'")
+  //            LineChartOutlined
+  //            span Actividades
+  //
+  //          div(v-if="item.key === 'inbox'")
+  //            CommentOutlined
+  //            span Mensajes
+  //
+  //        //-vistas de modal
+  //        div(v-if="key === 'postulation'")
+  //          h2 Habilidades Del postulante
+  //
+  //        div(v-else-if="key === 'activities'")
+  //          h2 Actividades
+  //
+  //        div(v-else-if="key === 'inbox'")
+  //          h2 Mensajes
 
 </template>
 

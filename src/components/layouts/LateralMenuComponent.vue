@@ -56,7 +56,7 @@ export default defineComponent({
       } catch(error) {
         console.log({ error })
       } finally {
-        this.$router.push({ name: 'Login' })
+        this.$router.push({ name: 'Landing' })
       }
     }
   }
