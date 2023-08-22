@@ -141,7 +141,7 @@ export default defineComponent({
       try {
         this.loadingSave = true;
         if (this.refFormFlow && this.refFormStages) {
-          const values = await this.refFormFlow.validateFields()
+          const values = await this.refFormFlow.validateFields() as FlowInterface
           await this.refFormStages.validateFields()
 
           const stagesAttributes = this.dynamicStageForms.stages.concat(this.removedStages)

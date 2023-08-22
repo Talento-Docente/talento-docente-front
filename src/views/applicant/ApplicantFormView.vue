@@ -76,7 +76,10 @@ export default defineComponent({
         second_last_name: '',
         dni: '',
         picture: null,
-        birthday: null,
+        birthday: '',
+        role: '',
+        permissions: [],
+        applicant: {} as ApplicantInterface
       })
     }),
     pictureList: [],

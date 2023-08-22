@@ -55,6 +55,7 @@ export default defineComponent({
       title: null,
       establishment_id: null,
       flow_id: null,
+      postulations_resume: {},
       stage_configurations: [] as StageConfigurationInterface[],
       stage_configurations_attributes: [] as StageConfigurationInterface[]
     }),

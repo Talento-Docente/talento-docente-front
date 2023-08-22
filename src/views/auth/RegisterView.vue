@@ -68,10 +68,10 @@ export default defineComponent({
 
       /** Form Establishment */
       formRegisterEstablishment: reactive<EstablishmentInterface>({
-        dni: null,
-        name: null,
-        address: null,
-        phone: null,
+        dni: '',
+        name: '',
+        address: '',
+        phone: '',
       }),
 
       /** Form Terms */

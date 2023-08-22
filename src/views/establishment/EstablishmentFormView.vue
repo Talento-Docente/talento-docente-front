@@ -19,9 +19,10 @@ export default defineComponent({
     selectedEstablishmentId: ref<number>(0),
     selectedMethod: ref<string | string[]>('new'),
     form: reactive<EstablishmentInterface>({
-      name: null,
-      address: null,
-      phone: null
+      dni: '',
+      name: '',
+      address: '',
+      phone: ''
     }),
 
     /** Store */

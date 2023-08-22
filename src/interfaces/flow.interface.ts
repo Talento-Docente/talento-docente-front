@@ -6,4 +6,5 @@ export interface FlowInterface {
     name: string
     description: string,
     stages?: Array<StageInterface>
+    stages_attributes?: Array<StageInterface>
 }

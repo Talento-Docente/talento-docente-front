@@ -61,8 +61,8 @@ export default defineComponent({
     /** Form Modal */
     formCreate: reactive<FlowInterface>({
       establishment_id: null,
-      name: null,
-      description: null,
+      name: '',
+      description: '',
       stages: []
     }),
 
