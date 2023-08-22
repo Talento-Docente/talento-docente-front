@@ -10,7 +10,7 @@ export default {
     {
       path: "my_profile",
       name: "MyProfile",
-      component: () => import("@/views/myprofile/MyProfileView.vue"),
+      component: () => import("@/views/admin/my_profile/MyProfileView.vue"),
       meta: {
         requiredAuth: true,
         authRoute: false
@@ -19,7 +19,7 @@ export default {
     {
       path: "my_business",
       name: "MyBusiness",
-      component: () => import("@/views/myBusiness/MyBusinessView.vue"),
+      component: () => import("@/views/admin/my_business/MyBusinessView.vue"),
       meta: {
         requiredAuth: true,
         authRoute: false

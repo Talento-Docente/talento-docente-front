@@ -25,6 +25,13 @@ export function show(establishmentId: number | null, employmentId: number) {
   });
 }
 
+export function resume(establishmentId: number | null) {
+  return axios({
+    url: `${config.urlApi}/api/establishments/${establishmentId}/employments/get/resume`,
+    method: 'get'
+  });
+}
+
 export function create(establishmentId: number | null, data: EmploymentInterface) {
   return axios({
     url: `${config.urlApi}/api/establishments/${establishmentId}/employments`,
@@ -53,5 +60,6 @@ export default {
   show,
   create,
   update,
-  destroy
+  destroy,
+  resume
 };

@@ -9,6 +9,7 @@ import type { MetaInterface } from "@/interfaces/meta.interface"
 
 /** Services */
 import FlowServices from '@/services/flow.services'
+import { authStore } from "@/stores/auth.store";
 
 export const flowStore = defineStore('flow', {
 
@@ -23,7 +24,11 @@ export const flowStore = defineStore('flow', {
      * Obtención de flujo
      * */
     async getFlows(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
-      const response = await FlowServices.index(page, pageSize, searchBy)
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await FlowServices.index(establishmentId, page, pageSize, searchBy)
       const { flows, meta } = response.data
       this.flows = flows
       this.meta = meta
@@ -34,7 +39,11 @@ export const flowStore = defineStore('flow', {
     * Obtención de flujos por ID
     * */
     async getFlow(flowId: number = 1) {
-      const response = await FlowServices.show(flowId)
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await FlowServices.show(establishmentId, flowId)
       const { data } = response
       this.flow = data
       return data
@@ -44,7 +53,11 @@ export const flowStore = defineStore('flow', {
     * Creación de flujo
     * */
     async createFlow(flowData: FlowInterface) {
-      const response = await FlowServices.create(flowData)
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await FlowServices.create(establishmentId, flowData)
       const { data } = response
       return data
     },
@@ -54,7 +67,11 @@ export const flowStore = defineStore('flow', {
     * */
 
     async updateFlow(flowId: number, flowData: FlowInterface) {
-      const response = await FlowServices.update(flowId, flowData)
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await FlowServices.update(establishmentId, flowId, flowData)
       const { data } = response
       return data
     },
@@ -64,7 +81,11 @@ export const flowStore = defineStore('flow', {
     * Eliminar flow por ID
     * */
     async destroyFlow(flowId: number) {
-      const response = await FlowServices.destroy(flowId)
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await FlowServices.destroy(establishmentId, flowId)
       const { data } = response
       return data
     },

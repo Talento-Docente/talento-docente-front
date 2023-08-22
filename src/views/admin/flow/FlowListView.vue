@@ -9,8 +9,7 @@ import type { FlowInterface } from "@/interfaces/flow.interface";
 
 /** Store */
 import { flowStore } from "@/stores/flow.store";
-import { establishmentStore } from "@/stores/establishment.store";
-
+import { authStore } from "@/stores/auth.store";
 
 /** Icons */
 import {
@@ -76,7 +75,7 @@ export default defineComponent({
 
     /** Store */
     flowStore: flowStore(),
-    establishmentStore: establishmentStore()
+    authStore: authStore()
   }),
 
   setup () {
@@ -95,7 +94,6 @@ export default defineComponent({
       try {
         this.loadingFlow = true;
         await this.flowStore.getFlows();
-        await this.establishmentStore.getEstablishments();
       } catch (error) {
         console.log({ error });
       } finally {
@@ -110,8 +108,8 @@ export default defineComponent({
     clearFormModalCreate() {
       this.formCreate = reactive<FlowInterface>({
         establishment_id: null,
-        name: null,
-        description: null,
+        name: '',
+        description: '',
         stages: []
       })
       this.visibleModalCreate = false
@@ -122,7 +120,12 @@ export default defineComponent({
         if (this.refFormCreate) {
           this.loadingSave = true;
           const values = await this.refFormCreate.validateFields()
-          const response = await this.flowStore.createFlow(values)
+          const params = {
+            name: values.name,
+            description: values.description,
+            establishment_id: this.authStore.selectedEstablishmentId
+          } as FlowInterface
+          const response = await this.flowStore.createFlow(params)
           const { flow, status } = response;
           if (status !== "success") {
             message.error("Error al guardar información");
@@ -232,16 +235,9 @@ export default defineComponent({
       a-form(ref="refFormCreate", :model="formCreate", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
 
         a-form-item(
-          label="Establecimiento",
-          name="establishment_id",
-          :rules="[{ required: true, message: 'Seleccione un establecimiento' }]")
-          a-select(v-model:value="formCreate.establishment_id")
-            a-select-option(v-for="establishment in establishmentStore.establishments", :value="establishment.id") {{ establishment.name }}
-
-        a-form-item(
           label="Nombre del Flujo",
           name="name",
-          :rules="[{ required: true, message: 'Ingrese nombre, maximo 20 caracteres', min: 0, max: 20 }]")
+          :rules="[{ required: true, message: 'Ingrese nombre, maximo 20 caracteres', min: 0, max: 40 }]")
           a-input(v-model:value="formCreate.name")
 
         a-form-item(

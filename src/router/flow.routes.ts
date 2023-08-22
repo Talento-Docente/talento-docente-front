@@ -10,7 +10,7 @@ export default {
     {
       path: "",
       name: "Flow",
-      component: () => import("@/views/flow/FlowListView.vue"),
+      component: () => import("@/views/admin/flow/FlowListView.vue"),
       meta: {
         requiredAuth: true,
         authRoute: false
@@ -19,7 +19,7 @@ export default {
     {
       path: ":method/:id",
       name: "FlowForm",
-      component: () => import("@/views/flow/FlowFormView.vue"),
+      component: () => import("@/views/admin/flow/FlowFormView.vue"),
       meta: {
         requiredAuth: true,
         authRoute: false

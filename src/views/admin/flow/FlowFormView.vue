@@ -7,7 +7,7 @@ import * as _ from "lodash";
 
 /** Store */
 import { flowStore } from "@/stores/flow.store";
-import { establishmentStore } from "@/stores/establishment.store";
+import { authStore } from "@/stores/auth.store";
 
 /** Interfaces */
 import type { FormInstance } from "ant-design-vue";
@@ -30,7 +30,7 @@ export default defineComponent({
   data: () => ({
     /** Store */
     flowStore: flowStore(),
-    establishmentStore: establishmentStore(),
+    authStore: authStore(),
 
     /** Form */
     labelCol: { span: 24 },
@@ -39,8 +39,8 @@ export default defineComponent({
     selectedMethod: ref<string | string[]>("new"),
     formFlow: reactive<FlowInterface>({
       establishment_id: null,
-      name: null,
-      description: null,
+      name: '',
+      description: '',
       stages: []
     }),
     // stages: [] as Array<StageInterface>,
@@ -74,9 +74,8 @@ export default defineComponent({
     if (method && id) {
       this.selectedFlowId = parseInt(`${id}`, 10);
       this.selectedMethod = method;
-      await this.establishmentStore.getEstablishments()
       if (method === "update") {
-        this.getFlow()
+        await this.getFlow()
       }
     } else {
       message.error("Error al obtener información");
@@ -201,16 +200,9 @@ export default defineComponent({
         a-card
           a-form(ref="refFormFlow", :model="formFlow", :label-col="labelCol" :wrapper-col="wrapperCol")
             a-form-item(
-              label="Establecimiento",
-              name="establishment_id",
-              :rules="[{ required: true, message: 'Seleccione un establecimiento' }]")
-              a-select(v-model:value="formFlow.establishment_id")
-                a-select-option(v-for="establishment in establishmentStore.establishments", :value="establishment.id") {{ establishment.name }}
-
-            a-form-item(
               label="Nombre del Flujo",
               name="name",
-              :rules="[{ required: true, message: 'Ingrese nombre, maximo 20 caracteres', min: 0, max: 20 }]")
+              :rules="[{ required: true, message: 'Ingrese nombre, maximo 20 caracteres', min: 0, max: 40 }]")
               a-input(v-model:value="formFlow.name")
 
             a-form-item(
@@ -259,7 +251,7 @@ export default defineComponent({
                     a-form-item(
                       label="Nombre",
                       :name="['stages', index, 'name']",
-                      :rules="[{ required: true, message: 'Ingrese nombre, máximo 20 caracteres', min: 1, max: 20 }]"
+                      :rules="[{ required: true, message: 'Ingrese nombre, máximo 20 caracteres', min: 1, max: 40 }]"
                     )
                       a-input(v-model:value="stage.name")
 

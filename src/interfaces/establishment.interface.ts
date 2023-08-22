@@ -1,9 +1,7 @@
 export interface EstablishmentInterface {
-    id?: number | null
-    dni: string | null
-    name: string | null
-    address: string | null
-    phone: string | null
-    created_at?: Date | null
-    updated_at?: Date | null
+    id?: number
+    dni: string
+    name: string
+    address: string
+    phone: string
 }

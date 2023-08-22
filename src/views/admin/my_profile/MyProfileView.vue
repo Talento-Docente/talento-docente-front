@@ -110,7 +110,6 @@ export default defineComponent({
             a-typography-text(type="secondary")
               span Mi Informacion Personal
 
-
           a-row
 
             a-col(:sm="12")

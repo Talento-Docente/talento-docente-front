@@ -86,7 +86,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       folder-outlined
       span Trabajos
 
-    a-menu-item(key="4", @click="() => $router.push({ name: 'Applicant' })", v-if="[ROLE_SUPER_ADMIN, ROLE_ESTABLISHMENT].indexOf(authStore.role) > -1")
+    a-menu-item(key="4", @click="() => $router.push({ name: 'Applicant' })", v-if="[ROLE_SUPER_ADMIN].indexOf(authStore.role) > -1")
       user-outlined
       span Postulantes
 

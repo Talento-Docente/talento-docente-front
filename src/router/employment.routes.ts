@@ -26,7 +26,7 @@ export default {
       } as RouteMetaInterface
     },
     {
-      path: "employment_jobs",
+      path: ":id/employment_jobs",
       name: "EmploymentJobsView",
       component: () => import("@/views/employment/EmploymentJobsView.vue"),
       meta: {

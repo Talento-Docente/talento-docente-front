@@ -67,6 +67,11 @@ export default defineComponent({
     /** Table */
     columns: COLUMNS,
 
+    /** Filters */
+    searchBy: {
+      search_text: null
+    },
+
     /** Store */
     employmentStore: employmentStore(),
     authStore: authStore(),
@@ -92,8 +97,8 @@ export default defineComponent({
     async init () {
       try {
         this.loadingEmployment = true
-        await this.employmentStore.getEmployments()
-      } catch (error) {
+        await this.employmentStore.getEmployments(1, 20, this.searchBy)
+      } catch (error: any) {
         this.employmentStore.clearStore()
         console.log({ error })
         message.warn(String(error.message))
@@ -127,7 +132,7 @@ export default defineComponent({
 
       a-col(:xl="{ span: 6 }")
         a-form-item(label="Buscar por")
-          a-input(placeholder="Nombre...")
+          a-input(v-model:value="searchBy.search_text", placeholder="Nombre...")
 
       a-col
         a-form-item

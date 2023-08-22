@@ -6,7 +6,7 @@ import type { FormInstance } from 'ant-design-vue';
 /** Internal dependencies */
 /** Store */
 import { testStore } from '@/stores/test.store'
-import { establishmentStore } from "@/stores/establishment.store";
+import { authStore } from "@/stores/auth.store";
 
 /** Interfaces */
 import { message, type TableColumnsType } from 'ant-design-vue'
@@ -65,7 +65,7 @@ export default defineComponent({
 
     /** Store */
     testStore: testStore(),
-    establishmentStore: establishmentStore(),
+    authStore: authStore(),
 
     /** Loader */
     loadingTest: ref<boolean>(false),
@@ -108,7 +108,6 @@ export default defineComponent({
       try {
         this.loadingTest = true
         await this.testStore.getTests()
-        await this.establishmentStore.getEstablishments();
       } catch (error) {
         console.log({ error })
       } finally {
@@ -135,6 +134,7 @@ export default defineComponent({
         if (this.refFormCreate) {
           this.loadingCreate = false
           const values = await this.refFormCreate.validateFields()
+          values.establishment_id = this.authStore.selectedEstablishmentId
           const response = await this.testStore.createTest(values)
           if (response.status !== 'success') {
             message.error('Error al guardar información')
@@ -281,12 +281,6 @@ export default defineComponent({
     a-form(ref="refFormCreate", :model="formCreate", @finish="saveTest", :label-col="labelCol" :wrapper-col="wrapperCol")
       a-row
         a-col(:xl="{ span: 24 }")
-          a-form-item(
-            label="Establecimiento"
-            name="establishment_id"
-            :rules="[{ required: true, message: 'Seleccione un establecimiento' }]")
-            a-select(v-model:value="formCreate.establishment_id")
-              a-select-option(v-for="establishment in establishmentStore.establishments", :value="establishment.id") {{ establishment.name }}
 
           a-form-item(
             label="Nombre"

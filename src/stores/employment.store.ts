@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import { authStore } from '@/stores/auth.store'
 
 /** Interfaces */
-import type { EmploymentInterface } from "@/interfaces/employment.interface"
+import type { EmploymentInterface, EmploymentResumeInterface } from "@/interfaces/employment.interface"
 import type { MetaInterface } from "@/interfaces/meta.interface"
 
 /** Services */
@@ -19,6 +19,11 @@ export const employmentStore = defineStore('employment', {
       employments: [] as EmploymentInterface[],
       employment: null as EmploymentInterface | null,
       meta: {} as MetaInterface,
+      resume: {
+        created: 0,
+        closed: 0,
+        in_progress: 0,
+      } as EmploymentResumeInterface
     }
   },
 
@@ -26,6 +31,11 @@ export const employmentStore = defineStore('employment', {
     clearStore () {
       this.employments = [] as EmploymentInterface[]
       this.meta = {} as MetaInterface
+      this.resume = {
+        created: 0,
+        closed: 0,
+        in_progress: 0,
+      } as EmploymentResumeInterface
     },
 
     async getEmployments(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
@@ -38,6 +48,18 @@ export const employmentStore = defineStore('employment', {
       this.employments = employments
       this.meta = meta
       return employments
+    },
+
+    async getResume() {
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await employmentServices.resume(establishmentId)
+      const { status, message, resume } = response.data
+      console.log({ status, message, resume })
+      this.resume = resume as EmploymentResumeInterface
+      return { status, message, resume }
     },
 
     async getEmployment(employmentId: number = 1) {

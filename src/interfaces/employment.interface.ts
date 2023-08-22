@@ -1,4 +1,5 @@
 import type { StageConfigurationInterface } from "@/interfaces/stage_configuration.interface";
+import type { FlowInterface } from "@/interfaces/flow.interface";
 
 export interface EmploymentInterface {
     id?: number | null
@@ -14,6 +15,14 @@ export interface EmploymentInterface {
     status?: string | null
     establishment_id?: number | null
     flow_id?: number | null
-    stage_configurations?: Array<StageConfigurationInterface>
-    stage_configurations_attributes?: Array<StageConfigurationInterface>
+    flow?: FlowInterface
+    stage_configurations: Array<StageConfigurationInterface>
+    stage_configurations_attributes: Array<StageConfigurationInterface>
+    postulations_resume: any
+}
+
+export interface EmploymentResumeInterface {
+    created: number,
+    closed: number,
+    in_progress: number,
 }

@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 /** Internal dependencies */
 /** Store */
-import { establishmentStore } from "@/stores/establishment.store";
+import { testStore } from "@/stores/test.store";
 import { employmentStore } from "@/stores/employment.store";
 import { flowStore } from "@/stores/flow.store";
 import { authStore } from "@/stores/auth.store";
@@ -16,7 +16,7 @@ import { authStore } from "@/stores/auth.store";
 import type { EmploymentInterface } from "@/interfaces/employment.interface";
 import type { StageInterface } from "@/interfaces/stage.interface";
 import type { StageConfigurationInterface } from "@/interfaces/stage_configuration.interface";
-import type { StageConfigurationReferenceInterface } from "@/interfaces/stage_configuration_reference.interface";
+// import type { StageConfigurationReferenceInterface } from "@/interfaces/stage_configuration_reference.interface";
 
 /** Icons */
 import {
@@ -26,6 +26,7 @@ import {
 
 /** Constants */
 import { STATUSES, EMPLOYMENT_TYPES, SCHEDULE_TYPES, QUALIFICATIONS } from "@/constants/employment.constants";
+import type { StageConfigurationReferenceInterface } from "@/interfaces/stage_configuration_reference.interface";
 
 export default defineComponent({
 
@@ -54,6 +55,8 @@ export default defineComponent({
       title: null,
       establishment_id: null,
       flow_id: null,
+      stage_configurations: [] as StageConfigurationInterface[],
+      stage_configurations_attributes: [] as StageConfigurationInterface[]
     }),
 
     /** Stages */
@@ -63,6 +66,7 @@ export default defineComponent({
     employmentStore: employmentStore(),
     flowStore: flowStore(),
     authStore: authStore(),
+    testStore: testStore(),
 
     /** Loader */
     loadingEmployment: false,
@@ -76,14 +80,15 @@ export default defineComponent({
     QUALIFICATIONS
   }),
 
-  mounted() {
+  async mounted() {
     const { method, id } = this.$route.params;
     if (method && id) {
-      this.flowStore.getFlows();
+      await this.flowStore.getFlows();
+      await this.testStore.getTests();
       this.selectedEmploymentId = parseInt(`${id}`, 10);
       this.selectedMethod = method;
       if (method === "update") {
-        this.getEmployment();
+        await this.getEmployment();
       }
     } else {
       message.error("Error al obtener información");
@@ -103,7 +108,7 @@ export default defineComponent({
         if (this.employmentStore.employment) {
           this.form = this.employmentStore.employment;
           if (this.form.flow_id) {
-            this.getFlow(this.form.flow_id)
+            await this.getFlow(this.form.flow_id)
           }
 
         } else {
@@ -139,7 +144,24 @@ export default defineComponent({
 
     async onFinish(values: any) {
       try {
+        console.log({ values, form: this.form })
         values.establishment_id = this.authStore.selectedEstablishmentId
+        values.stage_configurations_attributes = []
+        this.form.stage_configurations.forEach((stageConfiguration: StageConfigurationInterface) => {
+          if (stageConfiguration.localStatus === 'new') {
+            stageConfiguration.id = null
+          }
+          stageConfiguration.stage_configuration_references.forEach((stageConfigurationReference: StageConfigurationReferenceInterface) => {
+            if (stageConfigurationReference.localStatus === 'new') {
+              stageConfigurationReference.id = null
+            }
+            if (!stageConfiguration.stage_configuration_references_attributes) {
+              stageConfiguration.stage_configuration_references_attributes = []
+            }
+            stageConfiguration.stage_configuration_references_attributes.push(stageConfigurationReference)
+          })
+          values.stage_configurations_attributes.push(stageConfiguration)
+        })
         this.loadingSave = true;
         if (this.selectedMethod === "new") {
           const response = await this.employmentStore.createEmployment(values);
@@ -169,61 +191,83 @@ export default defineComponent({
       }
     },
 
-    showStageConfigurationReference (stage: StageInterface) {
-      const employment = this.employmentStore.employment
-      if (employment) {
-        const index = _.find((employment.stage_configurations), (stageConfiguration: StageConfigurationInterface) => {
-          return stageConfiguration.stage_id === stage.id
-        })
-        if (employment.stage_configurations) {
-          if (index > -1 && employment.stage_configurations.length > 0) {
-            return employment.stage_configurations[index]
-          } else {
-            const stageConfiguration: StageConfigurationInterface = {
-              stage_id: stage.id,
-              employment_id: this.employmentStore.employment?.id,
-              localStatus: 'new',
-              id: uuid.v4(),
-              stage_configuration_references: []
-            }
-            employment.stage_configurations.push(stageConfiguration)
-            return stageConfiguration
-          }
-        } else {
-          const stageConfiguration: StageConfigurationInterface = {
-            stage_id: stage.id,
-            employment_id: this.employmentStore.employment?.id,
-            localStatus: 'new',
-            id: uuid.v4(),
-            stage_configuration_references: []
-          }
-          employment.stage_configurations = [stageConfiguration]
-          return stageConfiguration
-        }
+    showStageConfiguration (stage: StageInterface): StageConfigurationInterface {
+      const stageConfigurationIndex = _.findIndex((this.form.stage_configurations), (stageConfiguration: StageConfigurationInterface) => {
+        return stageConfiguration.stage_id === stage.id
+      })
+      if (stageConfigurationIndex > -1) {
+        return this.form.stage_configurations[stageConfigurationIndex]
+
       } else {
-        return null
+        const stageConfiguration: StageConfigurationInterface = {
+          stage_id: stage.id,
+          employment_id: this.employmentStore.employment?.id,
+          localStatus: 'new',
+          id: uuid.v4(),
+          stage_configuration_references: [],
+          stage_configuration_references_attributes: []
+        }
+        this.form.stage_configurations.push(stageConfiguration)
+        return stageConfiguration
+
       }
     },
 
-    addNewReference (stageConfiguration: StageConfigurationInterface) {
-      const index = _.find((this.employmentStore.employment?.stage_configurations), (_stageConfiguration: StageConfigurationInterface) => {
+    addNewReference (stage: StageInterface) {
+      const stageConfiguration = this.showStageConfiguration(stage)
+      const stageConfigurationIndex = _.findIndex((this.form.stage_configurations), (_stageConfiguration: StageConfigurationInterface) => {
         return _stageConfiguration.stage_id === stageConfiguration.stage_id
       })
-      if (index > -1) {
-        const stageConfigurationReferences = this.employmentStore.employment?.stage_configurations[index].stage_configuration_references
+      if (stageConfigurationIndex > -1) {
+        let resource_type = null
+        let reference_type = ''
+        if (stage.stage_type === 'document') {
+          reference_type = 'document'
+        } else if (stage.stage_type === 'test') {
+          reference_type = 'test'
+          resource_type = 'Test'
+        }
+
+        let stageConfigurationReferences = this.form.stage_configurations[stageConfigurationIndex].stage_configuration_references
         const stageConfigurationReference: StageConfigurationReferenceInterface = {
           localStatus: 'new',
-          name: null,
-          description: null,
-          reference_type: null,
+          id: uuid.v4(),
+          name: '',
+          description: '',
+          reference_type: reference_type,
+          resource_type: resource_type
         }
 
         if (stageConfigurationReferences && stageConfigurationReferences.length > 0) {
-
+          stageConfigurationReferences.push(stageConfigurationReference)
         } else {
-
+          stageConfigurationReferences = [stageConfigurationReference]
         }
+        this.form.stage_configurations[stageConfigurationIndex].stage_configuration_references = stageConfigurationReferences
       }
+    },
+
+    removeReference (stage: StageInterface, stageConfigurationReference: StageConfigurationReferenceInterface): boolean {
+      const stageConfiguration = this.showStageConfiguration(stage)
+      const stageConfigurationIndex = _.findIndex((this.form.stage_configurations), (_stageConfiguration: StageConfigurationInterface) => {
+        return _stageConfiguration.stage_id === stageConfiguration.stage_id
+      })
+      if (stageConfigurationIndex > -1) {
+        let stageConfigurationReferences = this.form.stage_configurations[stageConfigurationIndex].stage_configuration_references
+        const stageConfigurationReferenceIndex = _.findIndex((stageConfigurationReferences), (_stageConfigurationReference: StageConfigurationReferenceInterface) => {
+          return stageConfigurationReference.id === _stageConfigurationReference.id
+        })
+        if (stageConfigurationReferenceIndex > -1) {
+          if (stageConfigurationReference.localStatus === 'new') {
+            this.form.stage_configurations[stageConfigurationIndex].stage_configuration_references.splice(stageConfigurationReferenceIndex, 1)
+          } else {
+            this.form.stage_configurations[stageConfigurationIndex].stage_configuration_references[stageConfigurationReferenceIndex]._destroy = true
+          }
+          return true
+        }
+        return false
+      }
+      return false
     }
   }
 
@@ -284,13 +328,15 @@ export default defineComponent({
           a-form-item(
             label="Fecha de Inicio"
             name="start_date"
+            extra="Fecha de inicio de la publicación",
             :rules="[{ required: true, message: 'Ingresar fecha de inicio de la publicación' }]")
             a-input(type="date", v-model:value="form.start_date")
 
           a-form-item(
             label="Fecha de Termino"
-            name="end_date"
-            :rules="[{ required: true, message: 'Ingresar fecha de termino de la publicación' }]")
+            name="end_date",
+            extra="Fecha de termino de la publicación",
+            :rules="[{ required: false, message: 'Ingresar fecha de termino de la publicación' }]")
             a-input(type="date", v-model:value="form.end_date")
 
           a-form-item(
@@ -331,7 +377,7 @@ export default defineComponent({
               a-collapse-panel(v-for="stage in flowStore.flow?.stages", :key="stage.id", :style="'background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden'")
                 template(#header) {{ stage.name }}
                 template(#extra)
-                  template(v-if="stage.stage_type === 'normal' || stage.stage_type === 'finish'")
+                  template(v-if="stage.stage_type === 'normal' || stage.stage_type === 'finish' || stage.stage_type === 'meet'")
                     check-outlined.color__success.font-size__20
 
                   template(v-else)
@@ -342,32 +388,50 @@ export default defineComponent({
                   p.font-size__10.margin__0.padding__0 Paso no requiere configuraciones adicionales
 
 
-                template(v-if="stage.stage_type === 'document'")
+                template(v-else-if="stage.stage_type === 'document'")
                   p.font-size__10.margin__0.padding__0 ¿Que documentos se solicitaran?
-                    a-row.margin-top__10
-                      a-col(:span="12")
+                    a-row(:gutter="[20, 20]").margin-top__10
+                      a-col(:span="10")
                         span Nombre
-                      a-col(:span="12")
+                      a-col(:span="10")
                         span Descripción
+                      a-col(:span="4")
+                        span Acciones
                     a-divider.margin__0.padding__0
-                    template(v-for="stageConfigurationReference in showStageConfigurationReference(stage).stage_configuration_references")
-                      template(v-if="stageConfigurationReference")
-                        a-row
-                          a-col(:span="12")
-                            span {{ stageConfigurationReference.name }}
-                          a-col(:span="12")
-                            span {{ stageConfigurationReference.description }}
+                    template(v-for="stageConfigurationReference in showStageConfiguration(stage).stage_configuration_references")
+                      a-row(:gutter="[20, 20]", v-if="!stageConfigurationReference._destroy")
+                        a-col(:span="10")
+                          a-input(v-model:value="stageConfigurationReference.name").margin__10
+                        a-col(:span="10")
+                          a-input(v-model:value="stageConfigurationReference.description").margin__10
+                        a-col(:span="4")
+                          a-button(type="danger", size="small", @click="() => removeReference(stage, stageConfigurationReference)").margin__10 Eliminar
 
                     .float-right
-                      a-button(type="link", @click="addNewReference(showStageConfigurationReference(stage))").font-size__10 Añadir documento +
+                      a-button(type="link", @click="() => addNewReference(stage)").font-size__10 Añadir documento +
 
 
-                template(v-if="stage.stage_type === 'test'")
+                template(v-else-if="stage.stage_type === 'test'")
                   p.font-size__10.margin__0.padding__0 ¿Seleccione que pruebas se solicitarán?
+                    a-row(:gutter="[20, 20]").margin-top__10
+                      a-col(:span="16")
+                        span Prueba
+                      a-col(:span="8")
+                        span Acciones
+                    a-divider.margin__0.padding__0
+                    template(v-for="stageConfigurationReference in showStageConfiguration(stage).stage_configuration_references")
+                      a-row(:gutter="[20, 20]", v-if="!stageConfigurationReference._destroy")
+                        a-col(:span="16")
+                          a-select(v-model:value="stageConfigurationReference.resource_id").width__100.margin__10
+                            a-select-option(v-for="test in testStore.tests" :value="test.id") {{ test.name }}
+                        a-col(:span="8")
+                          a-button(type="danger", size="small", @click="() => removeReference(stage, stageConfigurationReference)").margin__10 Eliminar
+
+                    .float-right
+                      a-button(type="link", @click="() => addNewReference(stage)").font-size__10 Añadir prueba +
 
 
-                template(v-if="stage.stage_type === 'meet'")
-                  p.font-size__10.margin__0.padding__0 ¿Seleccione calendario a usar?
-
+                template(v-else-if="stage.stage_type === 'meet'")
+                  p.font-size__10.margin__0.padding__0 Paso no requiere configuraciones adicionales
 
 </template>
