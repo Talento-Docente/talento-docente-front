@@ -133,12 +133,12 @@ export default defineComponent({
             a-col(:sm="12")
               a-form-item(
                 name="first_name",
-                :rules="[{ required: true, message: 'Ingrese su nombre' }]"
+                :rules="[{ required: false, message: 'Ingrese su nombre' }]"
               )
                 a-input(v-model:value="formProfile.first_name", placeholder="Nombre")
               a-form-item(
                 name="last_name",
-                :rules="[{ required: true, message: 'Ingrese su apellido' }]"
+                :rules="[{ required: false, message: 'Ingrese su apellido' }]"
               )
                 a-input(v-model:value="formProfile.last_name", placeholder="Apellido")
 
@@ -152,7 +152,7 @@ export default defineComponent({
             a-col(:sm="12")
               a-form-item(
                 name="email",
-                :rules="[{ required: true, message: 'Ingrese su correo' }]"
+                :rules="[{ required: false, message: 'Ingrese su correo' }]"
               )
                 a-input(v-model:value="formProfile.email", placeholder="Correo", disabled)
 
@@ -165,7 +165,7 @@ export default defineComponent({
             a-col(:sm="12")
               a-form-item(
                 name="phone",
-                :rules="[{ required: true, message: 'Ingrese su telefono' }]"
+                :rules="[{ required: false, message: 'Ingrese su telefono' }]"
               )
                 a-input(v-model:value="formProfile.phone", placeholder="Teléfono")
 
@@ -177,7 +177,7 @@ export default defineComponent({
             a-col(:sm="12")
               a-form-item(
                 name="birthday",
-                :rules="[{ required: true, message: 'Ingrese su fecha de nacimiento' }]"
+                :rules="[{ required: false, message: 'Ingrese su fecha de nacimiento' }]"
               )
                 a-input(v-model:value="formProfile.birthday", placeholder="Fecha de nacimiento", type="date")
 
@@ -189,7 +189,7 @@ export default defineComponent({
             a-col(:sm="12")
               a-form-item(
                 name="birthday",
-                :rules="[{ required: true, message: 'Ingrese su fecha de nacimiento' }]"
+                :rules="[{ required: false, message: 'Ingrese su fecha de nacimiento' }]"
               )
                 a-input(v-model:value="formProfile.dni", placeholder="Rut", disabled)
 
