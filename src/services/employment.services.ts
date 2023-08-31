@@ -32,6 +32,13 @@ export function resume(establishmentId: number | null) {
   });
 }
 
+export function getApplicants(establishmentId: number | null, employmentId: number) {
+  return axios({
+    url: `${config.urlApi}/api/establishments/${establishmentId}/employments/${employmentId}/applicants`,
+    method: 'get'
+  });
+}
+
 export function create(establishmentId: number | null, data: EmploymentInterface) {
   return axios({
     url: `${config.urlApi}/api/establishments/${establishmentId}/employments`,
@@ -55,11 +62,21 @@ export function destroy(establishmentId: number | null, employmentId: number) {
   });
 }
 
+export function findOrCreatePostulation(establishmentId: number | null, employmentId: number, data: any) {
+  return axios({
+    url: `${config.urlApi}/api/establishments/${establishmentId}/employments/${employmentId}/find_or_create`,
+    method: 'post',
+    data
+  });
+}
+
 export default {
   index,
   show,
   create,
   update,
   destroy,
-  resume
+  resume,
+  getApplicants,
+  findOrCreatePostulation
 };

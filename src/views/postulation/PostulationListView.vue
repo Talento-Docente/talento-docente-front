@@ -1,15 +1,21 @@
 <script lang="ts">
 /** External dependencies */
 import { defineComponent, ref } from 'vue'
+import { message } from "ant-design-vue";
+import type { TableColumnsType } from 'ant-design-vue';
 
 /** Internal dependencies */
-
 /** Interfaces */
-import type { TableColumnsType } from 'ant-design-vue';
+import type { PostulationInterface } from '@/interfaces/postulation.interface';
+
+/** Stores */
+import { authStore } from '@/stores/auth.store'
+import { postulationStore } from '@/stores/postulation.store'
 
 /** Icons */
 import {
   EditOutlined,
+  EyeFilled,
   SearchOutlined,
   PlusOutlined,
   DownOutlined,
@@ -17,33 +23,27 @@ import {
   EyeOutlined
 } from '@ant-design/icons-vue';
 
-/**Testing */
-/** Constants Testing */
+/** Constants */
 const COLUMNS = ref<TableColumnsType>([
-  {
-    title: 'Cargo',
-    key: 'job',
-    dataIndex: 'job'
-  },
   {
     title: 'Establecimiento',
     key: 'establishment',
     dataIndex: 'establishment'
   },
   {
-    title: 'Ciudad',
-    key: 'location',
-    dataIndex: 'location'
+    title: 'Cargo',
+    key: 'employment',
+    dataIndex: 'employment'
   },
   {
     title: 'Estado',
-    key: 'status',
-    dataIndex: 'status'
+    key: 'stage',
+    dataIndex: 'stage'
   },
   {
     title: 'Fecha de postulacion',
-    key: 'date',
-    dataIndex: 'date'
+    key: 'created_at',
+    dataIndex: 'created_at'
   },
   {
     title: 'Acciones',
@@ -51,41 +51,12 @@ const COLUMNS = ref<TableColumnsType>([
     dataIndex: 'action'
   }
 ])
-const data = [
-  {
-    id: '1',
-    job: 'Sub-Director',
-    establishment: 'Colegio San Mariano',
-    location: 'Santiago',
-    status: "Enviado",
-    date:'Hace 18 dias',
-    img:"https://randomuser.me/api/portraits/med/women/12.jpg"
-  },
-  {
-    id: '2',
-    job: 'Docencia Ingles',
-    establishment: 'Colegio San Carlos',
-    location: 'Quilicura',
-    status: "En proceso",
-    date:'Hace 2 dias',
-    img:"https://randomuser.me/api/portraits/med/women/50.jpg"
-  },
-  {
-    id: '3',
-    job: 'Docencia Matematicas',
-    establishment: 'Instituto Comercial San Felipe',
-    location: 'Lampa',
-    status: "Cancelada",
-    date:'Hace 35 dias',
-    img:"https://randomuser.me/api/portraits/med/men/50.jpg"
-  },
-];
-const LISTSTATUS = ref(["Pendiente de envio","Enviadas","En proceso","Cancelada"])
 
 export default defineComponent({
 
   components: {
     EditOutlined,
+    EyeFilled,
     SearchOutlined,
     PlusOutlined,
     DownOutlined,
@@ -94,22 +65,59 @@ export default defineComponent({
   },
 
   data: () => ({
-    /** List */
-    listaStatus: LISTSTATUS,
     /**Table */
-    Columns:COLUMNS,
-    dataTable:data,
+    columns: COLUMNS,
+
+    /** Filters */
+    searchBy: {
+      search_text: null
+    },
+
+    /** Stores */
+    authStore: authStore(),
+    postulationStore: postulationStore(),
+
     /** Loader */
-    loadingEstablishment: false,
+    loadingPostulation: false,
+    loadingDelete: false
   }),
 
-  mounted () {
+  watch: {
+    'authStore.selectedEstablishment'(value) {
+      if (value) {
+        this.init()
+      }
+    }
+  },
 
+  mounted () {
+    this.init()
   },
 
   methods: {
+    async init () {
+      try {
+        this.loadingPostulation = true
+        await this.postulationStore.getPostulations(1, 20, this.searchBy)
+      } catch (error: any) {
+        console.log({ error })
+        message.warn(String(error.message))
+      } finally {
+        this.loadingPostulation = false
+      }
+    },
 
-
+    async deleteElement(postulationId: number) {
+      try {
+        this.loadingDelete = true
+        await this.postulationStore.destroyPostulation(postulationId)
+        await this.init()
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        this.loadingDelete = false
+      }
+    }
   }
 
 })
@@ -117,73 +125,50 @@ export default defineComponent({
 
 <template lang="pug">
 .postulation
-  a-button(type="primary", @click="() => $router.go(-1)").margin-right__10 Volver
-  .title.font-size__h3.margin-top__20 Postulaciones
-  .filter.margin-top__20
+  .title.font-size__h3 Mis Postulaciones
 
+  .filter.margin-top__20
     a-row(:gutter="[20, 20]")
       a-col(:span="6")
         a-form-item(label="Buscar por")
-          a-input(placeholder="Nombre...")
-
-      a-col
-        a-dropdown
-          template(#overlay)
-            a-menu
-              a-menu-item(v-for="status in listaStatus")
-                a-checkbox
-                    span {{ status }}
-
-          a-button()
-            span Estado de postulacion
-            down-outlined
+          a-input(v-model:value="searchBy.search_text", placeholder="Cargo o Establecimiento...")
 
       a-col
         a-form-item
-          a-button( type="primary")
+          a-button(type="primary", @click="init")
             search-outlined
             span Buscar
 
   .table.margin-top__20
     a-table(
-    :columns="Columns",
-    :data-source="dataTable")
+    :columns="columns",
+    :data-source="postulationStore.postulations")
 
-      template(#bodyCell="{ column, record }")
-        template(v-if="column.key === 'job'")
-          a-avatar()
-          b ㅤ {{ record.job }}
+      template(#bodyCell="{ column, record, text }")
 
-          //- cambiar el por method para colores!!!!
-        template(v-if="column.dataIndex === 'status'")
+        template(v-if="column.key === 'establishment'")
+          a-avatar.margin-right__10
+          span {{ record.establishment?.name }}
 
-          div(v-if="record.status === 'Enviado'")
-            a-tag(color="green")
-              span {{ record.status }}
+        template(v-if="column.key === 'employment'")
+          span {{ record.employment?.title }}
 
-          div(v-if="record.status === 'En proceso'")
-            a-tag(color="blue")
-              span {{ record.status }}
+        template(v-if="column.key === 'stage'")
+          span {{ record.stage?.name }}
 
-          div(v-if="record.status === 'Cancelada'")
-            a-tag(color="red")
-              span {{ record.status }}
+        template(v-if="column.key === 'created_at'")
+          span {{ $filters.date(text) }}
 
         template(v-if="column.dataIndex === 'action'")
           div(v-if="record.status !=='Cancelada'")
             a-button(
-              shape="round"
-              type="secondary"
+              type="primary"
             )
-              edit-outlined
-              span Editar
+              eye-outlined
+              span Revisar
 
             a-button(
-              shape="round"
               type="danger"
             ).margin-left__10
-              DeleteOutlined
-              span Cancelar
-
-    //-     template(v-if="column.dataIndex === 'action'")
+              span Cancelar mi Postulación
 </template>

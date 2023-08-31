@@ -12,6 +12,7 @@ export interface EmploymentInterface {
     salary: number | null
     schedule_type: string | null
     start_date: string | null
+    visible: boolean
     status?: string | null
     establishment_id?: number | null
     flow_id?: number | null

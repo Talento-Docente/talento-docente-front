@@ -1,17 +1,24 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+
+/** Icons */
 import {
   HomeOutlined,
+  UserOutlined,
   LoginOutlined,
   FormOutlined
 } from '@ant-design/icons-vue'
+
+/** Stores */
+import { authStore } from '@/stores/auth.store'
 
 export default defineComponent({
 
   components: {
     HomeOutlined,
     LoginOutlined,
-    FormOutlined
+    FormOutlined,
+    UserOutlined
   },
 
   setup() {
@@ -19,7 +26,11 @@ export default defineComponent({
   },
 
   data() {
-    return {};
+    return {
+      /** Stores */
+      authStore: authStore()
+
+    };
   },
 
   mounted() {
@@ -41,7 +52,7 @@ a-layout-header.landing-navbar
             home-outlined
     a-col
       a-menu(mode="horizontal", theme="dark")
-        a-sub-menu(key="register")
+        a-sub-menu(key="register", v-if="!authStore.isAuthenticated")
           template(#title)
             span Registrate aquí
           template(#icon)
@@ -52,7 +63,7 @@ a-layout-header.landing-navbar
             a-menu-item(key="RegisterBusiness", @click="() => $router.push({ name: 'Register', params: { register_type: 'establishment' } })")
               span Empresas
 
-        a-sub-menu(key="login")
+        a-sub-menu(key="login", v-if="!authStore.isAuthenticated")
           template(#title)
             span Iniciar Sesión
           template(#icon)
@@ -62,6 +73,11 @@ a-layout-header.landing-navbar
               span Profesionales
             a-menu-item(key="loginBusiness", @click="() => $router.push({ name: 'Login', params: { login_type: 'establishment' } })")
               span Empresas
+
+        a-menu-item(key="home", v-else, @click="() => $router.push({ name: 'Home' })")
+          span {{ authStore.user.first_name }} {{ authStore.user.last_name }}
+          template(#icon)
+            user-outlined
 
 </template>
 

@@ -90,6 +90,10 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
       user-outlined
       span Postulantes
 
+    a-menu-item(key="4", @click="() => $router.push({ name: 'Postulation' })", v-if="[ROLE_SUPER_ADMIN, ROLE_APPLICANT].indexOf(authStore.role) > -1")
+      user-outlined
+      span Mis Postulaciones
+
     //a-menu-item(key="5", @click="() => $router.push({ name: 'Postulation' })")
     //  user-switch-outlined
     //  span Postulaciones
@@ -121,7 +125,7 @@ a-layout-sider(:collapsed="menuStore.collapsed", collapsible, :trigger="null")
     //  appstore-outlined
     //  span Administración
 
-    a-divider
+    a-menu-divider
 
     a-menu-item(key="7", @click="logout")
       logout-outlined

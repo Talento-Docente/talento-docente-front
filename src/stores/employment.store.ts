@@ -102,5 +102,25 @@ export const employmentStore = defineStore('employment', {
       const { data } = response
       return data
     },
+
+    async getApplicants(employmentId: number) {
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await employmentServices.getApplicants(establishmentId, employmentId)
+      const { data } = response
+      return data
+    },
+
+    async findOrCreatePostulation(employmentId: number, form: any) {
+      const establishmentId: number | null = authStore().selectedEstablishmentId
+      if (establishmentId === null) {
+        throw Error('Establecimiento no seleccionado')
+      }
+      const response = await employmentServices.findOrCreatePostulation(establishmentId, employmentId, form)
+      const { data } = response
+      return data
+    },
   },
 })

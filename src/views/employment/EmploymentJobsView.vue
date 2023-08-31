@@ -1,11 +1,18 @@
 <script lang="ts">
 /** External dependencies */
-import { defineComponent } from "vue";
+import { defineComponent, reactive, ref } from "vue";
+import { message } from "ant-design-vue";
+import type { FormInstance } from "ant-design-vue";
 import draggable from 'vuedraggable'
 
 /** Stores */
 import { authStore } from "@/stores/auth.store";
 import { employmentStore } from "@/stores/employment.store";
+import { applicantStore } from "@/stores/applicant.store";
+import { postulationStore } from "@/stores/postulation.store";
+
+/** Interfaces */
+import type { PostulationInterface } from '@/interfaces/postulation.interface';
 
 /** Icons */
 import {
@@ -35,164 +42,61 @@ export default defineComponent({
 
   },
 
-  setup() {
-    return {};
+  setup () {
+    const refFormApplicant =  ref<FormInstance>()
+    return {
+      refFormApplicant
+    }
   },
 
   data() {
     return {
       /** Loader */
       loading: false,
+      loadingSelectedApplicant: false,
+      loadingPostulationChanges: false,
+      loadingAddApplicant: false,
 
       /** Stores */
       authStore: authStore(),
       employmentStore: employmentStore(),
+      applicantStore: applicantStore(),
+      postulationStore: postulationStore(),
 
-      /** Form */
-      list1: [
-        {
-          id: '1',
-          name: 'Felipe Vega',
-          description: {
-            titulo:'Docente Ingles',
-            correo: 'Felipedocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '2',
-          name: 'Mariana Briones',
-          description: {
-            titulo:'Docente Matematicas',
-            correo: 'Marianadocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '3',
-          name: 'Baltazar Vega',
-          description: {
-            titulo:'Docente Artes',
-            correo: 'Baltazardocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '4',
-          name: 'Mauricio Toro',
-          description: {
-            titulo:'Docente Lenguaje',
-            correo: 'Mauriciodocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '5',
-          name: 'Daniel Pardo',
-          description: {
-            titulo:'Docente Fisica/ciencias',
-            correo: 'Danieldocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '6',
-          name: 'Jaime Lopez',
-          description: {
-            titulo:'Docente Gimnasia',
-            correo: 'Jaimedocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '7',
-          name: 'Mauricio Parra',
-          description: {
-            titulo:'Docente Religion',
-            correo: 'MauricioPdocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '9',
-          name: 'Constanza Gonzalez',
-          description: {
-            titulo:'Docente Tecnologia',
-            correo: 'Constanzadocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        },
-        {
-          id: '8',
-          name: 'Julieta Venegas',
-          description: {
-            titulo:'Docente Musica',
-            correo: 'Julietadocente@colegio.com',
-            telefono:'+56912345678',
-            twitter:'https://twitter.com',
-            linkedin:'https://linkedin.com',
-            curriculum:'cv.pdf',
-          },
-        }
-      ],
-      list2: [],
-      list3: [],
-      list4: [],
-      list5: [],
-      list6: [],
-      activeNames: [],
-
-      /** Draggable Config */
-      componentData: {
-        // onChange: this.handleChange,
-        // onInput: this.inputChanged,
-        // wrap: true,
-        // value: this.activeNames
-      },
-      open:false,
-
-      /** Design */
-      element:{},
+      /** Modal */
+      selectedApplicant: {} as any,
+      visibleApplicantModal: false,
+      tabKey: 'skills',
       color: "#f3f3f3",
       tabListNoTitle: [
         {
-          key: 'postulation',
-          tab: 'Postulación',
+          key: 'skills',
+          tab: 'Habilidades',
         },
         {
-          key: 'activities',
-          tab: 'Actividad',
+          key: 'experiences',
+          tab: 'Experiencias',
         },
         {
-          key: 'inbox',
-          tab: 'Mensajes',
+          key: 'comments',
+          tab: 'Comentarios',
         },
       ],
-      key:'postulation',
+
+      /** Add Applicant Modal */
+      labelCol: { style: { width: '150px' } },
+      wrapperCol: { span: 24 },
+      visibleAddApplicantModal: false,
+      formApplicant: reactive<any>({
+        email: '',
+        first_name: '',
+        last_name: ''
+      }),
+
+      /** Stages */
+      stagesCount: 0,
+      selectedEmploymentId: null as number | null,
+      stages: {} as any
     };
   },
 
@@ -206,10 +110,22 @@ export default defineComponent({
       try {
         this.loading = true
         const { id } = this.$route.params
+        this.selectedEmploymentId = Number(id)
         if (!id) {
           throw Error('Not specific employment id')
         }
         await this.employmentStore.getEmployment(Number(id))
+
+        this.stagesCount = 0
+        this.employmentStore.employment?.flow?.stages?.forEach((stage) => {
+          this.stagesCount += 1
+          this.stages[`stage_${stage.id}`] = []
+        })
+
+        const { applicants } = await this.employmentStore.getApplicants(Number(id))
+        applicants.forEach((applicant: any) => {
+          this.stages[`stage_${applicant.stage_id}`].push(applicant)
+        })
       } catch (e) {
         console.log({ e })
         this.$router.push({ name: 'EmploymentList' })
@@ -226,22 +142,71 @@ export default defineComponent({
       console.log({ value })
     },
 
-    log (value: any) {
-      console.log({ value })
+    async log (stage: any, value: any) {
+      if (value.added) {
+        const { added: { element } } = value
+        console.log({ stage_id: stage.id, postulation_id: element.postulation_id })
+        try {
+          this.loadingPostulationChanges = true
+          await this.postulationStore.updatePostulation(
+            element.postulation_id,
+            { stage_id: stage.id } as PostulationInterface
+          )
+        } catch (e) {
+          message.error('Error al realizar cambios')
+        } finally {
+          this.loadingPostulationChanges = false
+        }
+      }
     },
 
-    showModal(element:any){
-      this.open = true
-      this.element=element
+    async showDetailModal(element: any){
+      try {
+        this.loadingSelectedApplicant = true
+        await this.applicantStore.getApplicant(element.applicant_id)
+        this.visibleApplicantModal = true
+      } catch (e) {
+        console.log({ e })
+        message.warning('Error al obtener información')
+      } finally {
+        this.loadingSelectedApplicant = false
+      }
     },
 
-    handleOk() {
-      this.open=false
-      this.element = {}
+    closeApplicantModal() {
+      this.visibleApplicantModal = false
+    },
+
+    async onFinishSearchApplicant() {
+      try {
+        if (this.refFormApplicant) {
+          this.loadingAddApplicant = true;
+          const values = await this.refFormApplicant.validateFields()
+          const form = {
+            email: values.email,
+            first_name: values.first_name,
+            last_name: values.last_name
+          } as any
+          const response = await this.employmentStore.findOrCreatePostulation(Number(this.selectedEmploymentId), form)
+          const { status, postulation } = response;
+          console.log({ postulation })
+          if (status !== "success") {
+            message.error("Error al obtener información");
+          } else {
+            message.success("Asociación exitosa");
+            await this.init()
+            this.visibleAddApplicantModal = false
+          }
+        }
+      } catch (error) {
+        console.log({ error });
+      } finally {
+        this.loadingAddApplicant = false
+      }
     },
 
     onTabChange(value: string, type: string){
-      this.key = value
+      this.tabKey = value
     }
   }
 
@@ -249,164 +214,144 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.employemnt-form-view
+.employment-form-view
+  a-row
+    a-col
+      a-button(type="primary", @click="() => $router.push({ name: 'Employment' })").margin-top__5.margin-right__10 Volver
+      a-button(type="primary", @click="() => $router.push({ name: 'EmploymentForm', params: { method: 'update', id: `${selectedEmploymentId}` }})", :loading="loading").margin-top__5.margin-right__10 Editar Trabajo
+      a-button(type="primary", @click="() => visibleAddApplicantModal = true").margin-top__5.margin-right__10 Añadir Postulante
+      a-button(type="primary", @click="() => init()", :loading="loading").margin-top__5.margin-right__20 Recargar
+    a-col
+      .font-size__h3 Postulación: {{ employmentStore.employment?.title }}
+
   a-row(justify="center")
     a-col(:xl="{ span: 24 }", :lg="{ span: 24 }", :sm="{ span: 24 }")
+      h2 Etapas
 
-      h3 Postulación: Docente de Básica Matematicas
-      h2 Proceso
-
-      a-row(:gutter="[20, 20]")
-        a-col(v-for="stage in employmentStore.employment?.flow?.stages")
-          a-card(:bodyStyle="{ background: color }")
+      a-row(:gutter="[5, 5]")
+        a-col(v-for="stage in employmentStore.employment?.flow?.stages", :lg="{ span: (24 / stagesCount).toFixed(0) - 1 }")
+          a-card(:bodyStyle="{ background: color }", :loading="loading")
             template(#title) {{ stage.name }}
 
             draggable(
-              :list="list1",
-              @change="log",
+              :list="stages[`stage_${stage.id}`]",
+              @change="(event) => log(stage, event)",
               group="people",
               item-key="id",
+              class="step-draggable"
             )
-              template(#item="{element}")
-                a-card(hoverable @click="showModal(element)").margin-top__5
-                  a-avatar.margin-right__5
-                  span {{ element.name }}
+              template(#item="{ element }")
+                a-card(hoverable, @click="() => showDetailModal(element)")
+                  a-row
+                    a-col
+                      a-avatar.margin-right__5
+                    a-col
+                      p.padding__0.margin__0.font-size__15 {{ element.first_name }} {{ element.last_name }}
+                      p.padding__0.margin__0.font-size__12 {{ element.first_name }} {{ element.last_name }}
+
+  a-modal(
+    title="Añadir Postulante",
+    v-model:visible="visibleAddApplicantModal",
+    @ok="onFinishSearchApplicant",
+    okText="Buscar y Añadir"
+    okType="primary",
+    :confirm-loading="loadingAddApplicant")
+    template(#title)
+      span Crear flujo de reclutamiento
+
+    a-form(ref="refFormApplicant", :model="formApplicant", @finish="onFinishSearchApplicant", :label-col="labelCol" :wrapper-col="wrapperCol")
+
+      a-form-item(
+        label="Correo",
+        name="email",
+        :rules="[{ required: true, message: 'Ingrese correo' }]")
+        a-input(v-model:value="formApplicant.email")
+
+      a-form-item(
+        label="Nombres",
+        name="first_name",
+        :rules="[{ required: true, message: 'Ingrese nombre'}]")
+        a-input(v-model:value="formApplicant.first_name" auto-size)
+
+      a-form-item(
+        label="Apellidos",
+        name="last_name",
+        :rules="[{ required: false }]")
+        a-input(v-model:value="formApplicant.last_name" auto-size)
+
+      p.padding__0.margin__0.font-size__12 ** En el caso que se encuentre una considencia por el correo se añadira aplicante con algún postulante en el sistema, se añadira. En el caso contrario, se creara postulante y se le enviara un correo para comenzar el registro.
+
+  a-modal(v-model:visible="visibleApplicantModal",
+          @ok="closeApplicantModal",
+          width="1000px",
+          :bodyStyle="{ background: color }",
+          :footer="null")
+
+    a-row.margin-top__20
+      a-col(:span="10")
+        a-row(:gutter="[16,8]")
+          a-col
+            a-avatar(:size="50")
+          a-col
+            h3 {{ applicantStore.applicant?.user?.first_name }} {{ applicantStore.applicant?.user?.last_name }}
+
+        a-typography-text(strong)
+          span {{ applicantStore.applicant?.description }}
+
+        .margin-top__20
+          a-button(type="link")
+            MailOutlined
+            span {{ applicantStore.applicant?.user?.email }}
+
+        .margin-top__10
+          a-button(type="link")
+            PhoneOutlined
+            span {{ applicantStore.applicant?.phone || 'No especificado' }}
+
+        .margin-top__10
+          a-button(type="link", :href="applicantStore.applicant?.twitter || '#'", :disabled="!applicantStore.applicant?.twitter")
+            TwitterOutlined
+            span {{ applicantStore.applicant?.twitter || 'No especificado' }}
+
+        .margin-top__10
+          a-button(type="link", :href="applicantStore.applicant?.linkedin || '#'", :disabled="!applicantStore.applicant?.linkedin")
+            LinkedinOutlined
+            span {{ applicantStore.applicant?.linkedin || 'No especificado' }}
+
+        .margin-top__10
+          a-button(type="link", :href="applicantStore.applicant?.curriculumPreview || '#'", :disabled="!applicantStore.applicant?.curriculumPreview")
+            AuditOutlined
+            span Ver CV
 
 
-        //a-col(:span="4")
-        //  a-card(:bodyStyle="{background: color}")
-        //    template(#title) Realiza test enviados
-        //    draggable(
-        //      :list="list2",
-        //      @change="log",
-        //      group="people",
-        //      item-key="id",
-        //    )
-        //      template(#item="{element}")
-        //        a-card(hoverable).margin-top__5
-        //          span {{ element.name }}
-        //
-        //a-col(:span="4")
-        //  a-card(:bodyStyle="{background: color}")
-        //    template(#title) Primer Llamado
-        //    draggable(
-        //      :list="list3",
-        //      @change="log",
-        //      group="people",
-        //      item-key="id",
-        //    )
-        //      template(#item="{element}")
-        //        a-card(hoverable).margin-top__5
-        //          span {{ element.name }}
-        //
-        //a-col(:span="4")
-        //  a-card(:bodyStyle="{background: color}")
-        //    template(#title) Entrevista Psicologica
-        //    draggable(
-        //      :list="list4",
-        //      @change="log",
-        //      group="people",
-        //      item-key="id",
-        //    )
-        //      template(#item="{element}")
-        //        a-card(hoverable).margin-top__5
-        //          span {{ element.name }}
-        //
-        //a-col(:span="4")
-        //  a-card(:bodyStyle="{background: color}")
-        //    template(#title) Posibles Candidatos
-        //    draggable(
-        //      :list="list5",
-        //      @change="log",
-        //      group="people",
-        //      item-key="id",
-        //    )
-        //      template(#item="{element}")
-        //        a-card(hoverable).margin-top__5
-        //          span {{ element.name }}
-        //
-        //a-col(:span="4")
-        //  a-card(:bodyStyle="{background: color}")
-        //    template(#title) Contratado
-        //    draggable(
-        //      :list="list6",
-        //      @change="log",
-        //      group="people",
-        //      item-key="id",
-        //    )
-        //      template(#item="{element}")
-        //        a-card(hoverable).margin-top__5
-        //          span {{ element.name }}
+      //- Modal Right side
+      a-col(:span="14")
+        a-card(:tab-list="tabListNoTitle"
+          :active-tab-key="tabKey"
+          @tabChange="key => onTabChange(key, 'key')"
+          :headStyle="{background: color}").margin-top__10
 
-  //a-modal(v-model:visible="open"
-  //        @ok="handleOk"
-  //        width="1000px"
-  //        :bodyStyle="{background: color}"
-  //        :footer="null")
-  //
-  //  a-row().margin-top__20
-  //    a-col(:span="10")
-  //      div()
-  //        a-row(:gutter="[16,8]")
-  //          a-col
-  //            a-avatar(:size="50")
-  //          a-col
-  //            h3 {{ element.name }}
-  //
-  //      div()
-  //        a-typography-text(strong)
-  //          span {{ element.description.titulo }}
-  //
-  //      div().margin-top__20
-  //        MailOutlined
-  //        span.margin-left__10 {{ element.description.correo }}
-  //
-  //      div().margin-top__10
-  //        PhoneOutlined
-  //        span.margin-left__10 {{ element.description.telefono }}
-  //
-  //      div().margin-top__10
-  //        TwitterOutlined
-  //        a.margin-left__10 {{ element.description.twitter }}
-  //
-  //      div().margin-top__10
-  //        LinkedinOutlined
-  //        a.margin-left__10 {{ element.description.linkedin }}
-  //
-  //      div().margin-top__10
-  //        AuditOutlined
-  //        a().margin-left__10 Ver CV
-  //
-  //
-  //      //- Modal Right side
-  //    a-col(:span="14")
-  //      a-card(:tab-list="tabListNoTitle"
-  //        :active-tab-key="key"
-  //        @tabChange="key => onTabChange(key, 'key')"
-  //        :headStyle="{background: color}").margin-top__10
-  //        //- icons
-  //        template(#customTab="item")
-  //          div(v-if="item.key === 'postulation'")
-  //            FormOutlined
-  //            span Postulaciones
-  //
-  //          div(v-if="item.key === 'activities'")
-  //            LineChartOutlined
-  //            span Actividades
-  //
-  //          div(v-if="item.key === 'inbox'")
-  //            CommentOutlined
-  //            span Mensajes
-  //
-  //        //-vistas de modal
-  //        div(v-if="key === 'postulation'")
-  //          h2 Habilidades Del postulante
-  //
-  //        div(v-else-if="key === 'activities'")
-  //          h2 Actividades
-  //
-  //        div(v-else-if="key === 'inbox'")
-  //          h2 Mensajes
+          template(#customTab="item")
+            template(v-if="item.key === 'postulation'")
+              FormOutlined
+              span Habilidades
+
+            template(v-if="item.key === 'activities'")
+              LineChartOutlined
+              span Experiencias
+
+            template(v-if="item.key === 'inbox'")
+              CommentOutlined
+              span Comentarios
+
+          template(v-if="tabKey === 'skills'")
+            h2 Habilidades
+
+          template(v-else-if="tabKey === 'experiences'")
+            h2 Experiencias
+
+          template(v-else-if="tabKey === 'comments'")
+            h2 Comentarios
 
 </template>
 

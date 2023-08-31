@@ -54,6 +54,7 @@ export default defineComponent({
       status: null,
       title: null,
       establishment_id: null,
+      visible: false,
       flow_id: null,
       postulations_resume: {},
       stage_configurations: [] as StageConfigurationInterface[],
@@ -304,6 +305,11 @@ export default defineComponent({
             :rules="[{ required: true, message: 'Seleccione estado' }]")
             a-select(v-model:value="form.status")
               a-select-option(v-for="status in STATUSES", :value="status.key") {{ status.value }}
+
+          a-form-item(
+            label="Visibilidad"
+            name="visible")
+            a-checkbox(v-model:checked="form.visible") Visible a todo Publico
 
           a-form-item(
             label="Formalidad"

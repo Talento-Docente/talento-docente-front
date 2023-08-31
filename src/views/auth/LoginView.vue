@@ -66,7 +66,7 @@ export default defineComponent({
     a-col(:xl="{ span: 8, offset: 8 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
       a-card
         .text-align__center
-          p(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer Talento Docente
+          p(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer Talento Docente {{ loginType === 'professional' ? '(Profesional)' : '(Empresa)' }}
 
         a-form(:model="form", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
 

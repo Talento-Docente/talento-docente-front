@@ -33,6 +33,11 @@ const COLUMNS = ref<TableColumnsType>([
     dataIndex: 'status'
   },
   {
+    title: 'Visibilidad',
+    key: 'visible',
+    dataIndex: 'visible'
+  },
+  {
     title: 'Formalidad',
     key: 'employment_type',
     dataIndex: 'employment_type'
@@ -156,13 +161,19 @@ export default defineComponent({
 
         template(v-if="column.dataIndex === 'status'")
           template(v-if="record.status === 'created'")
-            a-tag(color="green") {{ $filters.employmentStatuses(text) }}
-
-          template(v-if="record.status === 'in_progress'")
             a-tag(color="orange") {{ $filters.employmentStatuses(text) }}
 
+          template(v-if="record.status === 'in_progress'")
+            a-tag(color="blue") {{ $filters.employmentStatuses(text) }}
+
           template(v-if="record.status === 'closed'")
-            a-tag(color="red") {{ $filters.employmentStatuses(text) }}
+            a-tag(color="green") {{ $filters.employmentStatuses(text) }}
+
+        template(v-if="column.dataIndex === 'visible'")
+          template(v-if="text")
+            a-tag(color="green") Si
+          template(v-else)
+            a-tag(color="orange") No
 
         template(v-if="column.dataIndex === 'employment_type'")
           span {{ $filters.employmentType(text) }}
