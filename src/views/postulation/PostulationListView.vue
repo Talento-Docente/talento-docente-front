@@ -162,7 +162,8 @@ export default defineComponent({
         template(v-if="column.dataIndex === 'action'")
           div(v-if="record.status !=='Cancelada'")
             a-button(
-              type="primary"
+              type="primary",
+              @click="() => $router.push({ name: 'PostulationForm', params: { method: 'show', id: `${record.id}` }})"
             )
               eye-outlined
               span Revisar

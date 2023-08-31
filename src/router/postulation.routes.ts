@@ -19,7 +19,7 @@ export default {
     {
       path: ":method/:id",
       name: "PostulationForm",
-      component: () => import("@/views/postulation/PostulationListView.vue"),
+      component: () => import("@/views/postulation/PostulationFormView.vue"),
       meta: {
         requiredAuth: true,
         authRoute: false

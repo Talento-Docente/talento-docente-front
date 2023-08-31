@@ -71,10 +71,22 @@ export function destroy(establishmentId: number | null, postulationId: number) {
   });
 }
 
+export function getActivities(establishmentId: number | null, postulationId: number) {
+  let url = `${config.urlApi}/api/establishments/${establishmentId}/postulations/${postulationId}/activities`
+  if (establishmentId === null) {
+    url = `${config.urlApi}/api/postulations/${postulationId}/activities`
+  }
+  return axios({
+    url,
+    method: 'get'
+  });
+}
+
 export default {
   index,
   show,
   create,
   update,
-  destroy
+  destroy,
+  getActivities
 };

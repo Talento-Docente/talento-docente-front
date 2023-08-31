@@ -223,6 +223,7 @@ export default defineComponent({
       if (stageConfigurationIndex > -1) {
         let resource_type = null
         let reference_type = ''
+        console.log({ stage })
         if (stage.stage_type === 'document') {
           reference_type = 'document'
         } else if (stage.stage_type === 'test') {

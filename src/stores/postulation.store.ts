@@ -26,9 +26,9 @@ export const postulationStore = defineStore('postulation', {
      * Obtención de flujo
      * */
     async getPostulations(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
-      const establishmentId = null
+      let establishmentId = null
       if (authStore().role != ROLE_APPLICANT) {
-        const establishmentId: number | null = authStore().selectedEstablishmentId
+        establishmentId = authStore().selectedEstablishmentId
         if (establishmentId === null) {
           throw Error('Establecimiento no seleccionado')
         }
@@ -44,9 +44,9 @@ export const postulationStore = defineStore('postulation', {
     * Obtención de flujos por ID
     * */
     async getPostulation(postulationId: number = 1) {
-      const establishmentId = null
+      let establishmentId = null
       if (authStore().role != ROLE_APPLICANT) {
-        const establishmentId: number | null = authStore().selectedEstablishmentId
+        establishmentId = authStore().selectedEstablishmentId
         if (establishmentId === null) {
           throw Error('Establecimiento no seleccionado')
         }
@@ -61,9 +61,9 @@ export const postulationStore = defineStore('postulation', {
     * Creación de flujo
     * */
     async createPostulation(postulationData: PostulationInterface) {
-      const establishmentId = null
+      let establishmentId = null
       if (authStore().role != ROLE_APPLICANT) {
-        const establishmentId: number | null = authStore().selectedEstablishmentId
+        establishmentId = authStore().selectedEstablishmentId
         if (establishmentId === null) {
           throw Error('Establecimiento no seleccionado')
         }
@@ -78,9 +78,10 @@ export const postulationStore = defineStore('postulation', {
     * */
 
     async updatePostulation(postulationId: number, postulationData: PostulationInterface) {
-      const establishmentId = null
+      let establishmentId = null
+      console.log('role: ', authStore().role)
       if (authStore().role != ROLE_APPLICANT) {
-        const establishmentId: number | null = authStore().selectedEstablishmentId
+        establishmentId = authStore().selectedEstablishmentId
         if (establishmentId === null) {
           throw Error('Establecimiento no seleccionado')
         }
@@ -95,14 +96,30 @@ export const postulationStore = defineStore('postulation', {
     * Eliminar postulation por ID
     * */
     async destroyPostulation(postulationId: number) {
-      const establishmentId = null
+      let establishmentId = null
       if (authStore().role != ROLE_APPLICANT) {
-        const establishmentId: number | null = authStore().selectedEstablishmentId
+        establishmentId = authStore().selectedEstablishmentId
         if (establishmentId === null) {
           throw Error('Establecimiento no seleccionado')
         }
       }
       const response = await PostulationServices.destroy(establishmentId, postulationId)
+      const { data } = response
+      return data
+    },
+
+    /**
+     * Obtención de flujos por ID
+     * */
+    async getActivities(postulationId: number = 1) {
+      let establishmentId = null
+      if (authStore().role != ROLE_APPLICANT) {
+        establishmentId = authStore().selectedEstablishmentId
+        if (establishmentId === null) {
+          throw Error('Establecimiento no seleccionado')
+        }
+      }
+      const response = await PostulationServices.getActivities(establishmentId, postulationId)
       const { data } = response
       return data
     },
