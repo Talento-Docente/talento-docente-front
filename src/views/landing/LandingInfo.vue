@@ -71,16 +71,19 @@ export default defineComponent({
           a-row(justify="space-between" :gutter="16").margin-top__50
             a-col(:span="8")
               a-card(class="card-shadow card-beg")
+                a-image(class="center-ico" src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/6217b2e1146ea8ec8ad237d4_zoom.svg")
                 h2 No publicamos cualquier puesto
                 p Los empleos publicados aquí pasan por un estricto control de calidad: personas expertas en tecnología eligiendo los empleos que valen la pena.
 
             a-col(:span="8")
               a-card(class="card-shadow card-beg")
+                a-image(src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/62169ff0689cf91385e43ef4_view.svg")
                 h2 No mas Secretos
                 p Exigimos a las empresas lo mismo que ellas te exigen a ti: Transparencia total. Es lo justo.
 
             a-col(:span="8")
               a-card(class="card-shadow card-beg")
+                a-image(src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/6216a122aa2c37bcc29b1c2e_plant-vase.svg")
                 h2 Te ayudamos a ser el mejor profesional
                 p No somos solo un portal de empleos. Estamos comprometidos con tu crecimiento profesional.
 
@@ -89,6 +92,7 @@ export default defineComponent({
               div( class="div-image")
                 div(class="image-content")
                   a-card( class="card-image")
+                    a-image(src="https://cdn-icons-png.flaticon.com/128/1080/1080985.png")
                     h3 Más de 100 establecimientos anuncian aquí.
                     p Startups, corporaciones líderes e importantes agencias de reclutamiento tecnológico están buscando hacerte parte de su equipo.
                     a-row(justify="center")
@@ -98,33 +102,50 @@ export default defineComponent({
           a-row().margin-top__50
             a-col(:span="24")
               div(class="container")
+                a-image(src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/6217b2e1146ea8ec8ad237d4_zoom.svg")
                 h3 Cantidad, pero sobre todo calidad.
                 p Tenemos un equipo de moderación que se encarga de revisar cada uno de los anuncios. Estos son algunos de los requisitos que deben cumplir antes de ser publicados:
 
           a-row(justify="center" :gutter="[16,16]").margin-top__50
             a-col(:span="10")
               a-card(class="card-beg content")
-                h4 
-                  b Funciones claras y acordes al puesto.
-                p ¡No más cargos imposibles! Sólo permitimos un cargo y nivel de experiencia por empleo.“Se busca unicornio experto junior...”
+                a-row 
+                  a-col(:span="4")
+                    a-image(:width="50" src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/618bf28d03d735ec7257ee6a_sparkle.png")
+                  a-col(:span="20")
+                    h4 
+                      b Funciones claras y acordes al puesto.
+                    p ¡No más cargos imposibles! Sólo permitimos un cargo y nivel de experiencia por empleo.“Se busca unicornio experto junior...”
 
             a-col(:span="10" :offset="1")
               a-card(class="card-beg content")
-                h4
-                  b Sueldos acordes (o superiores) al mercado.
-                p La industria tecnológica ha crecido gracias a talentos como el tuyo. Es justo que ese crecimiento se refleje en tu salario.
+                a-row 
+                    a-col(:span="4")
+                      a-image(:width="50" src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/62150df282a16239943e8aa9_wallet-90%201.svg")
+                    a-col(:span="20")
+                      h4
+                        b Sueldos acordes (o superiores) al mercado.
+                      p La industria tecnológica ha crecido gracias a talentos como el tuyo. Es justo que ese crecimiento se refleje en tu salario.
 
             a-col(:span="10")
               a-card(class="card-beg content")
-                h4 
-                  b El empleador se debe identificar.
-                p Basta de empresas fantasma. Todas las empresas deben estar plenamente identificadas
+                a-row 
+                  a-col(:span="4")
+                    a-image(:width="50" src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/62150de619f99fa702c1e2f5_incognito%201.svg")
+                  a-col(:span="20")
+                    h4 
+                      b El empleador se debe identificar.
+                    p Basta de empresas fantasma. Todas las empresas deben estar plenamente identificadas
 
             a-col(:span="10" :offset="1")
               a-card(class="card-beg content")
-                h4
-                  b Libre de discriminación o sesgos.
-                p Creemos en la importancia de impulsar la igualdad de condiciones en la industria digital sin importar género, edad, nacionalidad, entre otros.
+                a-row 
+                  a-col(:span="4")
+                    a-image(:width="50" src="https://uploads-ssl.webflow.com/60832c1545a7b95d55205644/62150df2f48010f72a1b6db8_single-position%201.svg")
+                  a-col(:span="20")
+                    h4
+                      b Libre de discriminación o sesgos.
+                    p Creemos en la importancia de impulsar la igualdad de condiciones en la industria digital sin importar género, edad, nacionalidad, entre otros.
 
           a-row(justify="center" :gutter="16").margin-top__50
             a-col(:span="4")
@@ -152,6 +173,10 @@ export default defineComponent({
     background-position: center center;
     
   }
+  .center-ico{
+    margin:0px auto;
+  }
+
   .image-content{
     height: 100%;
     display: flex;
@@ -161,6 +186,7 @@ export default defineComponent({
   .card-image{
     max-width: 600px;
     border-radius: 30px;
+    
   }
   .card-shadow{
     box-shadow: 5px 5px 10px 2px #dbd9d9;
@@ -170,7 +196,7 @@ export default defineComponent({
     margin: 0 auto;
   }
   .card-beg{
-    height: 200px;
+    
     box-shadow: 5px 5px 5px 2px  #ebe9e9 ;
     border-radius: 15px;
   }
