@@ -2,10 +2,11 @@
 import { defineComponent } from "vue";
 import LandingNavbar from "@/views/landing/LandingNavbar.vue";
 import LandingJobs from "@/views/landing/LandingJobs.vue";
+import LandingInfo from "@/views/landing/LandingInfo.vue"
 
 export default defineComponent({
 
-  components: { LandingJobs, LandingNavbar },
+  components: { LandingJobs, LandingNavbar, LandingInfo },
 
   setup() {
     return {};
@@ -28,5 +29,6 @@ export default defineComponent({
   a-layout
     landing-navbar
     landing-jobs
+    landing-info
 </template>
 
