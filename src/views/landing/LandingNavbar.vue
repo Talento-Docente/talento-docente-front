@@ -46,7 +46,7 @@ a-layout-header.landing-navbar
   a-row(justify="space-between")
     a-col
       a-menu(mode="horizontal", theme="dark")
-        a-menu-item(key="home")
+        a-menu-item(key="home", @click="() => $router.push({ name: 'Landing' })")
           span Talento Docente
           template(#icon)
             home-outlined

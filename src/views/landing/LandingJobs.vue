@@ -30,7 +30,7 @@ export default defineComponent({
   },
 
   async mounted() {
-    // await this.employmentStore.getEmployments()
+    await this.employmentStore.getPublicEmployments()
   },
 
   methods: {}
@@ -48,8 +48,8 @@ export default defineComponent({
 
         a-row(justify="space-between")
           a-col(:span="12")
-            a-button(type="primary", size="large").margin-top__30 Obten información en tu correo
-            a-button(type="link", size="large") Añadir una postulación
+            //a-button(type="primary", size="large").margin-top__30 Obten información en tu correo
+            //a-button(type="link", size="large") Añadir una postulación
 
             a-row.margin-top__30
               a-col(:span="8")
@@ -111,7 +111,7 @@ export default defineComponent({
                         .font-size__16 {{ employment.description }}
 
                     template(#actions)
-                      a-button(type="primary", size="large") Postular
+                      a-button(type="primary", size="large", @click="() => $router.push({ name: 'EmploymentPublicView', params: { employment_id: `${employment.id}` }})") Postular
 
 
 </template>

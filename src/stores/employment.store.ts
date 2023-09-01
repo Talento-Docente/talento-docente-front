@@ -11,7 +11,7 @@ import type { EmploymentInterface, EmploymentResumeInterface } from "@/interface
 import type { MetaInterface } from "@/interfaces/meta.interface"
 
 /** Services */
-import employmentServices from '@/services/employment.services'
+import employmentServices, { getPublicEmployment } from "@/services/employment.services";
 export const employmentStore = defineStore('employment', {
 
   state: () => {
@@ -48,6 +48,21 @@ export const employmentStore = defineStore('employment', {
       this.employments = employments
       this.meta = meta
       return employments
+    },
+
+    async getPublicEmployments(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
+      const response = await employmentServices.getPublicEmployments(page, pageSize, searchBy)
+      const { employments, meta } = response.data
+      this.employments = employments
+      this.meta = meta
+      return employments
+    },
+
+    async getPublicEmployment(employmentId: number = 1) {
+      const response = await employmentServices.getPublicEmployment(employmentId)
+      const { employment } = response.data
+      this.employment = employment
+      return employment
     },
 
     async getResume() {

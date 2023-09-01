@@ -41,6 +41,24 @@ const router = createRouter({
     },
 
     {
+      path: '/',
+      name: 'EmploymentPublic',
+      redirect: '/employment/public/:employment_id',
+      component: () => import('@/components/layouts/BlankLayout.vue'),
+      children: [
+        {
+          path: 'employment/public/:employment_id',
+          name: 'EmploymentPublicView',
+          component: () => import('@/views/employment/EmploymentPublicView.vue'),
+          meta: {
+            requiredAuth: false,
+            authRoute: false
+          } as RouteMetaInterface,
+        },
+      ]
+    },
+
+    {
       path: '/login/:login_type',
       name: 'Login',
       component: () => import('@/views/auth/LoginView.vue'),

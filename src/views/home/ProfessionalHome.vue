@@ -6,9 +6,14 @@ import { defineComponent } from 'vue'
 /** Stores */
 import { authStore } from "@/stores/auth.store";
 
+/** Components */
+import LandingJobs from "@/views/landing/LandingJobs.vue";
+
 export default defineComponent({
 
-  components: {},
+  components: {
+    LandingJobs
+  },
 
   data () {
     return {
@@ -31,6 +36,6 @@ export default defineComponent({
 
 <template lang="pug">
 .main
-  span Por definir
+  landing-jobs
 
 </template>

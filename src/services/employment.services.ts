@@ -18,9 +18,23 @@ export function index(establishmentId: number | null, page: number = 1, pageSize
   });
 }
 
+export function getPublicEmployments(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
+  return axios({
+    url: urlWithParams(`${config.urlApi}/api/employments/public`, { page, page_size: pageSize, search_by: searchBy }),
+    method: 'get'
+  });
+}
+
 export function show(establishmentId: number | null, employmentId: number) {
   return axios({
     url: `${config.urlApi}/api/establishments/${establishmentId}/employments/${employmentId}`,
+    method: 'get'
+  });
+}
+
+export function getPublicEmployment(employmentId: number) {
+  return axios({
+    url: `${config.urlApi}/api/employments/public/${employmentId}`,
     method: 'get'
   });
 }
@@ -78,5 +92,7 @@ export default {
   destroy,
   resume,
   getApplicants,
-  findOrCreatePostulation
+  findOrCreatePostulation,
+  getPublicEmployments,
+  getPublicEmployment
 };

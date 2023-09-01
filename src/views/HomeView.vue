@@ -50,6 +50,6 @@ export default defineComponent({
 <template lang="pug">
 .main
   professional-home(v-if="[ROLE_APPLICANT].indexOf(authStore.role) > -1")
-  professional-home(v-if="[ROLE_ESTABLISHMENT, ROLE_SUPER_ADMIN].indexOf(authStore.role) > -1")
+  establishment-home(v-if="[ROLE_ESTABLISHMENT, ROLE_SUPER_ADMIN].indexOf(authStore.role) > -1")
 
 </template>
