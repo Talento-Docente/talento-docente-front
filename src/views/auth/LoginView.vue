@@ -1,4 +1,5 @@
 <script lang="ts">
+import LandingNavbar from "@/views/landing/LandingNavbar.vue";
 /** External dependencies */
 import { defineComponent, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue';
@@ -11,8 +12,16 @@ import type { LoginInterface } from "@/interfaces/login.interface";
 /** Store */
 import { authStore } from "@/stores/auth.store";
 
-export default defineComponent({
+/** Icon */
+import { UserOutlined,
+  BankOutlined
+} from '@ant-design/icons-vue';
 
+export default defineComponent({
+  components: { LandingNavbar, 
+    UserOutlined,
+    BankOutlined
+   },
   data() {
     return {
       /** Form */
@@ -62,50 +71,89 @@ export default defineComponent({
 
 <template lang="pug">
 .login
-  a-row.login__form
-    a-col(:xl="{ span: 8, offset: 8 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
-      a-card
+  landing-navbar.login-navbar
+  a-row.login__bg
+    a-col(:xl="{ span: 14, offset: 5 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
+      a-card(:bordered="false" class="border-card").margin-top__50
         .text-align__center
-          p(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer Talento Docente {{ loginType === 'professional' ? '(Profesional)' : '(Empresa)' }}
-
-        a-form(:model="form", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
-
-          a-form-item(
-            label="Correo"
-            name="email"
-            :rules="[{ required: true, message: 'Ingrese su correo!' }]")
-
-            a-input(v-model:value="form.email")
-
-          a-form-item(
-            label="Contraseña"
-            name="password"
-            :rules="[{ required: true, message: 'Ingrese su contraseña!' }]")
-            a-input-password(v-model:value="form.password")
-
-          a-form-item
+          h3(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer 
+            b Talento Docente
+          p.font-size__20.margin-top__10 {{ loginType === 'professional' ? 'Deja que los empleos lleguen a ti' : 'Comienza a encontrar talento ya' }}
+        div(class="content-card" ).login__form
+          a-card(class="login-card").margin-top__20
             .text-align__center
-              a-button(
-                :disabled="disabled",
-                type="primary",
-                html-type="submit",
-                class="login-form-button",
-                :loading="loading"
-              ) Iniciar sesión
+              span(v-if="loginType === 'professional'")
+                user-outlined(:style="'font-size: 25px;'")
+                h2 ¿Ya tienes cuenta registrada?
+              span(v-if="loginType === 'establishment'")
+                bank-outlined(:style="'font-size: 25px;'")
+                h2 ¿Ya tienes cuenta de empresa registrada?
+              h2 Inicia sesión
+            a-form(:model="form", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
 
-          a-form-item
-            .text-align__center
-              a-button(
-                type="link",
-              ) Recuperar Contraseña
+              a-form-item(
+                label="Correo"
+                name="email"
+                :rules="[{ required: true, message: 'Ingrese su correo!' }]")
 
-              a-button(
-                type="link",
-                @click="() => $router.push({ name: 'Register', params: { register_type: loginType } })"
-              ) Registrate aquí
+                a-input(v-model:value="form.email")
 
+              a-form-item(
+                label="Contraseña"
+                name="password"
+                :rules="[{ required: true, message: 'Ingrese su contraseña!' }]")
+                a-input-password(v-model:value="form.password")
 
+              a-form-item
+                .text-align__center
+                  a-button(
+                    :disabled="disabled",
+                    type="primary",
+                    html-type="submit",
+                    class="login-form-button",
+                    :loading="loading"
+                  ) Iniciar sesión
 
+              a-form-item
+                .text-align__center
+                  a-button(
+                    type="link",
+                  ) Recuperar Contraseña
+
+                  a-button(
+                    type="link",
+                    @click="() => $router.push({ name: 'Register', params: { register_type: loginType } })"
+                  ) Registrate aquí
+  a-row().login__footer
+    a-col(:xl="{ span: 14, offset: 5 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
+      .text-align__center
+        h2 
+          b ¿Tienes dudas? 
+        span Consulta nuestras 
+          a preguntas frecuentes 
+          span o 
+          a chatea con nosotros.
 
 </template>
+
+<style>
+
+.border-card{
+  border-radius: 20px;
+}
+.content-card{
+  margin: 0 auto;
+  max-width:500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.login-card{
+  width: 100%;
+  border-radius: 10px;
+  background-color: #f2f6f7;
+}
+
+</style>
 
