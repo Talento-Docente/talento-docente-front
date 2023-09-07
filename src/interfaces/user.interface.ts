@@ -8,6 +8,7 @@ export interface UserInterface {
     last_name: string
     dni: string
     birthday: Date | string
+    role: String,
     provider?: string | null
     skip_password_validation?: boolean | null
     password?: string | null
@@ -20,7 +21,6 @@ export interface UserInterface {
     second_last_name?: string | null
     picture?: any
     picturePreview?: any
-    role: String,
     permissions: PermissionInterface[],
     applicant: ApplicantInterface
 }

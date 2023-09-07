@@ -1,7 +1,12 @@
 <script lang="ts">
 /** External dependencies */
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
+import type { UploadProps } from 'ant-design-vue';
 import { message as aMessage } from "ant-design-vue";
+import * as uuid from "uuid";
+
+/** Internal dependencies */
+import config from '@/config'
 
 /** Icons */
 import {
@@ -33,10 +38,21 @@ import { authStore } from "@/stores/auth.store";
 
 /** Services */
 import userServices from "@/services/user.services";
+import { QuillEditor } from "@vueup/vue-quill";
+
+function getBase64(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
 
 export default defineComponent({
 
   components: {
+    QuillEditor,
     UploadOutlined,
     PlusOutlined,
     LoadingOutlined,
@@ -59,6 +75,8 @@ export default defineComponent({
 
   data() {
     return {
+      config,
+
       /** Form User */
       formProfile: reactive<ProfileInterface>({
         last_name: "",
@@ -71,14 +89,20 @@ export default defineComponent({
         description: "",
         phone: "",
         linkedin: "",
-        
+
       }),
+
+      /** Files */
+      pictureList: ref<UploadProps['fileList']>([]),
+      curriculumList: ref<UploadProps['fileList']>([]),
+      headers: { 'Authorization': authStore().token },
 
       /** Stores */
       authStore: authStore(),
 
       /** Loader */
       loading: false,
+      loadingUpload: false,
 
       /** Modal */
       modalExperience: false,
@@ -88,6 +112,7 @@ export default defineComponent({
   },
 
   mounted() {
+<<<<<<< HEAD
     const user = this.authStore.user
     this.formProfile.first_name = user.first_name
     this.formProfile.last_name = user.last_name
@@ -97,6 +122,12 @@ export default defineComponent({
     this.formProfile.phone = user.applicant.phone
     this.formProfile.linkedin = user.applicant.linkedin
     this.formProfile.description = user.applicant.description
+=======
+    this.init()
+    // this.formProfile.phone = user.applicant.phone
+    // this.formProfile.linkedin = user.applicant.linkedin
+    // this.formProfile.description = user.applicant.description
+>>>>>>> main
 
 
     this.formProfile.youtube = user.applicant.youtube
@@ -106,6 +137,38 @@ export default defineComponent({
   computed: {},
 
   methods: {
+
+    init () {
+      const user = this.authStore.user
+      this.formProfile.first_name = user.first_name
+      this.formProfile.last_name = user.last_name
+      this.formProfile.email = user.email
+      this.formProfile.birthday = user.birthday
+      this.formProfile.dni = user.dni
+      this.formProfile.description = user.applicant.description
+      if (user.picture) {
+        this.pictureList?.push(
+          {
+            uid: uuid.v4(),
+            name: 'picture.png',
+            status: 'done',
+            url: user.picture,
+            thumbUrl: user.picture
+          }
+        )
+      }
+      if (user.applicant.curriculum) {
+        this.curriculumList?.push(
+          {
+            uid: uuid.v4(),
+            name: 'currriculum.pdf',
+            status: 'done',
+            url: user.applicant.curriculum,
+            thumbUrl: user.applicant.curriculum
+          }
+        )
+      }
+    },
 
     async updateUser (values: ProfileInterface) {
       try {
@@ -124,18 +187,47 @@ export default defineComponent({
       }
     },
 
+    async handlePreview (file: any) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      window.open(file.url, '_blank')
+    },
+
+    async handleRemove (documentName: string) {
+      try {
+        this.loadingUpload = true
+        const response = await userServices.removeFile(documentName)
+        if (response.data.status === 'success') {
+          aMessage.success('Eliminación exitosa')
+          await this.authStore.getProfile()
+          this.init()
+        } else {
+          aMessage.error('Error al elimnar')
+        }
+      } catch (e) {
+        console.log({ e })
+        aMessage.error('Error al eliminar datos')
+      } finally {
+        this.loadingUpload = false
+      }
+    },
+
     showModalExp () {
       this.modalExperience = true;
       console.log("Experiencia")
     },
+
     showModalSkills () {
       this.modalSkills = true;
       console.log("Habilidades")
     },
+
     showModalAcademy () {
       this.modalAcademy = true;
       console.log("Formacion Academica")
     },
+
     handleOk  () {
       this.modalExperience = false;
       this.modalSkills = false;
@@ -161,7 +253,7 @@ export default defineComponent({
           a-row
 
             a-col(:sm="12")
-              h4 
+              h4
                 CameraOutlined
                 span.margin-left__10 Foto de Perfil
               p.font-size__12.color__gray.padding__0.margin__0 Minimo 200x200 px, Cuadrara
@@ -169,14 +261,23 @@ export default defineComponent({
 
             a-col(:sm="12")
               a-form-item
-                a-upload(list-type="picture-card")
-                  plus-outlined.margin-right__5
-                  .ant-upload-text Cargar...
+                a-upload(
+                  list-type="picture-card",
+                  v-model:file-list="pictureList",
+                  :action="`${config.urlApi}/api/users/upload/picture`",
+                  :headers="headers",
+                  :loading="loadingUpload",
+                  @preview="handlePreview",
+                  @remove="() => handleRemove('picture')"
+                )
+                  template(v-if="pictureList.length <= 0")
+                    plus-outlined.margin-right__5
+                    .ant-upload-text Cargar...
 
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 UserOutlined
                 span.margin-left__10 Nombre y apellido
               p.font-size__12.color__gray.padding__0.margin__0 Usa tu nombre real ya que sera el cual visualizaran
@@ -197,7 +298,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 MailOutlined
                 span.margin-left__10 Correo
               p.font-size__12.color__gray.padding__0.margin__0 Tu correo es esencial para nosotros, ya que nos ayuda
@@ -213,7 +314,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 PhoneOutlined
                 span.margin-left__10 Telefono
               p.font-size__12.color__gray.padding__0.margin__0 Ingrese su numero de telefono personal.
@@ -228,7 +329,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 CalendarOutlined
                 span.margin-left__10 Fecha de Nacimiento
 
@@ -242,7 +343,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 IdcardOutlined
                 span.margin-left__10 Rut
 
@@ -262,22 +363,24 @@ export default defineComponent({
           a-row
 
             a-col(:sm="24")
-              h4.font-weight__bold 
+              h4.font-weight__bold
                 CommentOutlined
                 span.margin-left__10 Cuentanos sobre ti:
               a-form-item(
                 name="description",
                 :rules="[{ required: false }]"
               )
-                a-textarea(v-model:value="formProfile.description", :auto-size="{ minRows: 5, maxRows: 10 }")
+                quill-editor(v-model:content="formProfile.description", content-type="html")
+                //a-textarea(v-model:value="formProfile.description", :auto-size="{ minRows: 5, maxRows: 10 }")
 
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold 
+              h4.font-weight__bold
                 ProfileOutlined
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
@@ -292,10 +395,11 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold 
+              h4.font-weight__bold
                 UserAddOutlined
                 span.margin-left__10 Añade tus habilidades
               a-button(@click="showModalSkills()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalSkills" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mis Habilidades
@@ -310,10 +414,11 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold 
+              h4.font-weight__bold
                 ReadOutlined
                 span.margin-left__10 Formación academica
               a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mi formación academica
@@ -328,15 +433,22 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 AuditOutlined
                 span.margin-left__10 Carga tu CV
               p.font-size__12.color__gray.padding__0.margin__0 Archivo debe ser en formato PDF y no debe pesar mas 5MB.
 
             a-col(:sm="12")
               a-form-item
-                a-upload
-                  a-button
+                a-upload(
+                  v-model:file-list="curriculumList",
+                  :action="`${config.urlApi}/api/users/upload/curriculum`",
+                  :headers="headers",
+                  :loading="loadingUpload",
+                  @preview="handlePreview",
+                  @remove="() => handleRemove('curriculum')"
+                )
+                  a-button(:disabled="curriculumList.length > 0")
                     upload-outlined
                     span Sube el documento aquí
 
@@ -348,7 +460,7 @@ export default defineComponent({
           a-row
 
             a-col(:sm="12")
-              h4 
+              h4
                 YoutubeOutlined
                 span.margin-left__10 Un video de YouTube de ti mismo
               p.font-size__12.color__gray.padding__0.margin__0 Intruce acerca de ti en un pequeño video de no mas de 30
@@ -364,7 +476,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 FolderOutlined
                 span.margin-left__10 Link hacia tu porfaolio
               p.font-size__12.color__gray.padding__0.margin__0 Puedes copiar aqui alguna URL a tu porfalio. Puede ser
@@ -380,7 +492,7 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 
+              h4
                 LinkedinOutlined
                 span.margin-left__10 Linkedin
               p.font-size__12.color__gray.padding__0.margin__0 Puedes agregar tu perfil de Linkedin
