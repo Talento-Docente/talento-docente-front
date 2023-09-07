@@ -291,19 +291,19 @@ a-layout.register
                     :rules="[{ required: true, message: 'Ingrese apellidos' }]")
                     a-input(v-model:value="formRegisterUser.last_name")
 
-                a-col(:lg="{ span: 12 }", :sm="{ span: 24 }")
-                  a-form-item(
-                    label="Rut (Sin puntos ni guión)",
-                    name="dni",
-                    :rules="[{ required: true, validator: validateUserDni }]")
-                    a-input(v-model:value="formRegisterUser.dni")
+                //- a-col(:lg="{ span: 12 }", :sm="{ span: 24 }")
+                //-   a-form-item(
+                //-     label="Rut (Sin puntos ni guión)",
+                //-     name="dni",
+                //-     :rules="[{ required: true, validator: validateUserDni }]")
+                //-     a-input(v-model:value="formRegisterUser.dni")
 
-                a-col(:lg="{ span: 12 }", :sm="{ span: 24 }")
-                  a-form-item(
-                    label="Fecha de Nacimiento",
-                    name="birthday",
-                    :rules="[{ required: true, message: 'Ingrese su fecha de nacimiento' }]")
-                    a-input(type="date", v-model:value="formRegisterUser.birthday")
+                //- a-col(:lg="{ span: 12 }", :sm="{ span: 24 }")
+                //-   a-form-item(
+                //-     label="Fecha de Nacimiento",
+                //-     name="birthday",
+                //-     :rules="[{ required: true, message: 'Ingrese su fecha de nacimiento' }]")
+                //-     a-input(type="date", v-model:value="formRegisterUser.birthday")
 
                 a-col(:lg="{ span: 24 }", :sm="{ span: 24 }")
                   a-form-item(

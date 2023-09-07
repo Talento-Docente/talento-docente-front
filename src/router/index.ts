@@ -59,9 +59,18 @@ const router = createRouter({
     },
 
     {
-      path: '/login/:login_type',
-      name: 'Login',
-      component: () => import('@/views/auth/LoginView.vue'),
+      path: '/login/professional',
+      name: 'ProfessionalLogin',
+      component: () => import('@/views/auth/ProfessionalLoginView.vue'),
+      meta: {
+        requiredAuth: false,
+        authRoute: true
+      } as RouteMetaInterface,
+    },
+    {
+      path: '/login/establishment',
+      name: 'EstablishmentLogin',
+      component: () => import('@/views/auth/EstablishmentLoginView.vue'),
       meta: {
         requiredAuth: false,
         authRoute: true

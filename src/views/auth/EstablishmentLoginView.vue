@@ -31,7 +31,6 @@ export default defineComponent({
       }),
       labelCol: { style: { width: '150px' } },
       wrapperCol: { span: 24 },
-      loginType: ref<String>(''),
 
       /** Loader */
       loading: false
@@ -46,7 +45,6 @@ export default defineComponent({
 
   mounted () {
     const { login_type } = this.$route.params
-    this.loginType = String(login_type)
   },
 
   methods: {
@@ -72,22 +70,18 @@ export default defineComponent({
 <template lang="pug">
 .login
   landing-navbar.login-navbar
-  a-row.login__bg
+  a-row.login__bgEstablishment
     a-col(:xl="{ span: 14, offset: 5 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
       a-card(:bordered="false" class="border-card").margin-top__50
         .text-align__center
           h3(@click="() => $router.push({ name: 'Landing' })").font-size__20.cursor__pointer 
             b Talento Docente
-          p.font-size__20.margin-top__10 {{ loginType === 'professional' ? 'Deja que los empleos lleguen a ti' : 'Comienza a encontrar talento ya' }}
+          p.font-size__20.margin-top__10 Comienza a encontrar talento ya
         div(class="content-card" ).login__form
           a-card(class="login-card").margin-top__20
             .text-align__center
-              span(v-if="loginType === 'professional'")
-                user-outlined(:style="'font-size: 25px;'")
-                h2 ¿Ya tienes cuenta registrada?
-              span(v-if="loginType === 'establishment'")
-                bank-outlined(:style="'font-size: 25px;'")
-                h2 ¿Ya tienes cuenta de empresa registrada?
+              bank-outlined(:style="'font-size: 25px;'")
+              h2 ¿Ya tienes cuenta de empresa registrada?
               h2 Inicia sesión
             a-form(:model="form", @finish="onFinish", :label-col="labelCol" :wrapper-col="wrapperCol")
 
@@ -132,7 +126,7 @@ export default defineComponent({
         span Consulta nuestras 
           a preguntas frecuentes 
           span o 
-          a chatea con nosotros.
+          a contactanos.
 
 </template>
 

@@ -69,9 +69,9 @@ a-layout-header.landing-navbar
           template(#icon)
             login-outlined
           a-menu-item-group(title="¿Iniciar como?")
-            a-menu-item(key="loginEmployee", @click="() => $router.push({ name: 'Login', params: { login_type: 'professional' } })")
+            a-menu-item(key="loginEmployee", @click="() => $router.push({ name: 'ProfessionalLogin' })")
               span Profesionales
-            a-menu-item(key="loginBusiness", @click="() => $router.push({ name: 'Login', params: { login_type: 'establishment' } })")
+            a-menu-item(key="loginBusiness", @click="() => $router.push({ name: 'EstablishmentLogin' })")
               span Empresas
 
         a-menu-item(key="home", v-else, @click="() => $router.push({ name: 'Home' })")
