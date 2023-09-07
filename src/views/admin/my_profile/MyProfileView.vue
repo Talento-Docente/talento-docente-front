@@ -37,7 +37,8 @@ import type { ProfileInterface } from "@/interfaces/user.interface";
 import { authStore } from "@/stores/auth.store";
 
 /** Services */
-import userServices, { removeFile } from "@/services/user.services";
+import userServices from "@/services/user.services";
+import { QuillEditor } from "@vueup/vue-quill";
 
 function getBase64(file: any) {
   return new Promise((resolve, reject) => {
@@ -51,6 +52,7 @@ function getBase64(file: any) {
 export default defineComponent({
 
   components: {
+    QuillEditor,
     UploadOutlined,
     PlusOutlined,
     LoadingOutlined,
@@ -131,6 +133,7 @@ export default defineComponent({
       this.formProfile.email = user.email
       this.formProfile.birthday = user.birthday
       this.formProfile.dni = user.dni
+      this.formProfile.description = user.applicant.description
       if (user.picture) {
         this.pictureList?.push(
           {
@@ -355,7 +358,8 @@ export default defineComponent({
                 name="description",
                 :rules="[{ required: false }]"
               )
-                a-textarea(v-model:value="formProfile.description", :auto-size="{ minRows: 5, maxRows: 10 }")
+                quill-editor(v-model:content="formProfile.description", content-type="html")
+                //a-textarea(v-model:value="formProfile.description", :auto-size="{ minRows: 5, maxRows: 10 }")
 
             a-divider
 
