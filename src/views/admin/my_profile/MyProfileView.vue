@@ -368,6 +368,7 @@ export default defineComponent({
                 ProfileOutlined
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
@@ -386,6 +387,7 @@ export default defineComponent({
                 UserAddOutlined
                 span.margin-left__10 Añade tus habilidades
               a-button(@click="showModalSkills()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalSkills" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mis Habilidades
@@ -404,6 +406,7 @@ export default defineComponent({
                 ReadOutlined
                 span.margin-left__10 Formación academica
               a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
+
               a-modal(width="700px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mi formación academica
