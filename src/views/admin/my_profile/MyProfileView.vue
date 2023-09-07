@@ -94,13 +94,13 @@ export default defineComponent({
     this.formProfile.email = user.email
     this.formProfile.birthday = user.birthday
     this.formProfile.dni = user.dni
-    // this.formProfile.phone = user.applicant.phone
-    // this.formProfile.linkedin = user.applicant.linkedin
-    // this.formProfile.description = user.applicant.description
+    this.formProfile.phone = user.applicant.phone
+    this.formProfile.linkedin = user.applicant.linkedin
+    this.formProfile.description = user.applicant.description
 
 
-    // this.formProfile.youtube = user.applicant.youtube
-    // this.formProfile.briefcase = user.applicant.briefcase
+    this.formProfile.youtube = user.applicant.youtube
+    this.formProfile.briefcase = user.applicant.briefcase
   },
 
   computed: {},
