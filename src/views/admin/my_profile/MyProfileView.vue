@@ -11,7 +11,18 @@ import {
   MailOutlined,
   PhoneOutlined,
   TwitterOutlined,
-  LinkedinOutlined
+  LinkedinOutlined,
+  CameraOutlined,
+  UserOutlined,
+  AuditOutlined,
+  CalendarOutlined,
+  IdcardOutlined,
+  CommentOutlined,
+  ProfileOutlined,
+  UserAddOutlined,
+  ReadOutlined,
+  YoutubeOutlined,
+  FolderOutlined
 } from "@ant-design/icons-vue";
 
 /** Interfaces */
@@ -32,7 +43,18 @@ export default defineComponent({
     MailOutlined,
     PhoneOutlined,
     TwitterOutlined,
-    LinkedinOutlined
+    LinkedinOutlined,
+    CameraOutlined,
+    UserOutlined,
+    AuditOutlined,
+    CalendarOutlined,
+    IdcardOutlined,
+    CommentOutlined,
+    ProfileOutlined,
+    UserAddOutlined,
+    ReadOutlined,
+    YoutubeOutlined,
+    FolderOutlined
   },
 
   data() {
@@ -48,14 +70,20 @@ export default defineComponent({
         youtube: "",
         description: "",
         phone: "",
-        linkedin: ""
+        linkedin: "",
+        
       }),
 
       /** Stores */
       authStore: authStore(),
 
       /** Loader */
-      loading: false
+      loading: false,
+
+      /** Modal */
+      modalExperience: false,
+      modalSkills:false,
+      modalAcademy:false
     };
   },
 
@@ -66,11 +94,13 @@ export default defineComponent({
     this.formProfile.email = user.email
     this.formProfile.birthday = user.birthday
     this.formProfile.dni = user.dni
-    this.formProfile.phone = user.applicant.phone
-    this.formProfile.linkedin = user.applicant.linkedin
-    this.formProfile.description = user.applicant.description
-    this.formProfile.youtube = user.applicant.youtube
-    this.formProfile.briefcase = user.applicant.briefcase
+    // this.formProfile.phone = user.applicant.phone
+    // this.formProfile.linkedin = user.applicant.linkedin
+    // this.formProfile.description = user.applicant.description
+
+
+    // this.formProfile.youtube = user.applicant.youtube
+    // this.formProfile.briefcase = user.applicant.briefcase
   },
 
   computed: {},
@@ -92,7 +122,25 @@ export default defineComponent({
       } finally {
         this.loading = false
       }
-    }
+    },
+
+    showModalExp () {
+      this.modalExperience = true;
+      console.log("Experiencia")
+    },
+    showModalSkills () {
+      this.modalSkills = true;
+      console.log("Habilidades")
+    },
+    showModalAcademy () {
+      this.modalAcademy = true;
+      console.log("Formacion Academica")
+    },
+    handleOk  () {
+      this.modalExperience = false;
+      this.modalSkills = false;
+      this.modalAcademy = false;
+    },
   }
 
 });
@@ -113,7 +161,9 @@ export default defineComponent({
           a-row
 
             a-col(:sm="12")
-              h4 Foto de Perfil
+              h4 
+                CameraOutlined
+                span.margin-left__10 Foto de Perfil
               p.font-size__12.color__gray.padding__0.margin__0 Minimo 200x200 px, Cuadrara
               p.font-size__12.color__gray.padding__0.margin__0 (Igual que el avatar de Facebook o Whatsapp).
 
@@ -126,7 +176,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Nombre y apellido
+              h4 
+                UserOutlined
+                span.margin-left__10 Nombre y apellido
               p.font-size__12.color__gray.padding__0.margin__0 Usa tu nombre real ya que sera el cual visualizaran
               p.font-size__12.color__gray.padding__0.margin__0 las empresas al momemento de reclutar.
 
@@ -145,7 +197,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Correo
+              h4 
+                MailOutlined
+                span.margin-left__10 Correo
               p.font-size__12.color__gray.padding__0.margin__0 Tu correo es esencial para nosotros, ya que nos ayuda
               p.font-size__12.color__gray.padding__0.margin__0 a enviarte notificaciones sobre tus postulaciones.
 
@@ -159,7 +213,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Telefono
+              h4 
+                PhoneOutlined
+                span.margin-left__10 Telefono
               p.font-size__12.color__gray.padding__0.margin__0 Ingrese su numero de telefono personal.
 
             a-col(:sm="12")
@@ -172,7 +228,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Fecha de Nacimiento
+              h4 
+                CalendarOutlined
+                span.margin-left__10 Fecha de Nacimiento
 
             a-col(:sm="12")
               a-form-item(
@@ -184,7 +242,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Rut
+              h4 
+                IdcardOutlined
+                span.margin-left__10 Rut
 
             a-col(:sm="12")
               a-form-item(
@@ -202,7 +262,9 @@ export default defineComponent({
           a-row
 
             a-col(:sm="24")
-              h4.font-weight__bold Cuentanos sobre ti:
+              h4.font-weight__bold 
+                CommentOutlined
+                span.margin-left__10 Cuentanos sobre ti:
               a-form-item(
                 name="description",
                 :rules="[{ required: false }]"
@@ -212,25 +274,63 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold Añade tus ultimas experiencias laborales
-              a-button(type="primary", variant="outlined") Añadir
+              h4.font-weight__bold 
+                ProfileOutlined
+                span.margin-left__10 Añade tus ultimas experiencias laborales
+              a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
+              a-modal(width="700px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
+                template(#title)
+                  .text-align__center Añadir mis experiencias Laborales
+                a-row(:gutter="16")
+                  a-col(:span="10" :offset="1" )
+                    h2 Perfil profesional y experiencia laboral
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+
+                  a-col(:span="12")
+                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui su experiencia laboral...")
 
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold Añade tus habilidades
-              a-button(type="primary", variant="outlined") Añadir
+              h4.font-weight__bold 
+                UserAddOutlined
+                span.margin-left__10 Añade tus habilidades
+              a-button(@click="showModalSkills()" type="primary", variant="outlined") Añadir
+              a-modal(width="700px" centered v-model:visible="modalSkills" okText="Guardar" @ok="handleOk")
+                template(#title)
+                  .text-align__center Añadir mis Habilidades
+                a-row(:gutter="16")
+                  a-col(:span="10" :offset="1" )
+                    h2 Habilidades
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+
+                  a-col(:span="12")
+                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui sus habilidades...")
 
             a-divider
 
             a-col(:sm="12")
-              h4.font-weight__bold Formación academica
-              a-button(type="primary", variant="outlined") Añadir
+              h4.font-weight__bold 
+                ReadOutlined
+                span.margin-left__10 Formación academica
+              a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
+              a-modal(width="700px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
+                template(#title)
+                  .text-align__center Añadir mi formación academica
+                a-row(:gutter="16")
+                  a-col(:span="10" :offset="1" )
+                    h2 Formación académica y estudios
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+
+                  a-col(:span="12")
+                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui su información academica...")
 
             a-divider
 
             a-col(:sm="12")
-              h4 Carga tu CV
+              h4 
+                AuditOutlined
+                span.margin-left__10 Carga tu CV
               p.font-size__12.color__gray.padding__0.margin__0 Archivo debe ser en formato PDF y no debe pesar mas 5MB.
 
             a-col(:sm="12")
@@ -248,7 +348,9 @@ export default defineComponent({
           a-row
 
             a-col(:sm="12")
-              h4 Un video de YouTube de ti mismo
+              h4 
+                YoutubeOutlined
+                span.margin-left__10 Un video de YouTube de ti mismo
               p.font-size__12.color__gray.padding__0.margin__0 Intruce acerca de ti en un pequeño video de no mas de 30
               p.font-size__12.color__gray.padding__0.margin__0 segundos. Compenta sobre tus experiencias y habilidades.
 
@@ -262,7 +364,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Link hacia tu porfaolio
+              h4 
+                FolderOutlined
+                span.margin-left__10 Link hacia tu porfaolio
               p.font-size__12.color__gray.padding__0.margin__0 Puedes copiar aqui alguna URL a tu porfalio. Puede ser
               p.font-size__12.color__gray.padding__0.margin__0 Dropbox, Drive, Sitio Web Propio u otra herramienta.
 
@@ -276,7 +380,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Linkedin
+              h4 
+                LinkedinOutlined
+                span.margin-left__10 Linkedin
               p.font-size__12.color__gray.padding__0.margin__0 Puedes agregar tu perfil de Linkedin
 
             a-col(:sm="12")
