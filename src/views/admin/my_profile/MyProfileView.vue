@@ -4,6 +4,7 @@ import { defineComponent, reactive, ref } from "vue";
 import type { UploadProps } from 'ant-design-vue';
 import { message as aMessage } from "ant-design-vue";
 import * as uuid from "uuid";
+import _ from "lodash";
 
 /** Internal dependencies */
 import config from '@/config'
@@ -47,6 +48,16 @@ function getBase64(file: any) {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
+}
+
+interface ExperienceInterface {
+  id?: number | string | null,
+  localStatus?: string | null
+  establishment_name: string | null,
+  job_title: string | null,
+  description: string | null,
+  init_date: string | null,
+  end_date: string | null
 }
 
 export default defineComponent({
@@ -107,31 +118,17 @@ export default defineComponent({
       /** Modal */
       modalExperience: false,
       modalSkills:false,
-      modalAcademy:false
+      modalAcademy:false,
+      
+
+      /** Experiences */
+      experienceActiveKey: null,
+      experiences: [] as Array<ExperienceInterface>,
     };
   },
 
   mounted() {
-<<<<<<< HEAD
-    const user = this.authStore.user
-    this.formProfile.first_name = user.first_name
-    this.formProfile.last_name = user.last_name
-    this.formProfile.email = user.email
-    this.formProfile.birthday = user.birthday
-    this.formProfile.dni = user.dni
-    this.formProfile.phone = user.applicant.phone
-    this.formProfile.linkedin = user.applicant.linkedin
-    this.formProfile.description = user.applicant.description
-=======
     this.init()
-    // this.formProfile.phone = user.applicant.phone
-    // this.formProfile.linkedin = user.applicant.linkedin
-    // this.formProfile.description = user.applicant.description
->>>>>>> main
-
-
-    this.formProfile.youtube = user.applicant.youtube
-    this.formProfile.briefcase = user.applicant.briefcase
   },
 
   computed: {},
@@ -215,17 +212,32 @@ export default defineComponent({
 
     showModalExp () {
       this.modalExperience = true;
-      console.log("Experiencia")
+    },
+    addNewExperience () {
+      const experience: ExperienceInterface = {
+        id: uuid.v4(),
+        localStatus: 'new',
+        establishment_name: null,
+        job_title: null,
+        description: null,
+        init_date: null,
+        end_date: null,
+      }
+      this.experiences.push(experience)
+    },
+    removeExperience (experience: ExperienceInterface) {
+      const index = _.findIndex(this.experiences, (_experience: ExperienceInterface) => {
+        return experience.id === _experience.id
+      })
+      this.experiences.splice(index, 1)
     },
 
     showModalSkills () {
       this.modalSkills = true;
-      console.log("Habilidades")
     },
 
     showModalAcademy () {
       this.modalAcademy = true;
-      console.log("Formacion Academica")
     },
 
     handleOk  () {
@@ -381,16 +393,64 @@ export default defineComponent({
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="700px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
+              a-modal(width="1000px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
+                
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
-                a-row(:gutter="16")
-                  a-col(:span="10" :offset="1" )
-                    h2 Perfil profesional y experiencia laboral
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
 
-                  a-col(:span="12")
-                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui su experiencia laboral...")
+                a-form(:model="formEdit", @finish="saveTest", :label-col="labelCol")
+                  a-row(:gutter="16")
+                    a-col(:span="8")
+                      h2 Perfil profesional y experiencia laboral
+                      p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+
+                    a-col(:span="16")
+                      a-collapse(v-model:active-key="experienceActiveKey")
+                        a-collapse-panel(v-for="experience in experiences", :key="experience.id")
+
+                          template(#header)
+                            span(v-if="experience.establishment_name") 
+                              span {{ experience.establishment_name }}
+                            span(v-else)
+                              span Experiencia
+                          template(#extra)
+                            a-button(type="link", danger, size="small", @click="removeExperience(experience)") Eliminar
+
+                          a-row(:gutter="20")
+                            
+                            a-col(:span="12")
+                              a-form-item(
+                                label="Empresa",
+                                name="establishment_name")
+                                a-input(v-model:value="experience.establishment_name")
+
+                            a-col(:span="12")
+                              a-form-item(
+                                label="Cargo",
+                                name="job_title")
+                                a-input(v-model:value="experience.job_title")
+
+                            a-col(:span="12")
+                              a-form-item(
+                                label="Fecha Inicio",
+                                name="init_date")
+                                a-input(type="date",v-model:value="experience.init_date")
+
+                            a-col(:span="12")
+                              a-form-item(
+                                label="Fecha termino",
+                                name="end_date")
+                                a-input(type="date",v-model:value="experience.end_date")
+                                p.font-size__12.color__gray.padding__0.margin__0 * Campo no obligatorio. 
+
+                            a-col(:span="24")
+                              a-form-item(
+                                label="Descripción del cargo",
+                                name="description")
+                                quill-editor(v-model:value="experience.description", content-type="html")
+
+                      a-button(type="link", @click="addNewExperience").margin-top__20.float-right
+                        span + Añadir Experiencia
 
             a-divider
 
