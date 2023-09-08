@@ -30,6 +30,7 @@ import {
   YoutubeOutlined,
   FolderOutlined
 } from "@ant-design/icons-vue";
+import type { SelectProps } from 'ant-design-vue';
 
 /** Interfaces */
 import type { ProfileInterface } from "@/interfaces/user.interface";
@@ -52,12 +53,19 @@ function getBase64(file: any) {
 
 interface ExperienceInterface {
   id?: number | string | null,
-  localStatus?: string | null
   establishment_name: string | null,
   job_title: string | null,
   description: string | null,
   init_date: string | null,
   end_date: string | null
+}
+
+interface TestInterface {
+    id?: number | null
+    college: string | null
+    profession: string | null
+    init_date: string | null
+    end_date: string | null
 }
 
 export default defineComponent({
@@ -119,11 +127,33 @@ export default defineComponent({
       modalExperience: false,
       modalSkills:false,
       modalAcademy:false,
+      labelCol: { style: { width: '150px' } },
+      wrapperCol: { span: 24 },
       
 
       /** Experiences */
       experienceActiveKey: null,
       experiences: [] as Array<ExperienceInterface>,
+
+      /** Habilities */
+      options : ref<SelectProps['options']>([
+        {
+          value: 'math_tech',
+          label: 'Matematicas',
+        },
+        {
+          value: 'cie_tech',
+          label: 'Ciencias',
+        },
+        {
+          value: 'eng',
+          label: 'Ingles',
+        },
+        {
+          value: 'aux',
+          label: 'Profesor de auxiliar',
+        },
+      ]),
     };
   },
 
@@ -213,10 +243,10 @@ export default defineComponent({
     showModalExp () {
       this.modalExperience = true;
     },
+
     addNewExperience () {
       const experience: ExperienceInterface = {
         id: uuid.v4(),
-        localStatus: 'new',
         establishment_name: null,
         job_title: null,
         description: null,
@@ -225,11 +255,16 @@ export default defineComponent({
       }
       this.experiences.push(experience)
     },
+
     removeExperience (experience: ExperienceInterface) {
       const index = _.findIndex(this.experiences, (_experience: ExperienceInterface) => {
         return experience.id === _experience.id
       })
       this.experiences.splice(index, 1)
+    },
+
+    handleChange (value: []) {
+      console.log(`selected ${value}`);
     },
 
     showModalSkills () {
@@ -393,16 +428,16 @@ export default defineComponent({
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="1000px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
+              a-modal(width="900px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
                 
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
 
-                a-form(:model="formEdit", @finish="saveTest", :label-col="labelCol")
+                a-form()
                   a-row(:gutter="16")
                     a-col(:span="8")
                       h2 Perfil profesional y experiencia laboral
-                      p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+                      p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
 
                     a-col(:span="16")
                       a-collapse(v-model:active-key="experienceActiveKey")
@@ -430,7 +465,7 @@ export default defineComponent({
                                 name="job_title")
                                 a-input(v-model:value="experience.job_title")
 
-                            a-col(:span="12")
+                            a-col(:span="11")
                               a-form-item(
                                 label="Fecha Inicio",
                                 name="init_date")
@@ -441,12 +476,12 @@ export default defineComponent({
                                 label="Fecha termino",
                                 name="end_date")
                                 a-input(type="date",v-model:value="experience.end_date")
-                                p.font-size__12.color__gray.padding__0.margin__0 * Campo no obligatorio. 
+                                p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio. 
 
                             a-col(:span="24")
+                              span Descripcion del cargo:
                               a-form-item(
-                                label="Descripción del cargo",
-                                name="description")
+                                name="description").margin-top__10
                                 quill-editor(v-model:value="experience.description", content-type="html")
 
                       a-button(type="link", @click="addNewExperience").margin-top__20.float-right
@@ -466,10 +501,17 @@ export default defineComponent({
                 a-row(:gutter="16")
                   a-col(:span="10" :offset="1" )
                     h2 Habilidades
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
 
                   a-col(:span="12")
-                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui sus habilidades...")
+                    a-select(
+                      mode="tags"
+                      style="width: 100%"
+                      :token-separators="[',']"
+                      placeholder="Agregar habilidades"
+                      :options="options"
+                      @change="handleChange")
+                      
 
             a-divider
 
@@ -479,16 +521,38 @@ export default defineComponent({
                 span.margin-left__10 Formación academica
               a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="700px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
+              a-modal(width="900px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mi formación academica
                 a-row(:gutter="16")
-                  a-col(:span="10" :offset="1" )
+                  a-col(:span="8" :offset="1" )
                     h2 Formación académica y estudios
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices aquí aplicarán para tus futuras postulaciones.
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
 
-                  a-col(:span="12")
-                    a-textarea(:auto-size="{ minRows: 5, maxRows: 10 }" placeholder="Escriba aqui su información academica...")
+                  a-col(:span="14")
+                    h4.text-align__center Mi información academica
+                    a-card
+                      a-form(:label-col="labelCol" :wrapper-col="wrapperCol")
+                        a-form-item(
+                            label="Nombre de institución",
+                            name="")
+                            a-input()
+
+                        a-form-item(
+                            label="Carrera",
+                            name="")
+                            a-input()
+                        
+                        a-form-item(:wrapper-col="{ span: 8 }"
+                          label="Fecha Inicio",
+                          name="init_date")
+                          a-input(type="date")
+
+                        a-form-item(:wrapper-col="{ span: 8 }"
+                          label="Fecha termino",
+                          name="end_date")
+                          a-input(type="date")
+                          p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
 
             a-divider
 
