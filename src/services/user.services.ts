@@ -42,9 +42,17 @@ export function removeFile(documentName: string) {
   });
 }
 
+export function removeEstablishmentFile(establishmentId: number, documentName: string) {
+  return axios({
+    url: `${config.urlApi}/api/establishments/${establishmentId}/users/upload/establishment/${documentName}`,
+    method: 'delete'
+  });
+}
+
 export default {
   update,
   updateEstablishment,
   uploadFile,
-  removeFile
+  removeFile,
+  removeEstablishmentFile
 };

@@ -1,6 +1,12 @@
 <script lang="ts">
 /** External dependencies */
+import * as uuid from "uuid";
 import { defineComponent, reactive, ref } from "vue";
+import type { UploadProps } from "ant-design-vue";
+import { message as aMessage } from "ant-design-vue/lib/components";
+
+/** Constant */
+import config from '@/config'
 
 /** Store */
 import { establishmentStore } from "@/stores/establishment.store";
@@ -8,6 +14,9 @@ import { authStore } from "@/stores/auth.store";
 
 /** Interfaces */
 import type { EstablishmentInterface } from "@/interfaces/establishment.interface";
+
+/** Services */
+import userServices from "@/services/user.services";
 
 /** Icons */
 import {
@@ -18,8 +27,15 @@ import {
   EnvironmentOutlined,
   GlobalOutlined,
 } from '@ant-design/icons-vue';
-import userServices from "@/services/user.services";
-import { message as aMessage } from "ant-design-vue/lib/components";
+
+function getBase64(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
 
 export default defineComponent({
 
@@ -37,6 +53,8 @@ export default defineComponent({
   },
 
   data: ()=>({
+    config,
+
     /** Store */
     establishmentStore: establishmentStore(),
     authStore: authStore(),
@@ -46,15 +64,35 @@ export default defineComponent({
       dni: '',
       name: '',
       address:  '',
-      phone: ''
+      phone: '',
+      picture: null
     }),
+
+    /** Files */
+    pictureList: ref<UploadProps['fileList']>([]),
+    headers: { 'Authorization': authStore().token },
 
     /** Loader */
     loading: false,
+    loadingUpload: false
   }),
 
   mounted() {
-    this.formEstablishment = this.authStore.selectedEstablishment
+    const establishment = this.authStore.selectedEstablishment
+    console.log({ establishment })
+    this.formEstablishment = establishment
+    if (establishment.picture) {
+      console.log(establishment.picture)
+      this.pictureList?.push(
+        {
+          uid: uuid.v4(),
+          name: 'picture.png',
+          status: 'done',
+          url: establishment.picture,
+          thumbUrl: establishment.picture
+        }
+      )
+    }
   },
 
   methods: {
@@ -74,7 +112,33 @@ export default defineComponent({
       } finally {
         this.loading = false
       }
-    }
+    },
+
+    async handlePreview (file: any) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      window.open(file.url, '_blank')
+    },
+
+    async handleRemove (documentName: string) {
+      try {
+        this.loadingUpload = true
+        const response = await userServices.removeEstablishmentFile(Number(this.authStore.selectedEstablishment.id), documentName)
+        if (response.data.status === 'success') {
+          aMessage.success('Eliminación exitosa')
+          await this.authStore.getProfile()
+          // this.init()
+        } else {
+          aMessage.error('Error al elimnar')
+        }
+      } catch (e) {
+        console.log({ e })
+        aMessage.error('Error al eliminar datos')
+      } finally {
+        this.loadingUpload = false
+      }
+    },
   }
 
 });
@@ -101,9 +165,18 @@ export default defineComponent({
 
             a-col(:sm="12")
               a-form-item
-                a-upload(list-type="picture-card")
-                  plus-outlined.margin-right__5
-                  .ant-upload-text Cargar...
+                a-upload(
+                  list-type="picture-card",
+                  v-model:file-list="pictureList",
+                  :action="`${config.urlApi}/api/establishments/${authStore.selectedEstablishment.id}/users/upload/establishment/picture`",
+                  :headers="headers",
+                  :loading="loadingUpload",
+                  @preview="handlePreview",
+                  @remove="() => handleRemove('picture')"
+                )
+                  template(v-if="pictureList.length <= 0")
+                    plus-outlined.margin-right__5
+                    .ant-upload-text Cargar...
 
             a-divider
 
