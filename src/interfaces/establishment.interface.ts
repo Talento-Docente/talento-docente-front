@@ -4,4 +4,5 @@ export interface EstablishmentInterface {
     name: string
     address: string
     phone: string
+    picture: string | null
 }
