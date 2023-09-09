@@ -120,7 +120,7 @@ export default defineComponent({
                 span Para postular debes
                 a(@click="() => $router.push({ name: 'ProfessionalLogin', params: { employment_id: selectedEmploymentId } })")  iniciar sesión
                 span  ó
-                a  registrate
+                a(@click="() => $router.push({ name: 'Register', params: { register_type: 'professional', employment_id: selectedEmploymentId } })")  registrate
                 span  si aun no lo has echo.
             a-col(v-if="authStore.isAuthenticated")
               a-button(type="primary") Postular

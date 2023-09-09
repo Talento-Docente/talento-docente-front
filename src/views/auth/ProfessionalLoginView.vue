@@ -64,17 +64,17 @@ export default defineComponent({
         .login(values.email, values.password)
         .then(() => {
           message.success('Ingreso exitoso')
+          if(this.isNumber){
+          this.$router.push({ name: 'EmploymentPublicView', params: { employment_id: this.selectedEmploymentId } })
+          }else{
           this.$router.push({ name: 'Home' })
+          }
         })
         .catch((error) => {
           console.log({ error })
           message.error('Credenciales invalidas')
         })
       this.loading = false
-      if(this.isNumber){
-        this.$router.push({ name: 'EmploymentPublicView', params: { employment_id: this.selectedEmploymentId } })
-      }
-
     }
   }
 

@@ -90,12 +90,24 @@ export default defineComponent({
 
       /** Loader */
       loading: false,
+
+      /** Employment Puclib data */
+      selectedEmploymentId: ref<number>(0),
+      isNumber: false,
     }
   },
 
   mounted () {
     const { register_type } = this.$route.params
     this.registerType = String(register_type)
+    const { employment_id } = this.$route.params
+    this.selectedEmploymentId = parseInt(`${employment_id}`, 10)
+    if (!isNaN(this.selectedEmploymentId)) {
+      this.isNumber=true
+      console.log(this.isNumber+" "+this.selectedEmploymentId)
+    }else{
+      console.log(this.isNumber)
+    }
   },
 
   methods: {
@@ -217,7 +229,13 @@ export default defineComponent({
         if (status === 'error') {
           aMessage.error(String(message))
         } else {
-          this.$router.push({ name: 'Login', params: { login_type: this.registerType } })
+          if(this.registerType==='professional'){
+          this.$router.push({ name: 'ProfessionalLogin', params: { employment_id: this.selectedEmploymentId } })
+
+          }
+          if(this.registerType==='establishment'){
+          this.$router.push({ name: 'EstablishmentLogin' })
+          }
           aMessage.success('Registro exitoso')
         }
       } catch (error) {

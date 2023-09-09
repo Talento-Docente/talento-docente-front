@@ -78,7 +78,7 @@ const router = createRouter({
     },
 
     {
-      path: '/register/:register_type',
+      path: '/register/:register_type/:employment_id?',
       name: 'Register',
       component: () => import('@/views/auth/RegisterView.vue'),
       meta: {

@@ -60,13 +60,6 @@ interface ExperienceInterface {
   end_date: string | null
 }
 
-interface TestInterface {
-    id?: number | null
-    college: string | null
-    profession: string | null
-    init_date: string | null
-    end_date: string | null
-}
 
 export default defineComponent({
 
