@@ -123,10 +123,8 @@ export default defineComponent({
       .text-align__center
         h2 
           b ¿Tienes dudas? 
-        span Consulta nuestras 
-          a preguntas frecuentes 
-          span o 
-          a contactanos.
+        span Contactanos haciendo click 
+          a aqui.
 
 </template>
 

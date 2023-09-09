@@ -59,7 +59,7 @@ const router = createRouter({
     },
 
     {
-      path: '/login/professional',
+      path: '/login/professional/:employment_id?',
       name: 'ProfessionalLogin',
       component: () => import('@/views/auth/ProfessionalLoginView.vue'),
       meta: {

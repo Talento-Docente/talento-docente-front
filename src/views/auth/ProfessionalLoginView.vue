@@ -33,8 +33,11 @@ export default defineComponent({
       wrapperCol: { span: 24 },
 
       /** Loader */
-      loading: false
-    }
+      loading: false,
+      /** Employment Puclib data */
+      selectedEmploymentId: ref<number>(0),
+      isNumber: false,
+      }
   },
 
   computed: {
@@ -44,7 +47,14 @@ export default defineComponent({
   },
 
   mounted () {
-    const { login_type } = this.$route.params
+    const { employment_id } = this.$route.params
+    this.selectedEmploymentId = parseInt(`${employment_id}`, 10)
+    if (!isNaN(this.selectedEmploymentId)) {
+      this.isNumber=true
+      console.log(this.isNumber+" "+this.selectedEmploymentId)
+    }else{
+      console.log(this.isNumber)
+    }
   },
 
   methods: {
@@ -61,6 +71,10 @@ export default defineComponent({
           message.error('Credenciales invalidas')
         })
       this.loading = false
+      if(this.isNumber){
+        this.$router.push({ name: 'EmploymentPublicView', params: { employment_id: this.selectedEmploymentId } })
+      }
+
     }
   }
 
@@ -123,10 +137,8 @@ export default defineComponent({
       .text-align__center
         h2 
           b ¿Tienes dudas? 
-        span Consulta nuestras 
-          a preguntas frecuentes 
-          span o 
-          a contactanos.
+        span Contactanos haciendo click 
+          a aqui.
 
 </template>
 

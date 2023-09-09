@@ -6,6 +6,7 @@ import { message } from 'ant-design-vue'
 /** Internal dependencies */
 /** Store */
 import { employmentStore } from '@/stores/employment.store'
+import { authStore } from '@/stores/auth.store'
 
 /** Components */
 import LandingNavbar from "@/views/landing/LandingNavbar.vue";
@@ -22,6 +23,7 @@ export default defineComponent({
 
     /** Store */
     employmentStore: employmentStore(),
+    authStore: authStore(),
 
     /** Loader */
     loadingEmployment: false,
@@ -113,8 +115,15 @@ export default defineComponent({
           .font-size__h4.margin-top__50 Postular
           a-divider.padding__0.margin__0
           a-row(:gutter="[16,8]", align="middle", justify="center").margin-top__20
-            a-col
-              a-button(type="primary", size="large") Postular
+            a-col(v-if="!authStore.isAuthenticated")
+              h4
+                span Para postular debes
+                a(@click="() => $router.push({ name: 'ProfessionalLogin', params: { employment_id: selectedEmploymentId } })")  iniciar sesión
+                span  ó
+                a  registrate
+                span  si aun no lo has echo.
+            a-col(v-if="authStore.isAuthenticated")
+              a-button(type="primary") Postular
 
 
 </template>
