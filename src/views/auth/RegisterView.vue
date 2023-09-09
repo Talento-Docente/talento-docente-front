@@ -71,7 +71,7 @@ export default defineComponent({
         dni: '',
         name: '',
         address: '',
-        phone: '',
+        phone: ''
       }),
 
       /** Form Terms */
@@ -204,7 +204,7 @@ export default defineComponent({
       if (this.currentStep > 0) {
         this.currentStep -= 1
       } else {
-        this.$router.push({ name: 'Login', params: { login_type: this.registerType } })
+        this.$router.push({ path: '/login/'+this.registerType})
       }
     },
 
@@ -229,8 +229,12 @@ export default defineComponent({
         if (status === 'error') {
           aMessage.error(String(message))
         } else {
-          if(this.registerType==='professional'){
+          if(this.isNumber){
           this.$router.push({ name: 'ProfessionalLogin', params: { employment_id: this.selectedEmploymentId } })
+
+          }
+          if(this.registerType==='professional'){
+          this.$router.push({ name: 'ProfessionalLogin'})
 
           }
           if(this.registerType==='establishment'){
