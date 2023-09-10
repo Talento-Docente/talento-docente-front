@@ -51,9 +51,6 @@ export default defineComponent({
     this.selectedEmploymentId = parseInt(`${employment_id}`, 10)
     if (!isNaN(this.selectedEmploymentId)) {
       this.isNumber=true
-      console.log(this.isNumber+" "+this.selectedEmploymentId)
-    }else{
-      console.log(this.isNumber)
     }
   },
 

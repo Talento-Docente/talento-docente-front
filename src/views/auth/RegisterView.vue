@@ -71,7 +71,8 @@ export default defineComponent({
         dni: '',
         name: '',
         address: '',
-        phone: ''
+        phone: '',
+        picture:''
       }),
 
       /** Form Terms */

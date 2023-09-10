@@ -26,6 +26,11 @@ import {
   LinkedinOutlined,
   EnvironmentOutlined,
   GlobalOutlined,
+  PlusOutlined,
+  BankOutlined,
+  IdcardOutlined,
+  ProfileOutlined,
+  SendOutlined
 } from '@ant-design/icons-vue';
 
 function getBase64(file: any) {
@@ -46,6 +51,11 @@ export default defineComponent({
     LinkedinOutlined,
     EnvironmentOutlined,
     GlobalOutlined,
+    PlusOutlined,
+    BankOutlined,
+    IdcardOutlined,
+    ProfileOutlined,
+    SendOutlined
   },
 
   setup() {
@@ -159,7 +169,9 @@ export default defineComponent({
           a-row
 
             a-col(:sm="12")
-              h4 Logo Empresa
+              h4 
+                BankOutlined
+                span.margin-left__10 Logo Empresa
               p.font-size__12.color__gray.padding__0.margin__0 Minimo 200x200 px, Cuadrara
               p.font-size__12.color__gray.padding__0.margin__0 (Igual que el avatar de Facebook o Whatsapp).
 
@@ -181,7 +193,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Nombre
+              h4 
+                ProfileOutlined
+                span.margin-left__10 Nombre
               p.font-size__12.color__gray.padding__0.margin__0 Nombre del negocio.
 
             a-col(:sm="12")
@@ -194,7 +208,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Rut
+              h4 
+                IdcardOutlined 
+                span.margin-left__10 Rut
 
             a-col(:sm="12")
               a-form-item(
@@ -206,7 +222,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Dirección
+              h4
+                SendOutlined(:rotate="320")
+                span.margin-left__10 Dirección
               p.font-size__12.color__gray.padding__0.margin__0 Ingrese dirección del establecimiento.
 
             a-col(:sm="12")
@@ -219,7 +237,9 @@ export default defineComponent({
             a-divider
 
             a-col(:sm="12")
-              h4 Telefono de Contacto
+              h4 
+                PhoneOutlined
+                span.margin-left__10 Telefono de Contacto
               p.font-size__12.color__gray.padding__0.margin__0 Telefono de contacto.
 
             a-col(:sm="12")

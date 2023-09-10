@@ -257,6 +257,7 @@ export default defineComponent({
     },
 
     handleChange (value: []) {
+      //Al cambiar el tag en habilidades 
       console.log(`selected ${value}`);
     },
 
