@@ -93,25 +93,45 @@ export default defineComponent({
       loading: false,
     }),
 
-     /** Habilities Filter */
-     options : ref<SelectProps['options']>([
+    /** Habilities Filter */
+    options : ref<SelectProps['options']>([
+      {
+        value: 'math_tech',
+        label: 'Matematicas',
+      },
+      {
+        value: 'cie_tech',
+        label: 'Ciencias',
+      },
+      {
+        value: 'eng',
+        label: 'Ingles',
+      },
+      {
+        value: 'aux',
+        label: 'Profesor de auxiliar',
+      },
+    ]),
+    profOptions : ref<SelectProps['options']>([
         {
-          value: 'math_tech',
-          label: 'Matematicas',
+          value: 'math_doc',
+          label: 'Docente de Matematicas',
         },
         {
           value: 'cie_tech',
-          label: 'Ciencias',
+          label: 'Docente de Ciencias',
         },
         {
           value: 'eng',
-          label: 'Ingles',
+          label: 'Docente de Ingles',
         },
         {
           value: 'aux',
-          label: 'Profesor de auxiliar',
+          label: 'ing. calculo',
         },
       ]),
+
+
   
     /** Store */
     applicantStore: applicantStore(),
@@ -177,8 +197,7 @@ export default defineComponent({
             style="width: 100%"
             :token-separators="[',']"
             placeholder="Profesión..."
-            :options="options"
-            @change="handleChange")
+            :options="profOptions")
       a-col
         a-button(@click="init", type="primary")
           search-outlined
@@ -190,8 +209,7 @@ export default defineComponent({
             style="width: 100%"
             :token-separators="[',']"
             placeholder="habilidades..."
-            :options="options"
-            @change="handleChange")
+            :options="options")
 
       a-col
         a-button(@click="init", type="primary")
@@ -210,7 +228,7 @@ export default defineComponent({
   div
     div(:style="'margin-bottom: 16px'")
       a-button(type="primary" :disabled="!hasSelected" :loading="state.loading" @click="start")
-        span Reload
+        span Transferir
       span(:style="'margin-left: 8px'")
         template(v-if="hasSelected")
           span {{ `Seleccionados ${state.selectedRowKeys.length}` }}
