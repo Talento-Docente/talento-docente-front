@@ -6,9 +6,6 @@ import { message as aMessage, message } from "ant-design-vue";
 import * as uuid from "uuid";
 import _ from "lodash";
 
-/** Interfaces */
-import type {  WorkExperienceInterface } from '@/interfaces/work_experience.interface'
-import type {  AcademicTrainingInterface } from '@/interfaces/academic_training.interface'
 
 /** Internal dependencies */
 import config from '@/config'
@@ -38,11 +35,16 @@ import type { SelectProps } from 'ant-design-vue';
 
 /** Interfaces */
 import type { ProfileInterface } from "@/interfaces/user.interface";
+import type {  WorkExperienceInterface } from '@/interfaces/work_experience.interface'
+import type {  AcademicTrainingInterface } from '@/interfaces/academic_training.interface'
 
 /** Stores */
 import { authStore } from "@/stores/auth.store";
 import {workExperienceStore} from "@/stores/work_experience.store"
 import {academicTrainingStore} from "@/stores/academic_training.store"
+
+/** Component */
+import MyExperienceModal from "@/views/admin/my_profile/MyExperienceModal.vue";
 
 /** Services */
 import userServices from "@/services/user.services";
@@ -78,7 +80,8 @@ export default defineComponent({
     UserAddOutlined,
     ReadOutlined,
     YoutubeOutlined,
-    FolderOutlined
+    FolderOutlined,
+    MyExperienceModal
   },
 
   data() {
@@ -165,7 +168,6 @@ export default defineComponent({
 
   mounted() {
     this.init()
-    this.getExperiences()
   },
 
   computed: {},
@@ -173,14 +175,8 @@ export default defineComponent({
   methods: {
 
     init () {
-      // try {
-      //   this.workExperienceStore.getWorkExperiences()
-      //   console.log(this.workExperienceStore.workExperiences)
-      // } catch (error) {
-      //   console.log(error)
-      // }
-      this.workExperienceStore.workExperiences = this.authStore.user.applicant.work_experiences
       const user = this.authStore.user
+      this.academicTrainingStore.academicTrainings = user.applicant.academic_trainings
       this.formProfile.first_name = user.first_name
       this.formProfile.last_name = user.last_name
       this.formProfile.email = user.email
@@ -253,20 +249,7 @@ export default defineComponent({
         this.loadingUpload = false
       }
     },
-
-    showModalExp () {
-      this.modalExperience = true;
-    },
-
-    cleanFormExperience () {
-      this.formExperience.business_name= ''
-      this.formExperience.description= ''
-      this.formExperience.end_date= ''
-      this.formExperience.job_title= ''
-      this.formExperience.start_date= ''
-      this.formExperience.applicant_id = 0
-    },
-
+   
     cleanFormAcademic(){
       this.formAcademic.career_name = ''
       this.formAcademic.end_date = ''
@@ -280,63 +263,15 @@ export default defineComponent({
       console.log(`selected ${value}`);
     },
 
-    showModalSkills () {
-      this.modalSkills = true;
-    },
-
     showModalAcademy () {
       this.modalAcademy = true;
     },
 
     handleOk  () {
-      this.modalExperience = false;
       this.modalSkills = false;
       this.modalAcademy = false;
     },
-    async createExperience(values: any) {
-      try {
-        this.loading = true
-        const userId = parseInt(`${this.authStore.user.id}`, 10)
-        values.applicant_id = userId
-        const response = await this.workExperienceStore.createWorkExperience(values)
-        if (response.status !== 'success') {
-          message.error('Error al guardar información')
-        } else {
-          message.success('Experiencia guardada')
-        }
-      } catch (e) {
-        console.log(e)
-      }finally{
-        this.cleanFormExperience()
-        this.handleOk()
-      }
-      this.loading = false
-    },
-
-    removeExperience () {
-
-    },
-
-    async getExperience(){
-      try {
-
-      } catch (error) {
-
-      }
-
-    },
-    async getExperiences(){
-      try {
-        this.loading = true
-        await this.workExperienceStore.getWorkExperiences()
-      } catch (error) {
-        console.log(error)
-      }finally {
-        this.loading = false;
-      }
-
-    },
-
+    
     async createAcademicTraining (values: any){
       try {
         this.loading = true
@@ -357,17 +292,6 @@ export default defineComponent({
       }
 
     },
-
-    async getAcademicTrainings(){
-      try {
-        this.loading = true
-        await this.academicTrainingStore.getAcademicTrainings()
-      } catch (e) {
-        console.log(e)
-      }finally {
-        this.loading = false;
-      }
-    }
   }
 
 });
@@ -510,76 +434,11 @@ export default defineComponent({
 
             a-divider
 
-            a-col(:sm="12")
-              h4.font-weight__bold
-                ProfileOutlined
-                span.margin-left__10 Añade tus ultimas experiencias laborales
-              a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
+            a-col(:sm="24")
+              MyExperienceModal
+            //- a-col(:sm="12")
+            //-   span {{ workExperienceStore.workExperiences  }}
 
-              span {{ workExperienceStore.workExperiences }}
-
-              a-modal(width="900px" centered v-model:visible="modalExperience" :footer="null" @ok="handleOk")
-
-                template(#title)
-                  .text-align__center Añadir mis experiencias Laborales
-                a-row(:gutter="16")
-                  a-col(:span="8")
-                    h2 Perfil profesional y experiencia laboral
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
-
-                  a-col(:span="16")
-                    a-form(:model="formExperience", @finish="createExperience")
-                      a-card
-                        template(#title)
-                          .text-align__center
-                            span(v-if="formExperience.business_name")
-                              span {{ formExperience.business_name }}
-                            span(v-else)
-                              span Mi Experiencia
-                        a-row(:gutter="20")
-
-                          a-col(:span="12")
-                            a-form-item(
-                              label="Empresa",
-                              name="business_name"
-                              :rules="[{ required: true, message: 'Ingrese nombre', min: 1}]")
-                              a-input(v-model:value="formExperience.business_name")
-
-                          a-col(:span="12")
-                            a-form-item(
-                              label="Cargo",
-                              name="job_title"
-                              :rules="[{ required: true, message: 'Ingrese cargo', min: 3}]")
-                              a-input(v-model:value="formExperience.job_title")
-
-                          a-col(:span="11")
-                            a-form-item(
-                              label="Fecha Inicio",
-                              name="start_date"
-                              :rules="[{ required: true, message: 'Ingrese fecha'}]")
-                              a-input(type="date",v-model:value="formExperience.start_date")
-
-                          a-col(:span="12")
-                            a-form-item(
-                              label="Fecha termino",
-                              name="end_date")
-                              a-input(type="date",v-model:value="formExperience.end_date")
-                              p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
-
-                          a-col(:span="24")
-                            span Descripcion del cargo:
-                            a-form-item(
-                              name="description").margin-top__10
-                              quill-editor(v-model:value="formExperience.description", content-type="html")
-                        a-button(type="link" @click="cleanFormExperience()").margin-top__20.float-right
-                          span Limpiar
-
-                        a-button(type="primary" html-type="submit").margin-top__20.float-right
-                          span Guardar
-            a-col(:sm="12")
-              //- a-list(
-              //-   :data-source="workExperienceStore.workExperience"
-              //-   item-layout="horizontal")
 
             a-divider
 

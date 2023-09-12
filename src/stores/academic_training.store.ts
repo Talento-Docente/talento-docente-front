@@ -25,10 +25,10 @@ export const academicTrainingStore = defineStore('academicTraining', {
         throw Error('Establecimiento no seleccionado')
       }
       const response = await AcademicTrainingServices.index(page, pageSize, searchBy)
-      const { academicTrainings, meta } = response.data
-      this.academicTrainings = academicTrainings
-      this.meta = meta
-      return academicTrainings
+      const { data } = response
+      this.academicTrainings = data.academic_trainings
+      this.meta = data.meta
+      return this.academicTrainings
     },
 
     async getAcademicTraining(academicTrainingId: number = 1) {
