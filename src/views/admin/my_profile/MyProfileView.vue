@@ -120,7 +120,7 @@ export default defineComponent({
       modalAcademy:false,
       labelCol: { style: { width: '150px' } },
       wrapperCol: { span: 24 },
-      
+
 
       /** Experiences */
       formExperience: reactive<WorkExperienceInterface>({
@@ -133,7 +133,7 @@ export default defineComponent({
       }),
       loadingExpList: ref(false),
 
-      /** Habilities */
+      /** Abilities */
       options : ref<SelectProps['options']>([
         {
           value: 'math_tech',
@@ -173,12 +173,13 @@ export default defineComponent({
   methods: {
 
     init () {
-      try {
-        this.workExperienceStore.getWorkExperiences()
-        console.log(this.workExperienceStore.workExperiences)
-      } catch (error) {
-        console.log(error)
-      }
+      // try {
+      //   this.workExperienceStore.getWorkExperiences()
+      //   console.log(this.workExperienceStore.workExperiences)
+      // } catch (error) {
+      //   console.log(error)
+      // }
+      this.workExperienceStore.workExperiences = this.authStore.user.applicant.work_experiences
       const user = this.authStore.user
       this.formProfile.first_name = user.first_name
       this.formProfile.last_name = user.last_name
@@ -275,7 +276,7 @@ export default defineComponent({
     },
 
     handleChange (value: []) {
-      //Al cambiar el tag en habilidades 
+      //Al cambiar el tag en habilidades
       console.log(`selected ${value}`);
     },
 
@@ -310,17 +311,17 @@ export default defineComponent({
         this.handleOk()
       }
       this.loading = false
-    }, 
-    
-    removeExperience () {
-      
     },
-    
+
+    removeExperience () {
+
+    },
+
     async getExperience(){
       try {
-        
+
       } catch (error) {
-        
+
       }
 
     },
@@ -354,7 +355,7 @@ export default defineComponent({
         this.handleOk()
         this.loading = false
       }
-      
+
     },
 
     async getAcademicTrainings(){
@@ -515,8 +516,10 @@ export default defineComponent({
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
 
+              span {{ workExperienceStore.workExperiences }}
+
               a-modal(width="900px" centered v-model:visible="modalExperience" :footer="null" @ok="handleOk")
-                
+
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
                 a-row(:gutter="16")
@@ -528,13 +531,13 @@ export default defineComponent({
                     a-form(:model="formExperience", @finish="createExperience")
                       a-card
                         template(#title)
-                          .text-align__center 
+                          .text-align__center
                             span(v-if="formExperience.business_name")
                               span {{ formExperience.business_name }}
                             span(v-else)
                               span Mi Experiencia
                         a-row(:gutter="20")
-                          
+
                           a-col(:span="12")
                             a-form-item(
                               label="Empresa",
@@ -561,7 +564,7 @@ export default defineComponent({
                               label="Fecha termino",
                               name="end_date")
                               a-input(type="date",v-model:value="formExperience.end_date")
-                              p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio. 
+                              p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
 
                           a-col(:span="24")
                             span Descripcion del cargo:
@@ -593,7 +596,7 @@ export default defineComponent({
                   placeholder="Agregar habilidades"
                   :options="options"
                   @change="handleChange")
-                a-button(@click="showModalSkills()" type="primary", variant="outlined") Guardar                      
+                a-button(@click="showModalSkills()" type="primary", variant="outlined") Guardar
 
             a-divider
 
@@ -624,7 +627,7 @@ export default defineComponent({
                             label="Carrera",
                             name="career_name")
                             a-input(v-model:value="formAcademic.career_name")
-                        
+
                         a-form-item(:wrapper-col="{ span: 8 }"
                           label="Fecha Inicio",
                           name="start_date")
