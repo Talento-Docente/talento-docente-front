@@ -25,10 +25,10 @@ export const workExperienceStore = defineStore('workExperience', {
         throw Error('Establecimiento no seleccionado')
       }
       const response = await WorkExperienceServices.index(page, pageSize, searchBy)
-      const { workExperiences, meta } = response.data
-      this.workExperiences = workExperiences
-      this.meta = meta
-      return workExperiences
+      const { data } = response
+      this.workExperiences = data.work_experiences
+      this.meta = data.meta
+      return this.workExperiences
     },
 
     async getWorkExperience(workExperienceId: number = 1) {
