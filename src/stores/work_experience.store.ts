@@ -21,9 +21,9 @@ export const workExperienceStore = defineStore('workExperience', {
   actions: {
     async getWorkExperiences(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
       const establishmentId: number | null = authStore().selectedEstablishmentId
-      if (establishmentId === null) {
-        throw Error('Establecimiento no seleccionado')
-      }
+      // if (establishmentId === null) {
+      //   throw Error('Establecimiento no seleccionado')
+      // }
       const response = await WorkExperienceServices.index(page, pageSize, searchBy)
       const { data } = response
       this.workExperiences = data.work_experiences

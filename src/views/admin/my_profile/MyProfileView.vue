@@ -436,10 +436,7 @@ export default defineComponent({
 
             a-col(:sm="24")
               MyExperienceModal
-            //- a-col(:sm="12")
-            //-   span {{ workExperienceStore.workExperiences  }}
-
-
+              
             a-divider
 
             a-col(:sm="16")
