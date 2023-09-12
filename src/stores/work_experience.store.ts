@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 /** Internal dependencies */
 /** Interfaces */
-import type { WorkExperiecnceInterface } from "@/interfaces/work_experience.interface"
+import type {  WorkExperienceInterface } from "@/interfaces/work_experience.interface"
 import type { MetaInterface } from "@/interfaces/meta.interface"
 
 /** Services */
@@ -13,8 +13,8 @@ import { authStore } from "@/stores/auth.store";
 export const workExperienceStore = defineStore('workExperience', {
 
   state: () => ({
-    workExperiences: [] as WorkExperiecnceInterface[],
-    workExperience: null as WorkExperiecnceInterface | null,
+    workExperiences: [] as  WorkExperienceInterface[],
+    workExperience: null as  WorkExperienceInterface | null,
     meta: {} as MetaInterface,
   }),
 
@@ -38,13 +38,13 @@ export const workExperienceStore = defineStore('workExperience', {
       return data
     },
 
-    async createWorkExperience(workExperienceData: WorkExperiecnceInterface) {
+    async createWorkExperience(workExperienceData:  WorkExperienceInterface) {
       const response = await WorkExperienceServices.create(workExperienceData)
       const { data } = response
       return data
     },
 
-    async updateWorkExperience(workExperienceId: number, workExperienceData: WorkExperiecnceInterface) {
+    async updateWorkExperience(workExperienceId: number, workExperienceData:  WorkExperienceInterface) {
       const response = await WorkExperienceServices.update(workExperienceId, workExperienceData)
       const { data } = response
       return data

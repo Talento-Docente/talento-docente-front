@@ -7,7 +7,7 @@ import type { AcademicTrainingInterface } from "@/interfaces/academic_training.i
 import type { MetaInterface } from "@/interfaces/meta.interface"
 
 /** Services */
-import WorkExperienceServices from '@/services/academic_training.services'
+import AcademicTrainingServices from '@/services/academic_training.services'
 import { authStore } from "@/stores/auth.store";
 
 export const academicTrainingStore = defineStore('academicTraining', {
@@ -19,40 +19,40 @@ export const academicTrainingStore = defineStore('academicTraining', {
   }),
 
   actions: {
-    async getWorkExperiences(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
+    async getAcademicTrainings(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
       const establishmentId: number | null = authStore().selectedEstablishmentId
       if (establishmentId === null) {
         throw Error('Establecimiento no seleccionado')
       }
-      const response = await WorkExperienceServices.index(page, pageSize, searchBy)
+      const response = await AcademicTrainingServices.index(page, pageSize, searchBy)
       const { academicTrainings, meta } = response.data
       this.academicTrainings = academicTrainings
       this.meta = meta
       return academicTrainings
     },
 
-    async getWorkExperience(academicTrainingId: number = 1) {
-      const response = await WorkExperienceServices.show(academicTrainingId)
+    async getAcademicTraining(academicTrainingId: number = 1) {
+      const response = await AcademicTrainingServices.show(academicTrainingId)
       const { data } = response
       this.academicTraining = data
       return data
     },
 
-    async createWorkExperience(academicTrainingData: AcademicTrainingInterface) {
-      const response = await WorkExperienceServices.create(academicTrainingData)
+    async createAcademicTraining(academicTrainingData: AcademicTrainingInterface) {
+      const response = await AcademicTrainingServices.create(academicTrainingData)
       const { data } = response
       return data
     },
 
-    async updateWorkExperience(academicTrainingId: number, academicTrainingData: AcademicTrainingInterface) {
-      const response = await WorkExperienceServices.update(academicTrainingId, academicTrainingData)
+    async updateAcademicTraining(academicTrainingId: number, academicTrainingData: AcademicTrainingInterface) {
+      const response = await AcademicTrainingServices.update(academicTrainingId, academicTrainingData)
       const { data } = response
       return data
     },
 
 
-    async destroyWorkExperience(academicTrainingId: number) {
-      const response = await WorkExperienceServices.destroy(academicTrainingId)
+    async destroyAcademicTraining(academicTrainingId: number) {
+      const response = await AcademicTrainingServices.destroy(academicTrainingId)
       const { data } = response
       return data
     },

@@ -2,9 +2,13 @@
 /** External dependencies */
 import { defineComponent, reactive, ref } from "vue";
 import type { UploadProps } from 'ant-design-vue';
-import { message as aMessage } from "ant-design-vue";
+import { message as aMessage, message } from "ant-design-vue";
 import * as uuid from "uuid";
 import _ from "lodash";
+
+/** Interfaces */
+import type {  WorkExperienceInterface } from '@/interfaces/work_experience.interface'
+import type {  AcademicTrainingInterface } from '@/interfaces/academic_training.interface'
 
 /** Internal dependencies */
 import config from '@/config'
@@ -37,6 +41,8 @@ import type { ProfileInterface } from "@/interfaces/user.interface";
 
 /** Stores */
 import { authStore } from "@/stores/auth.store";
+import {workExperienceStore} from "@/stores/work_experience.store"
+import {academicTrainingStore} from "@/stores/academic_training.store"
 
 /** Services */
 import userServices from "@/services/user.services";
@@ -50,16 +56,6 @@ function getBase64(file: any) {
     reader.onerror = error => reject(error);
   });
 }
-
-interface ExperienceInterface {
-  id?: number | string | null,
-  establishment_name: string | null,
-  job_title: string | null,
-  description: string | null,
-  init_date: string | null,
-  end_date: string | null
-}
-
 
 export default defineComponent({
 
@@ -111,6 +107,8 @@ export default defineComponent({
 
       /** Stores */
       authStore: authStore(),
+      workExperienceStore: workExperienceStore(),
+      academicTrainingStore: academicTrainingStore(),
 
       /** Loader */
       loading: false,
@@ -125,8 +123,15 @@ export default defineComponent({
       
 
       /** Experiences */
-      experienceActiveKey: null,
-      experiences: [] as Array<ExperienceInterface>,
+      formExperience: reactive<WorkExperienceInterface>({
+        business_name: '',
+        description: '',
+        end_date: '',
+        job_title: '',
+        start_date: '',
+        applicant_id: 0
+      }),
+      loadingExpList: ref(false),
 
       /** Habilities */
       options : ref<SelectProps['options']>([
@@ -147,11 +152,20 @@ export default defineComponent({
           label: 'Profesor de auxiliar',
         },
       ]),
+      /** Academic Info*/
+      formAcademic: reactive<AcademicTrainingInterface>({
+        career_name: '',
+        end_date: '',
+        start_date: '',
+        study_house_name: '',
+        applicant_id: 0
+      }),
     };
   },
 
   mounted() {
     this.init()
+    this.getExperiences()
   },
 
   computed: {},
@@ -159,6 +173,12 @@ export default defineComponent({
   methods: {
 
     init () {
+      try {
+        this.workExperienceStore.getWorkExperiences()
+        console.log(this.workExperienceStore.workExperiences)
+      } catch (error) {
+        console.log(error)
+      }
       const user = this.authStore.user
       this.formProfile.first_name = user.first_name
       this.formProfile.last_name = user.last_name
@@ -222,7 +242,7 @@ export default defineComponent({
           aMessage.success('Eliminación exitosa')
           await this.authStore.getProfile()
           this.init()
-        } else {
+        }else {
           aMessage.error('Error al elimnar')
         }
       } catch (e) {
@@ -237,23 +257,21 @@ export default defineComponent({
       this.modalExperience = true;
     },
 
-    addNewExperience () {
-      const experience: ExperienceInterface = {
-        id: uuid.v4(),
-        establishment_name: null,
-        job_title: null,
-        description: null,
-        init_date: null,
-        end_date: null,
-      }
-      this.experiences.push(experience)
+    cleanFormExperience () {
+      this.formExperience.business_name= ''
+      this.formExperience.description= ''
+      this.formExperience.end_date= ''
+      this.formExperience.job_title= ''
+      this.formExperience.start_date= ''
+      this.formExperience.applicant_id = 0
     },
 
-    removeExperience (experience: ExperienceInterface) {
-      const index = _.findIndex(this.experiences, (_experience: ExperienceInterface) => {
-        return experience.id === _experience.id
-      })
-      this.experiences.splice(index, 1)
+    cleanFormAcademic(){
+      this.formAcademic.career_name = ''
+      this.formAcademic.end_date = ''
+      this.formAcademic.start_date = ''
+      this.formAcademic.study_house_name = ''
+      this.formAcademic.applicant_id = 0
     },
 
     handleChange (value: []) {
@@ -274,6 +292,81 @@ export default defineComponent({
       this.modalSkills = false;
       this.modalAcademy = false;
     },
+    async createExperience(values: any) {
+      try {
+        this.loading = true
+        const userId = parseInt(`${this.authStore.user.id}`, 10)
+        values.applicant_id = userId
+        const response = await this.workExperienceStore.createWorkExperience(values)
+        if (response.status !== 'success') {
+          message.error('Error al guardar información')
+        } else {
+          message.success('Experiencia guardada')
+        }
+      } catch (e) {
+        console.log(e)
+      }finally{
+        this.cleanFormExperience()
+        this.handleOk()
+      }
+      this.loading = false
+    }, 
+    
+    removeExperience () {
+      
+    },
+    
+    async getExperience(){
+      try {
+        
+      } catch (error) {
+        
+      }
+
+    },
+    async getExperiences(){
+      try {
+        this.loading = true
+        await this.workExperienceStore.getWorkExperiences()
+      } catch (error) {
+        console.log(error)
+      }finally {
+        this.loading = false;
+      }
+
+    },
+
+    async createAcademicTraining (values: any){
+      try {
+        this.loading = true
+        const userId = parseInt(`${this.authStore.user.id}`, 10)
+        values.applicant_id = userId
+        const response = await this.academicTrainingStore.createAcademicTraining(values)
+        if (response.status !== 'success') {
+          message.error('Error al guardar información')
+        } else {
+          message.success('Informacion academica guardada !')
+        }
+      } catch (e) {
+        console.log(e)
+      }finally{
+        this.cleanFormAcademic()
+        this.handleOk()
+        this.loading = false
+      }
+      
+    },
+
+    async getAcademicTrainings(){
+      try {
+        this.loading = true
+        await this.academicTrainingStore.getAcademicTrainings()
+      } catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false;
+      }
+    }
   }
 
 });
@@ -297,7 +390,7 @@ export default defineComponent({
               h4
                 CameraOutlined
                 span.margin-left__10 Foto de Perfil
-              p.font-size__12.color__gray.padding__0.margin__0 Minimo 200x200 px, Cuadrara
+              p.font-size__12.color__gray.padding__0.margin__0 Minimo 200x200 px, Cuadrada
               p.font-size__12.color__gray.padding__0.margin__0 (Igual que el avatar de Facebook o Whatsapp).
 
             a-col(:sm="12")
@@ -422,90 +515,85 @@ export default defineComponent({
                 span.margin-left__10 Añade tus ultimas experiencias laborales
               a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="900px" centered v-model:visible="modalExperience" okText="Guardar" @ok="handleOk")
+              a-modal(width="900px" centered v-model:visible="modalExperience" :footer="null" @ok="handleOk")
                 
                 template(#title)
                   .text-align__center Añadir mis experiencias Laborales
+                a-row(:gutter="16")
+                  a-col(:span="8")
+                    h2 Perfil profesional y experiencia laboral
+                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
 
-                a-form()
-                  a-row(:gutter="16")
-                    a-col(:span="8")
-                      h2 Perfil profesional y experiencia laboral
-                      p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
-
-                    a-col(:span="16")
-                      a-collapse(v-model:active-key="experienceActiveKey")
-                        a-collapse-panel(v-for="experience in experiences", :key="experience.id")
-
-                          template(#header)
-                            span(v-if="experience.establishment_name") 
-                              span {{ experience.establishment_name }}
+                  a-col(:span="16")
+                    a-form(:model="formExperience", @finish="createExperience")
+                      a-card
+                        template(#title)
+                          .text-align__center 
+                            span(v-if="formExperience.business_name")
+                              span {{ formExperience.business_name }}
                             span(v-else)
-                              span Experiencia
-                          template(#extra)
-                            a-button(type="link", danger, size="small", @click="removeExperience(experience)") Eliminar
+                              span Mi Experiencia
+                        a-row(:gutter="20")
+                          
+                          a-col(:span="12")
+                            a-form-item(
+                              label="Empresa",
+                              name="business_name"
+                              :rules="[{ required: true, message: 'Ingrese nombre', min: 1}]")
+                              a-input(v-model:value="formExperience.business_name")
 
-                          a-row(:gutter="20")
-                            
-                            a-col(:span="12")
-                              a-form-item(
-                                label="Empresa",
-                                name="establishment_name")
-                                a-input(v-model:value="experience.establishment_name")
+                          a-col(:span="12")
+                            a-form-item(
+                              label="Cargo",
+                              name="job_title"
+                              :rules="[{ required: true, message: 'Ingrese cargo', min: 3}]")
+                              a-input(v-model:value="formExperience.job_title")
 
-                            a-col(:span="12")
-                              a-form-item(
-                                label="Cargo",
-                                name="job_title")
-                                a-input(v-model:value="experience.job_title")
+                          a-col(:span="11")
+                            a-form-item(
+                              label="Fecha Inicio",
+                              name="start_date"
+                              :rules="[{ required: true, message: 'Ingrese fecha'}]")
+                              a-input(type="date",v-model:value="formExperience.start_date")
 
-                            a-col(:span="11")
-                              a-form-item(
-                                label="Fecha Inicio",
-                                name="init_date")
-                                a-input(type="date",v-model:value="experience.init_date")
+                          a-col(:span="12")
+                            a-form-item(
+                              label="Fecha termino",
+                              name="end_date")
+                              a-input(type="date",v-model:value="formExperience.end_date")
+                              p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio. 
 
-                            a-col(:span="12")
-                              a-form-item(
-                                label="Fecha termino",
-                                name="end_date")
-                                a-input(type="date",v-model:value="experience.end_date")
-                                p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio. 
+                          a-col(:span="24")
+                            span Descripcion del cargo:
+                            a-form-item(
+                              name="description").margin-top__10
+                              quill-editor(v-model:value="formExperience.description", content-type="html")
+                        a-button(type="link" @click="cleanFormExperience()").margin-top__20.float-right
+                          span Limpiar
 
-                            a-col(:span="24")
-                              span Descripcion del cargo:
-                              a-form-item(
-                                name="description").margin-top__10
-                                quill-editor(v-model:value="experience.description", content-type="html")
-
-                      a-button(type="link", @click="addNewExperience").margin-top__20.float-right
-                        span + Añadir Experiencia
+                        a-button(type="primary" html-type="submit").margin-top__20.float-right
+                          span Guardar
+            a-col(:sm="12")
+              //- a-list(
+              //-   :data-source="workExperienceStore.workExperience"
+              //-   item-layout="horizontal")
 
             a-divider
 
-            a-col(:sm="12")
+            a-col(:sm="16")
               h4.font-weight__bold
                 UserAddOutlined
                 span.margin-left__10 Añade tus habilidades
-              a-button(@click="showModalSkills()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="700px" centered v-model:visible="modalSkills" okText="Guardar" @ok="handleOk")
-                template(#title)
-                  .text-align__center Añadir mis Habilidades
-                a-row(:gutter="16")
-                  a-col(:span="10" :offset="1" )
-                    h2 Habilidades
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
-
-                  a-col(:span="12")
-                    a-select(
-                      mode="tags"
-                      style="width: 100%"
-                      :token-separators="[',']"
-                      placeholder="Agregar habilidades"
-                      :options="options"
-                      @change="handleChange")
-                      
+              a-col()
+                a-select(
+                  mode="tags"
+                  style="width: 60%"
+                  :token-separators="[',']"
+                  placeholder="Agregar habilidades"
+                  :options="options"
+                  @change="handleChange")
+                a-button(@click="showModalSkills()" type="primary", variant="outlined") Guardar                      
 
             a-divider
 
@@ -515,7 +603,7 @@ export default defineComponent({
                 span.margin-left__10 Formación academica
               a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
 
-              a-modal(width="900px" centered v-model:visible="modalAcademy" okText="Guardar" @ok="handleOk")
+              a-modal(width="900px" centered v-model:visible="modalAcademy" :footer="null" @ok="handleOk")
                 template(#title)
                   .text-align__center Añadir mi formación academica
                 a-row(:gutter="16")
@@ -526,27 +614,30 @@ export default defineComponent({
                   a-col(:span="14")
                     h4.text-align__center Mi información academica
                     a-card
-                      a-form(:label-col="labelCol" :wrapper-col="wrapperCol")
+                      a-form(:model="formAcademic" @finish="createAcademicTraining" :label-col="labelCol" :wrapper-col="wrapperCol")
                         a-form-item(
                             label="Nombre de institución",
-                            name="")
-                            a-input()
+                            name="study_house_name")
+                            a-input(v-model:value="formAcademic.study_house_name")
 
                         a-form-item(
                             label="Carrera",
-                            name="")
-                            a-input()
+                            name="career_name")
+                            a-input(v-model:value="formAcademic.career_name")
                         
                         a-form-item(:wrapper-col="{ span: 8 }"
                           label="Fecha Inicio",
-                          name="init_date")
-                          a-input(type="date")
+                          name="start_date")
+                          a-input(type="date" v-model:value="formAcademic.start_date")
 
                         a-form-item(:wrapper-col="{ span: 8 }"
                           label="Fecha termino",
                           name="end_date")
-                          a-input(type="date")
+                          a-input(type="date" v-model:value="formAcademic.end_date")
                           p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
+
+                        a-button(type="primary" html-type="submit").margin-top__20.float-right
+                          span Guardar
 
             a-divider
 
