@@ -18,6 +18,7 @@ import {
   ProfileOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+
 export default defineComponent({
 
   components: { 
@@ -26,10 +27,6 @@ export default defineComponent({
     LandingNavbar,
     ProfileOutlined
    },
-
-  setup() {
-    return {};
-  },
 
   data() {
     return {
@@ -50,6 +47,8 @@ export default defineComponent({
         applicant_id: 0
       }),
       modalExperience: false,
+      isAUpdate:false,
+      idExperience: 0,
     };
   },
 
@@ -61,8 +60,6 @@ export default defineComponent({
     async init () {
       try {
         await this.workExperienceStore.getWorkExperiences()
-        console.log(this.workExperienceStore.workExperiences)
-        
       } catch (error) {
         console.log(error)
       }
@@ -70,11 +67,21 @@ export default defineComponent({
     },
 
     showModalExp () {
-      this.modalExperience = true;
+      this.isAUpdate = false
+      this.cleanFormExperience ()
+      this.modalExperience = true
     },
+
+    showModalExpUpdate () {
+      this.isAUpdate = true
+      this.modalExperience = true
+    },
+
     handleOk  () {
-      this.modalExperience = false;
+      this.modalExperience = false
+      this.cleanFormExperience ()
     },
+
     cleanFormExperience () {
       this.formExperience.business_name= ""
       this.formExperience.description= " "
@@ -83,44 +90,79 @@ export default defineComponent({
       this.formExperience.start_date= ""
       this.formExperience.applicant_id = 0
     },
+
+    async saveButton(values:any){
+      if(this.isAUpdate){
+        this.updateWorkExperience(values)
+      }
+      if(!this.isAUpdate){
+        this.createExperience(values)
+      }
+    },
+
     async createExperience(values: any) {
       try {
+      this.loading = true
+      const userId = parseInt(`${this.authStore.user.id}`, 10)
+      values.applicant_id = userId
+      const response = await this.workExperienceStore.createWorkExperience(values)
+      if (response.status !== 'success') {
+        message.error('Error al guardar información')
+      } else {
+        message.success('Experiencia guardada')
+      }
+      } catch (e) {
+        console.log(e)
+      }finally{
+        this.handleOk()
+        await this.init()
+        this.loading = false
+      }
+    },
+
+    async updateWorkExperience(values: any){
+      try {
         this.loading = true
-        const userId = parseInt(`${this.authStore.user.id}`, 10)
-        values.applicant_id = userId
-        const response = await this.workExperienceStore.createWorkExperience(values)
+        const response = await this.workExperienceStore.updateWorkExperience(this.idExperience, values)
         if (response.status !== 'success') {
           message.error('Error al guardar información')
         } else {
-          message.success('Experiencia guardada')
+          message.success('Experiencia Actualizada')
         }
       } catch (e) {
         console.log(e)
       }finally{
         this.handleOk()
         await this.init()
+        this.loading = false
       }
-      this.loading = false
     },
+
     async deleteExperience(id:any){
       try {
         this.loading = true
-        const response = await this.workExperienceStore.destroyWorkExperience(id)
-        if (response.data.status === 'success') {
-          message.success('Eliminado exitoso')
-        } else {
-          message.error('Error al eliminar datos')
-        }
+        await this.workExperienceStore.destroyWorkExperience(id)
       } catch (e) {
         console.log(e)
       }finally{
         this.init()
         this.loading = false
       }
-
     },
-  }
 
+    prepareUpdate(value:any){
+      this.loading = true
+      this.idExperience= value.id
+      this.formExperience.business_name=value.business_name
+      this.formExperience.description= value.description
+      this.formExperience.end_date= value.end_date
+      this.formExperience.job_title= value.job_title
+      this.formExperience.start_date= value.start_date
+      this.formExperience.applicant_id = value.applicant_id
+      this.showModalExpUpdate()
+      this.loading = false
+    }
+  }
 });
 </script>
 
@@ -141,7 +183,7 @@ a-row
           p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
 
         a-col(:span="16")
-          a-form(:model="formExperience", @finish="createExperience")
+          a-form(:model="formExperience", @finish="saveButton")
             a-card
               template(#title)
                 .text-align__center
@@ -182,13 +224,17 @@ a-row
                 a-col(:span="24")
                   span Descripcion del cargo:
                   a-form-item(
-                    name="description").margin-top__10
+                    name="description"
+                    :rules="[{ required: true, message: 'Ingrese la descripcion del cargo realizado'}]").margin-top__10
                     quill-editor(v-model:content="formExperience.description", content-type="html")
               a-button(type="link" @click="cleanFormExperience()").margin-top__20.float-right
                 span Limpiar
 
-              a-button(type="primary" html-type="submit").margin-top__20.float-right
+              a-button(v-if="!isAUpdate" type="primary" html-type="submit").margin-top__20.float-right
                 span Guardar
+
+              a-button(v-if="isAUpdate" type="primary" html-type="submit").margin-top__20.float-right
+                span Actualizar
 
   a-col(:xl="13")
     a-list(item-layout="horizontal" :data-source="workExperienceStore?.workExperiences" size="small" )
@@ -197,6 +243,6 @@ a-row
           ul
             li {{ item.business_name }}
           template(#actions)
-            a Editar
+            a(@click="prepareUpdate(item)") Editar
             a-button(danger type="link" @click="deleteExperience(item.id)") Eliminar
 </template>
