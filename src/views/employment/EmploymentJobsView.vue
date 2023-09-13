@@ -14,6 +14,9 @@ import { postulationStore } from "@/stores/postulation.store";
 /** Interfaces */
 import type { PostulationInterface } from '@/interfaces/postulation.interface';
 
+/** Services */
+import { QuillEditor } from "@vueup/vue-quill";
+
 /** Icons */
 import {
   FormOutlined,
@@ -38,7 +41,8 @@ export default defineComponent({
     PhoneOutlined,
     TwitterOutlined,
     AuditOutlined,
-    MailOutlined
+    MailOutlined,
+    QuillEditor
 
   },
 
@@ -66,16 +70,20 @@ export default defineComponent({
       /** Modal */
       selectedApplicant: {} as any,
       visibleApplicantModal: false,
-      tabKey: 'skills',
+      tabKey: 'experiences',
       color: "#f3f3f3",
       tabListNoTitle: [
+      {
+          key: 'experiences',
+          tab: 'Experiencias',
+        },
         {
           key: 'skills',
           tab: 'Habilidades',
         },
         {
-          key: 'experiences',
-          tab: 'Experiencias',
+          key: 'academic_training',
+          tab: 'Formacion Academica',
         },
         {
           key: 'comments',
@@ -207,7 +215,7 @@ export default defineComponent({
 
     onTabChange(value: string, type: string){
       this.tabKey = value
-    }
+    },
   }
 
 });
@@ -244,7 +252,7 @@ export default defineComponent({
                 a-card(hoverable, @click="() => showDetailModal(element)")
                   a-row
                     a-col
-                      a-avatar.margin-right__5
+                      a-avatar().margin-right__5
                     a-col
                       p.padding__0.margin__0.font-size__15 {{ element.first_name }} {{ element.last_name }}
                       p.padding__0.margin__0.font-size__12 {{ element.first_name }} {{ element.last_name }}
@@ -288,15 +296,14 @@ export default defineComponent({
           :footer="null")
 
     a-row.margin-top__20
-      a-col(:span="10")
+      a-col(:span="9")
         a-row(:gutter="[16,8]")
-          a-col
-            a-avatar(:size="50")
+          a-col(v-if="applicantStore.applicant?.user?.picture")
+            a-avatar(:src="applicantStore.applicant?.user?.picture" :size="50")
           a-col
             h3 {{ applicantStore.applicant?.user?.first_name }} {{ applicantStore.applicant?.user?.last_name }}
 
-        a-typography-text(strong)
-          span {{ applicantStore.applicant?.description }}
+        span {{ applicantStore.applicant?.description }}
 
         .margin-top__20
           a-button(type="link")
@@ -319,39 +326,52 @@ export default defineComponent({
             span {{ applicantStore.applicant?.linkedin || 'No especificado' }}
 
         .margin-top__10
-          a-button(type="link", :href="applicantStore.applicant?.curriculumPreview || '#'", :disabled="!applicantStore.applicant?.curriculumPreview")
+          a-button(type="link", :href="applicantStore.applicant?.curriculum || '#'", :disabled="!applicantStore.applicant?.curriculum")
             AuditOutlined
             span Ver CV
 
 
       //- Modal Right side
-      a-col(:span="14")
+      a-col(:span="15")
         a-card(:tab-list="tabListNoTitle"
           :active-tab-key="tabKey"
           @tabChange="key => onTabChange(key, 'key')"
           :headStyle="{background: color}").margin-top__10
 
-          template(#customTab="item")
-            template(v-if="item.key === 'postulation'")
-              FormOutlined
-              span Habilidades
+          template(v-if="tabKey === 'experiences'")
+            h2.margin-bottom__30 Experiencias
+            a-list(item-layout="horizontal" size="small" :data-source="applicantStore.applicant?.work_experiences")
+              template(#renderItem="{ item, index }")
+                a-row()
+                  a-col(:span="8")
+                    h5.font-size__13 {{item.business_name}}
+                    span.font__italic  {{item.start_date  }} 
+                      span(v-if="item.end_date").display__block - {{ item.end_date }}
+                      span(v-else).display__block - Actualidad
 
-            template(v-if="item.key === 'activities'")
-              LineChartOutlined
-              span Experiencias
+                  a-col(:span="16")
+                    span.font__weight__600.display__block  {{item.job_title}}
+                    span {{ item.description }}
+                a-divider
 
-            template(v-if="item.key === 'inbox'")
-              CommentOutlined
-              span Comentarios
+          template(v-else-if="tabKey === 'skills'")
+            h2.margin-bottom__30 Habilidades
+            template(v-for="(tag, index) in applicantStore.applicant?.skills" :key="tag")
+              a-tag.font-size__14  {{ tag.skill }}
 
-          template(v-if="tabKey === 'skills'")
-            h2 Habilidades
-
-          template(v-else-if="tabKey === 'experiences'")
-            h2 Experiencias
+          template(v-else-if="tabKey === 'academic_training'")
+            h2.margin-bottom__30 Formacion academica
+            a-list(item-layout="horizontal" size="small" :data-source="applicantStore.applicant?.academic_trainings")
+              template(#renderItem="{ item, index }")
+                
+                span.font__weight__600 {{item.career_name}}
+                span.display__block {{item.study_house_name}}
+                span.font__italic  {{item.start_date}} 
+                  span(v-if="item.end_date") - {{ item.end_date }}
+                  span(v-else) - Actualidad
+                a-divider
 
           template(v-else-if="tabKey === 'comments'")
             h2 Comentarios
 
 </template>
-

@@ -64,8 +64,10 @@ export default defineComponent({
     },
 
     showModalExp () {
-      this.isAUpdate = false
-      this.cleanFormExperience ()
+      if(this.isAUpdate){
+        this.isAUpdate = false
+        this.cleanFormExperience ()
+      }
       this.modalExperience = true
     },
 
@@ -217,14 +219,14 @@ a-row
                     label="Fecha termino",
                     name="end_date")
                     a-input(type="date",v-model:value="formExperience.end_date")
-                    p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
+                    p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio en caso de empleo actual.
 
                 a-col(:span="24")
                   span Descripcion del cargo:
                   a-form-item(
                     name="description"
                     :rules="[{ required: true, message: 'Ingrese la descripcion del cargo realizado'}]").margin-top__10
-                    quill-editor(v-model:content="formExperience.description", content-type="html")
+                    QuillEditor( v-model:content="formExperience.description", content-type="html")
               a-button(type="link" @click="cleanFormExperience()").margin-top__20.float-right
                 span Limpiar
 

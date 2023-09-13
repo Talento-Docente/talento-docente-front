@@ -210,7 +210,7 @@ a-row
                 label="Fecha termino",
                 name="end_date")
                 a-input(type="date" v-model:value="formAcademic.end_date")
-                p.font-size__12.color__gray.padding__0.margin__0 * Campo no obligatorio.
+                p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio en caso de estudio actual.
 
               a-button(v-if="!isAUpdate" type="primary" html-type="submit").margin-top__20.float-right
                 span Guardar

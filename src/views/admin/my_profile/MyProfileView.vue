@@ -130,9 +130,13 @@ export default defineComponent({
       this.formProfile.first_name = user.first_name
       this.formProfile.last_name = user.last_name
       this.formProfile.email = user.email
+      this.formProfile.phone = user.applicant.phone
       this.formProfile.birthday = user.birthday
       this.formProfile.dni = user.dni
       this.formProfile.description = user.applicant.description
+
+      this.formProfile.linkedin = user.applicant.linkedin
+      this.formProfile.youtube = user.applicant.youtube
       if (user.picture) {
         this.pictureList?.push(
           {
