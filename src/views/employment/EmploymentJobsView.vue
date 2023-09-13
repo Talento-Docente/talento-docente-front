@@ -334,6 +334,7 @@ export default defineComponent({
       //- Modal Right side
       a-col(:span="15")
         a-card(:tab-list="tabListNoTitle"
+          :bordered="false"
           :active-tab-key="tabKey"
           @tabChange="key => onTabChange(key, 'key')"
           :headStyle="{background: color}").margin-top__10

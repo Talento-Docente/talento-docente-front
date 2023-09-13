@@ -5,6 +5,9 @@ import { defineComponent, ref, reactive} from 'vue'
 /** Internal dependencies */
 /** Store */
 import { applicantStore } from '@/stores/applicant.store'
+import { authStore } from "@/stores/auth.store";
+import { skillStore } from "@/stores/skill.store";
+
 
 /** Interfaces */
 import type { TableColumnsType, SelectProps } from 'ant-design-vue'
@@ -93,25 +96,10 @@ export default defineComponent({
       loading: false,
     }),
 
-    /** Habilities Filter */
-    options : ref<SelectProps['options']>([
-      {
-        value: 'math_tech',
-        label: 'Matematicas',
-      },
-      {
-        value: 'cie_tech',
-        label: 'Ciencias',
-      },
-      {
-        value: 'eng',
-        label: 'Ingles',
-      },
-      {
-        value: 'aux',
-        label: 'Profesor de auxiliar',
-      },
-    ]),
+    /** Abilities Filter */
+    options : reactive({
+        data: [{}]
+      }),
     profOptions : ref<SelectProps['options']>([
         {
           value: 'math_doc',
@@ -131,10 +119,13 @@ export default defineComponent({
         },
       ]),
 
+    /** Loader */
+    loading : false,
 
-  
     /** Store */
     applicantStore: applicantStore(),
+    authStore: authStore(),
+    skillStore: skillStore(),
 
     /** Loader */
     loadingApplicant: false
@@ -152,7 +143,24 @@ export default defineComponent({
 
   methods: {
     async init () {
+      this.optionSelect()
+    },
 
+    async optionSelect(){
+      try {
+        this.loading = true
+        await this.skillStore.getSkills()
+        const data = this.skillStore.skills.map(skill => ({
+          value: skill.skill,
+        }))
+        this.options.data = data
+
+      } catch (e) {
+        console.log(e)
+      }finally{
+        this.loading = false
+      }
+      
     },
 
     start ()  {
@@ -183,14 +191,8 @@ export default defineComponent({
       a-col(:xl="{ span: 6 }")
         a-form-item(label="Filtrar por")
           a-input(placeholder="Nombre, apellido, correo...")
-
-      a-col
-        a-form-item
-          a-button(@click="init", type="primary")
-            search-outlined
-            span Filtrar
           
-      a-col(:xl="{ span: 4 }").margin-left__30
+      a-col(:xl="{ span: 4 }")
       
         a-select(
             mode="multiple"
@@ -198,23 +200,20 @@ export default defineComponent({
             :token-separators="[',']"
             placeholder="Profesión..."
             :options="profOptions")
-      a-col
-        a-button(@click="init", type="primary")
-          search-outlined
-          span Filtrar por Profesion
 
-      a-col(:xl="{ span: 4 }").margin-left__30
+      a-col(:xl="{ span: 4 }")
         a-select(
             mode="multiple"
             style="width: 100%"
             :token-separators="[',']"
-            placeholder="habilidades..."
-            :options="options")
+            placeholder="Habilidades..."
+            :options="options.data")
 
       a-col
-        a-button(@click="init", type="primary")
-          search-outlined
-          span Filtrar por tag 
+        a-form-item
+          a-button(@click="init", type="primary")
+            search-outlined
+            span Filtrar
             
 
       //- a-col
