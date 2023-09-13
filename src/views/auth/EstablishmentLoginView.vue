@@ -4,7 +4,8 @@ import LandingNavbar from "@/views/landing/LandingNavbar.vue";
 import { defineComponent, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue';
 
-/** Internal dependencies */
+/** Components */
+import ContactUsModal from "./ContactUsModal.vue";
 
 /** Interfaces */
 import type { LoginInterface } from "@/interfaces/login.interface";
@@ -18,9 +19,11 @@ import { UserOutlined,
 } from '@ant-design/icons-vue';
 
 export default defineComponent({
-  components: { LandingNavbar, 
+  components: { 
+    LandingNavbar, 
     UserOutlined,
-    BankOutlined
+    BankOutlined,
+    ContactUsModal
    },
   data() {
     return {
@@ -120,11 +123,7 @@ export default defineComponent({
                   ) Registrate aquí
   a-row().login__footer
     a-col(:xl="{ span: 14, offset: 5 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
-      .text-align__center
-        h2 
-          b ¿Tienes dudas? 
-        span Contactanos haciendo click 
-          a aqui.
+      ContactUsModal
 
 </template>
 
