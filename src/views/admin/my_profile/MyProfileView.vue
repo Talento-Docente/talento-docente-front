@@ -35,16 +35,13 @@ import type { SelectProps } from 'ant-design-vue';
 
 /** Interfaces */
 import type { ProfileInterface } from "@/interfaces/user.interface";
-import type {  WorkExperienceInterface } from '@/interfaces/work_experience.interface'
-import type {  AcademicTrainingInterface } from '@/interfaces/academic_training.interface'
 
 /** Stores */
 import { authStore } from "@/stores/auth.store";
-import {workExperienceStore} from "@/stores/work_experience.store"
-import {academicTrainingStore} from "@/stores/academic_training.store"
 
 /** Component */
 import MyExperienceModal from "@/views/admin/my_profile/MyExperienceModal.vue";
+import MyAcademicTrainingModal from "@/views/admin/my_profile/MyAcademicTrainingModal.vue";
 
 /** Services */
 import userServices from "@/services/user.services";
@@ -81,7 +78,8 @@ export default defineComponent({
     ReadOutlined,
     YoutubeOutlined,
     FolderOutlined,
-    MyExperienceModal
+    MyExperienceModal,
+    MyAcademicTrainingModal
   },
 
   data() {
@@ -100,7 +98,6 @@ export default defineComponent({
         description: "",
         phone: "",
         linkedin: "",
-
       }),
 
       /** Files */
@@ -110,31 +107,10 @@ export default defineComponent({
 
       /** Stores */
       authStore: authStore(),
-      workExperienceStore: workExperienceStore(),
-      academicTrainingStore: academicTrainingStore(),
 
       /** Loader */
       loading: false,
       loadingUpload: false,
-
-      /** Modal */
-      modalExperience: false,
-      modalSkills:false,
-      modalAcademy:false,
-      labelCol: { style: { width: '150px' } },
-      wrapperCol: { span: 24 },
-
-
-      /** Experiences */
-      formExperience: reactive<WorkExperienceInterface>({
-        business_name: '',
-        description: '',
-        end_date: '',
-        job_title: '',
-        start_date: '',
-        applicant_id: 0
-      }),
-      loadingExpList: ref(false),
 
       /** Abilities */
       options : ref<SelectProps['options']>([
@@ -155,14 +131,6 @@ export default defineComponent({
           label: 'Profesor de auxiliar',
         },
       ]),
-      /** Academic Info*/
-      formAcademic: reactive<AcademicTrainingInterface>({
-        career_name: '',
-        end_date: '',
-        start_date: '',
-        study_house_name: '',
-        applicant_id: 0
-      }),
     };
   },
 
@@ -176,7 +144,6 @@ export default defineComponent({
 
     init () {
       const user = this.authStore.user
-      this.academicTrainingStore.academicTrainings = user.applicant.academic_trainings
       this.formProfile.first_name = user.first_name
       this.formProfile.last_name = user.last_name
       this.formProfile.email = user.email
@@ -249,48 +216,10 @@ export default defineComponent({
         this.loadingUpload = false
       }
     },
-   
-    cleanFormAcademic(){
-      this.formAcademic.career_name = ''
-      this.formAcademic.end_date = ''
-      this.formAcademic.start_date = ''
-      this.formAcademic.study_house_name = ''
-      this.formAcademic.applicant_id = 0
-    },
 
     handleChange (value: []) {
       //Al cambiar el tag en habilidades
       console.log(`selected ${value}`);
-    },
-
-    showModalAcademy () {
-      this.modalAcademy = true;
-    },
-
-    handleOk  () {
-      this.modalSkills = false;
-      this.modalAcademy = false;
-    },
-    
-    async createAcademicTraining (values: any){
-      try {
-        this.loading = true
-        const userId = parseInt(`${this.authStore.user.id}`, 10)
-        values.applicant_id = userId
-        const response = await this.academicTrainingStore.createAcademicTraining(values)
-        if (response.status !== 'success') {
-          message.error('Error al guardar información')
-        } else {
-          message.success('Informacion academica guardada !')
-        }
-      } catch (e) {
-        console.log(e)
-      }finally{
-        this.cleanFormAcademic()
-        this.handleOk()
-        this.loading = false
-      }
-
     },
   }
 
@@ -436,7 +365,7 @@ export default defineComponent({
 
             a-col(:sm="24")
               MyExperienceModal
-              
+
             a-divider
 
             a-col(:sm="16")
@@ -456,47 +385,8 @@ export default defineComponent({
 
             a-divider
 
-            a-col(:sm="12")
-              h4.font-weight__bold
-                ReadOutlined
-                span.margin-left__10 Formación academica
-              a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
-
-              a-modal(width="900px" centered v-model:visible="modalAcademy" :footer="null" @ok="handleOk")
-                template(#title)
-                  .text-align__center Añadir mi formación academica
-                a-row(:gutter="16")
-                  a-col(:span="8" :offset="1" )
-                    h2 Formación académica y estudios
-                    p.font-size__12.color__gray.padding__0.margin__0 Los cambios que realices se aplicarán a tus proximas postulaciones.
-
-                  a-col(:span="14")
-                    h4.text-align__center Mi información academica
-                    a-card
-                      a-form(:model="formAcademic" @finish="createAcademicTraining" :label-col="labelCol" :wrapper-col="wrapperCol")
-                        a-form-item(
-                            label="Nombre de institución",
-                            name="study_house_name")
-                            a-input(v-model:value="formAcademic.study_house_name")
-
-                        a-form-item(
-                            label="Carrera",
-                            name="career_name")
-                            a-input(v-model:value="formAcademic.career_name")
-
-                        a-form-item(:wrapper-col="{ span: 8 }"
-                          label="Fecha Inicio",
-                          name="start_date")
-                          a-input(type="date" v-model:value="formAcademic.start_date")
-
-                        a-form-item(:wrapper-col="{ span: 8 }"
-                          label="Fecha termino",
-                          name="end_date")
-                          a-input(type="date" v-model:value="formAcademic.end_date")
-                          p.font-size__12.color__gray.padding__0.margin__0 * No obligatorio.
-
-                        a-button(type="primary" html-type="submit").margin-top__20.float-right
-                          span Guardar
+            a-col(:sm="24")
+              MyAcademicTrainingModal
 
             a-divider
 

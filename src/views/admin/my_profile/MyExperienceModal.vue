@@ -1,7 +1,5 @@
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import LandingNavbar from "@/views/landing/LandingNavbar.vue";
-import LandingJobs from "@/views/landing/LandingJobs.vue";
 
 /** Interfaces */
 import type {  WorkExperienceInterface } from '@/interfaces/work_experience.interface'
@@ -17,14 +15,13 @@ import { QuillEditor } from "@vueup/vue-quill";
 import {
   ProfileOutlined,
 } from "@ant-design/icons-vue";
+
 import { message } from "ant-design-vue";
 
 export default defineComponent({
 
   components: { 
     QuillEditor,
-    LandingJobs, 
-    LandingNavbar,
     ProfileOutlined
    },
 
@@ -83,12 +80,13 @@ export default defineComponent({
     },
 
     cleanFormExperience () {
+      const userId = parseInt(`${this.authStore.user.id}`, 10)
       this.formExperience.business_name= ""
       this.formExperience.description= " "
       this.formExperience.end_date= ""
       this.formExperience.job_title= ""
       this.formExperience.start_date= ""
-      this.formExperience.applicant_id = 0
+      this.formExperience.applicant_id = userId
     },
 
     async saveButton(values:any){

@@ -20,10 +20,6 @@ export const academicTrainingStore = defineStore('academicTraining', {
 
   actions: {
     async getAcademicTrainings(page: number = 1, pageSize: number = 10, searchBy: any = {}) {
-      const establishmentId: number | null = authStore().selectedEstablishmentId
-      if (establishmentId === null) {
-        throw Error('Establecimiento no seleccionado')
-      }
       const response = await AcademicTrainingServices.index(page, pageSize, searchBy)
       const { data } = response
       this.academicTrainings = data.academic_trainings
