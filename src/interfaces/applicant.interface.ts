@@ -1,6 +1,7 @@
 import type { UserInterface } from "@/interfaces/user.interface";
 import type { WorkExperienceInterface } from "@/interfaces/work_experience.interface";
 import type { AcademicTrainingInterface } from "@/interfaces/academic_training.interface";
+import type { SkillInterface } from "./skill.interface";
 
 export interface ApplicantInterface {
     id?: number | null
@@ -18,4 +19,5 @@ export interface ApplicantInterface {
     user_attributes?: UserInterface
     work_experiences: Array<WorkExperienceInterface>
     academic_trainings: Array<AcademicTrainingInterface>
+    skills: Array<SkillInterface>
 }

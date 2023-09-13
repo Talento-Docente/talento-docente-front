@@ -170,7 +170,7 @@ a-row
     h4.font-weight__bold
       ProfileOutlined
       span.margin-left__10 Añade tus ultimas experiencias laborales
-    a-button(@click="showModalExp()" type="primary", variant="outlined") Añadir
+    a-button(@click="showModalExp()" type="primary", variant="outlined").margin-top__10 Añadir
 
     a-modal(width="900px" centered v-model:visible="modalExperience" :footer="null" @ok="handleOk")
       template(#title)

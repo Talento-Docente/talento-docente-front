@@ -1,5 +1,6 @@
 import type { PermissionInterface } from "@/interfaces/permission.interface";
 import type { ApplicantInterface } from "@/interfaces/applicant.interface";
+import type { SkillInterface } from "./skill.interface";
 
 export interface UserInterface {
     id?: number | null
@@ -23,6 +24,8 @@ export interface UserInterface {
     picturePreview?: any
     permissions: PermissionInterface[],
     applicant: ApplicantInterface
+    
+    skills: Array<SkillInterface>
 }
 
 export interface ProfileInterface {

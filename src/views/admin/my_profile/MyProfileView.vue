@@ -42,6 +42,7 @@ import { authStore } from "@/stores/auth.store";
 /** Component */
 import MyExperienceModal from "@/views/admin/my_profile/MyExperienceModal.vue";
 import MyAcademicTrainingModal from "@/views/admin/my_profile/MyAcademicTrainingModal.vue";
+import MySkills from "@/views/admin/my_profile/MySkills.vue";
 
 /** Services */
 import userServices from "@/services/user.services";
@@ -79,7 +80,8 @@ export default defineComponent({
     YoutubeOutlined,
     FolderOutlined,
     MyExperienceModal,
-    MyAcademicTrainingModal
+    MyAcademicTrainingModal,
+    MySkills
   },
 
   data() {
@@ -112,25 +114,6 @@ export default defineComponent({
       loading: false,
       loadingUpload: false,
 
-      /** Abilities */
-      options : ref<SelectProps['options']>([
-        {
-          value: 'math_tech',
-          label: 'Matematicas',
-        },
-        {
-          value: 'cie_tech',
-          label: 'Ciencias',
-        },
-        {
-          value: 'eng',
-          label: 'Ingles',
-        },
-        {
-          value: 'aux',
-          label: 'Profesor de auxiliar',
-        },
-      ]),
     };
   },
 
@@ -215,11 +198,6 @@ export default defineComponent({
       } finally {
         this.loadingUpload = false
       }
-    },
-
-    handleChange (value: []) {
-      //Al cambiar el tag en habilidades
-      console.log(`selected ${value}`);
     },
   }
 
@@ -363,34 +341,22 @@ export default defineComponent({
 
             a-divider
 
-            a-col(:sm="24")
+            a-col(:sm="24").margin-top__10
               MyExperienceModal
 
             a-divider
 
-            a-col(:sm="16")
-              h4.font-weight__bold
-                UserAddOutlined
-                span.margin-left__10 Añade tus habilidades
-
-              a-col()
-                a-select(
-                  mode="tags"
-                  style="width: 60%"
-                  :token-separators="[',']"
-                  placeholder="Agregar habilidades"
-                  :options="options"
-                  @change="handleChange")
-                a-button(@click="showModalSkills()" type="primary", variant="outlined") Guardar
+            a-col(:sm="24").margin-top__10
+              MySkills
 
             a-divider
 
-            a-col(:sm="24")
+            a-col(:sm="24").margin-top__10
               MyAcademicTrainingModal
 
             a-divider
-
-            a-col(:sm="12")
+            
+            a-col(:sm="12").margin-top__10
               h4
                 AuditOutlined
                 span.margin-left__10 Carga tu CV

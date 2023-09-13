@@ -137,7 +137,7 @@ export default defineComponent({
         if (response.status !== 'success') {
           message.error('Error al guardar información')
         } else {
-          message.success('Experiencia Actualizada')
+          message.success('Informacion academica Actualizada')
         }
       } catch (e) {
         console.log(e)
@@ -171,7 +171,7 @@ a-row
     h4.font-weight__bold
       ReadOutlined
       span.margin-left__10 Formación academica
-    a-button(@click="showModalAcademy()" type="primary", variant="outlined") Añadir
+    a-button(@click="showModalAcademy()" type="primary", variant="outlined").margin-top__10 Añadir
 
     a-modal(width="900px" centered v-model:visible="modalAcademy" :footer="null" @ok="handleOk")
       template(#title)
@@ -189,7 +189,7 @@ a-row
               .text-align__center Mi información academica
             a-card
               a-form-item(
-                  label="Nombre de institución",
+                  label="Institución ",
                   name="study_house_name"
                   :rules="[{ required: true, message: 'Ingrese nombre de la institución', min: 4}]")
                   a-input(v-model:value="formAcademic.study_house_name")
