@@ -303,7 +303,7 @@ export default defineComponent({
           a-col
             h3 {{ applicantStore.applicant?.user?.first_name }} {{ applicantStore.applicant?.user?.last_name }}
 
-        span {{ applicantStore.applicant?.description }}
+        span(v-html="applicantStore.applicant?.description")
 
         .margin-top__20
           a-button(type="link")
@@ -352,7 +352,7 @@ export default defineComponent({
 
                   a-col(:span="16")
                     span.font__weight__600.display__block  {{item.job_title}}
-                    span {{ item.description }}
+                    span(v-html="item.description")
                 a-divider
 
           template(v-else-if="tabKey === 'skills'")
