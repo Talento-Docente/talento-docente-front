@@ -320,7 +320,7 @@ export default defineComponent({
             label="Descripción"
             name="description"
             :rules="[{ required: true, message: 'Ingrese descripción del cargo' }]")
-            QuillEditor(v-model:value="form.description" content-type="html")
+            QuillEditor(v-model:content="form.description" content-type="html")
 
           a-form-item(
             label="Estado de la publicación"

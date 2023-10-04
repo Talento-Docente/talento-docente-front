@@ -108,7 +108,7 @@ export default defineComponent({
                         .font-size__30 {{ employment.title }}
 
                       template(#description)
-                        .font-size__16 {{ employment.description }}
+                        span(v-html="employment.description").font-size__16
 
                     template(#actions)
                       a-button(type="primary", size="large", @click="() => $router.push({ name: 'EmploymentPublicView', params: { employment_id: `${employment.id}` }})") Postular

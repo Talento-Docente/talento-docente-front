@@ -11,10 +11,21 @@ import { authStore } from '@/stores/auth.store'
 /** Components */
 import LandingNavbar from "@/views/landing/LandingNavbar.vue";
 
+/** Constants */
+import { STATUSES, EMPLOYMENT_TYPES, SCHEDULE_TYPES, QUALIFICATIONS } from "@/constants/employment.constants";
+
+/** Icons */
+import {
+  StarOutlined,
+  UserOutlined
+} from '@ant-design/icons-vue';
+
 export default defineComponent({
 
   components: {
-    LandingNavbar
+    LandingNavbar,
+    StarOutlined,
+    UserOutlined
   },
 
   data: () => ({
@@ -27,6 +38,15 @@ export default defineComponent({
 
     /** Loader */
     loadingEmployment: false,
+
+    /** CountPostulants */
+    countPostulants: 0,
+
+    /** Constants */
+    EMPLOYMENT_TYPES,
+    STATUSES,
+    SCHEDULE_TYPES,
+    QUALIFICATIONS,
 
     textDefault: '' +
       '<div id="lipsum">\n' +
@@ -52,6 +72,7 @@ export default defineComponent({
     if (employment_id) {
       this.selectedEmploymentId = parseInt(`${employment_id}`, 10)
       await this.getEmployment()
+      this.countPostulants = Object.keys(this.employmentStore.employment?.postulations_resume).length
     } else {
       message.error('Error al obtener información')
       this.back()
@@ -85,16 +106,56 @@ export default defineComponent({
 .establishment-public-view
   a-layout
     landing-navbar
-    a-row(justify="center")
-      a-col(:xl="{ span: 16 }", :lg="{ span: 16 }", :sm="{ span: 24 }")
+    a-row(justify="center" :gutter="[16,16]")
+      a-col(:xl="{ span: 14 }", :lg="{ span: 16 }", :sm="{ span: 24 }")
         a-card.margin-top__50.margin-bottom__50
           a-button(type="primary", @click="() => $router.go(-1)").margin-right__10 Volver
 
-          .font-size__h1.margin-top__20 {{ employmentStore.employment?.title }}
-
-          .font-size__h4.margin-top__20 Descripción
+          .font-size__h4.margin-top__50 Empresa
           a-divider.padding__0.margin__0
-          span {{ employmentStore.employment?.description }}
+          a-row(:gutter="[16,8]", align="middle", justify="start").margin-top__20
+
+            a-col
+              div.display__flex
+                a-avatar(:size="45")
+                div.margin-left__5
+                  b.display__block  {{ employmentStore.employment?.establishment?.name }}
+                  span 22 de agosto de 2023
+
+          .font-size__h1.text-align__center {{ employmentStore.employment?.title }}
+          a-row(:gutter="[16,8]", align="middle", justify="center").margin__0.padding__0
+
+            a-col.display__flex
+              div(v-for="etype in EMPLOYMENT_TYPES", :value="etype.key")
+                span(v-if="etype.key === employmentStore.employment?.employment_type") 
+                  span {{ etype.value }}
+
+              a-divider(type="vertical" style="height: 20px; background-color: #B5B2B2")
+
+              div(v-for="qualification in QUALIFICATIONS", :value="qualification.key")
+                span(v-if="qualification.key === employmentStore.employment?.qualification") 
+                  span {{ qualification.value }}
+
+              a-divider(type="vertical" style="height: 20px; background-color: #B5B2B2")
+
+              div(v-for="schedule in SCHEDULE_TYPES", :value="schedule.key")
+                span(v-if="schedule.key === employmentStore.employment?.schedule_type") 
+                  span {{ schedule.value }}
+
+          a-row(:gutter="[16,8]", align="middle", justify="center").margin-top__10.padding__0
+            a-col
+              div
+                UserOutlined.margin-right__5
+                span {{ countPostulants }}
+                span  postulaciones
+              div
+                StarOutlined.margin-right__5
+                span Revisado por ultima vez hoy
+
+
+          .font-size__h4.margin-top__50 Descripción
+          a-divider.padding__0.margin__0
+          span(v-html="employmentStore.employment?.description")
 
           .font-size__h4.margin-top__50 Requisitos
           a-divider.padding__0.margin__0
@@ -104,13 +165,7 @@ export default defineComponent({
           a-divider.padding__0.margin__0
           div(v-html="textDefault")
 
-          .font-size__h4.margin-top__50 Empresa
-          a-divider.padding__0.margin__0
-          a-row(:gutter="[16,8]", align="middle", justify="center").margin-top__20
-            a-col
-              a-avatar(:size="200")
-            a-col
-              h3 {{ employmentStore.employment?.establishment?.name }}
+
 
           .font-size__h4.margin-top__50 Postular
           a-divider.padding__0.margin__0
