@@ -94,7 +94,7 @@ export default defineComponent({
 
           .font-size__h4.margin-top__20 Descripción
           a-divider.padding__0.margin__0
-          div(v-html="textDefault")
+          span {{ employmentStore.employment?.description }}
 
           .font-size__h4.margin-top__50 Requisitos
           a-divider.padding__0.margin__0

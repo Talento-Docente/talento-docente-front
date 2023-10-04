@@ -6,6 +6,13 @@ import * as uuid from 'uuid';
 import * as _ from 'lodash';
 
 /** Internal dependencies */
+
+/** Component */
+import EmploymentQuestionsModal from "./EmploymentQuestionsModal.vue";
+
+/** Services */
+import { QuillEditor } from "@vueup/vue-quill";
+
 /** Store */
 import { testStore } from "@/stores/test.store";
 import { employmentStore } from "@/stores/employment.store";
@@ -32,13 +39,15 @@ export default defineComponent({
 
   components: {
     CheckOutlined,
-    WarningOutlined
+    WarningOutlined,
+    QuillEditor,
+    EmploymentQuestionsModal
   },
 
   data: () => ({
     /** Form */
-    labelCol: { xs: { span: 24 }, sm: { span: 8 } },
-    wrapperCol: { xs: { span: 24 }, sm: { span: 14 } },
+    labelCol: { xs: { span: 24 }, sm: { span: 8 }, xl: {span:10} },
+    wrapperCol: { xs: { span: 24 }, sm: { span: 14 }, xl: {span:12}},
     selectedEmploymentId: ref<number>(0),
     selectedMethod: ref<string | string[]>("new"),
     form: reactive<EmploymentInterface>({
@@ -79,7 +88,20 @@ export default defineComponent({
     EMPLOYMENT_TYPES,
     STATUSES,
     SCHEDULE_TYPES,
-    QUALIFICATIONS
+    QUALIFICATIONS,
+
+    /** Test */
+    beneficios:[
+      {
+        value: "3 meses de vacaciones"
+      },
+      {
+        value: "Seguro dental"
+      },
+      {
+        value: "Tarjeta para almuerzo"
+      }
+    ]
   }),
 
   async mounted() {
@@ -298,7 +320,7 @@ export default defineComponent({
             label="Descripción"
             name="description"
             :rules="[{ required: true, message: 'Ingrese descripción del cargo' }]")
-            a-textarea(v-model:value="form.description")
+            QuillEditor(v-model:value="form.description" content-type="html")
 
           a-form-item(
             label="Estado de la publicación"
@@ -325,13 +347,20 @@ export default defineComponent({
             :rules="[{ required: true, message: 'Seleccione Experiencia' }]")
             a-select(v-model:value="form.qualification")
               a-select-option(v-for="qualification in QUALIFICATIONS", :value="qualification.key") {{ qualification.value }}
-
+            
           a-form-item(
             label="Horario"
             name="schedule_type"
             :rules="[{ required: true, message: 'Seleccione formalidad' }]")
             a-select(v-model:value="form.schedule_type")
               a-select-option(v-for="scheduleType in SCHEDULE_TYPES", :value="scheduleType.key") {{ scheduleType.value }}
+          
+          a-form-item(
+            v-if="form.schedule_type === 'part_time'"
+            label="Horas semanales"
+          )
+            a-select()
+                a-select-option(v-for="scheduleType in SCHEDULE_TYPES", :value="scheduleType.key") {{ scheduleType.value }}
 
           a-form-item(
             label="Fecha de Inicio"
@@ -368,8 +397,24 @@ export default defineComponent({
                 @click="back()",
                 :loading="loadingSave"
               ) Cancelar
+          
+        a-col(:xl="{ span: 8 }", :lg="{ span: 12 }", :sm="{ span: 24 }")
+          a-form-item(
+              label="Requisitos",
+              extra="Requisitos del cargo")
+              QuillEditor(content-type="html")
 
-        a-col(:xl="{ span: 12 }", :lg="{ span: 12 }", :sm="{ span: 24 }")
+          a-form-item(
+              label="Beneficios",
+              )
+              a-select(
+                placeholder="Seleccione beneficios...",
+                mode="multiple",
+                :options="beneficios"
+              )
+          EmploymentQuestionsModal
+
+        a-col(:xl="{ span: 8 }", :lg="{ span: 12 }", :sm="{ span: 24 }")
           h4 Edición de pasos sobre flujo seleccionado:
           a-divider.margin__0.padding__0
 
