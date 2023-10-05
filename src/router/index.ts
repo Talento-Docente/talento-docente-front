@@ -55,6 +55,15 @@ const router = createRouter({
             authRoute: false
           } as RouteMetaInterface,
         },
+        {
+          path: 'employment/public/:employment_id/postulate',
+          name: 'EmploymentPostulationView',
+          component: () => import('@/views/employment/EmploymentPostulationView.vue'),
+          meta: {
+            requiredAuth: true,
+            authRoute: false
+          } as RouteMetaInterface,
+        },
       ]
     },
 

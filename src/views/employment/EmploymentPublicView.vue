@@ -48,6 +48,10 @@ export default defineComponent({
     SCHEDULE_TYPES,
     QUALIFICATIONS,
 
+    /** Beneficios */
+    benefits:['salir a la 1', '3 meses de vacaciones', 'recarga bip', 'tarjeta sodexo', 'papel en el baño'],
+
+
     textDefault: '' +
       '<div id="lipsum">\n' +
       '<p>\n' +
@@ -111,7 +115,7 @@ export default defineComponent({
         a-card.margin-top__50.margin-bottom__50
           a-button(type="primary", @click="() => $router.go(-1)").margin-right__10 Volver
 
-          .font-size__h4.margin-top__50 Empresa
+          .font-size__h4.margin-top__20 Empresa
           a-divider.padding__0.margin__0
           a-row(:gutter="[16,8]", align="middle", justify="start").margin-top__20
 
@@ -151,6 +155,17 @@ export default defineComponent({
               div
                 StarOutlined.margin-right__5
                 span Revisado por ultima vez hoy
+          a-row(:gutter="[16,8]", align="middle", justify="center").margin-top__20
+            a-col(v-if="!authStore.isAuthenticated")
+              h4
+                span Para postular debes
+                a(@click="() => $router.push({ name: 'ProfessionalLogin', params: { employment_id: selectedEmploymentId } })")  iniciar sesión
+                span  ó
+                a(@click="() => $router.push({ name: 'Register', params: { register_type: 'professional', employment_id: selectedEmploymentId } })")  registrate
+                span  si aun no lo has echo.
+            a-col(v-if="authStore.isAuthenticated")
+              a-button(type="primary" @click="() => $router.push({ name: 'EmploymentPostulationView', params: { employment_id: selectedEmploymentId } })") 
+                span Postular
 
 
           .font-size__h4.margin-top__50 Descripción
@@ -163,22 +178,6 @@ export default defineComponent({
 
           .font-size__h4.margin-top__50 Beneficios
           a-divider.padding__0.margin__0
-          div(v-html="textDefault")
-
-
-
-          .font-size__h4.margin-top__50 Postular
-          a-divider.padding__0.margin__0
-          a-row(:gutter="[16,8]", align="middle", justify="center").margin-top__20
-            a-col(v-if="!authStore.isAuthenticated")
-              h4
-                span Para postular debes
-                a(@click="() => $router.push({ name: 'ProfessionalLogin', params: { employment_id: selectedEmploymentId } })")  iniciar sesión
-                span  ó
-                a(@click="() => $router.push({ name: 'Register', params: { register_type: 'professional', employment_id: selectedEmploymentId } })")  registrate
-                span  si aun no lo has echo.
-            a-col(v-if="authStore.isAuthenticated")
-              a-button(type="primary") Postular
-
+          a-tag.margin-top__20(v-for="benefit in benefits") {{benefit}}
 
 </template>
