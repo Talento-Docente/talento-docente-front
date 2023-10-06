@@ -6,6 +6,7 @@ import { message } from 'ant-design-vue';
 
 /** Components */
 import ContactUsModal from "./ContactUsModal.vue";
+import ChangePasswordModal from "./ChangePasswordModal.vue"
 
 /** Interfaces */
 import type { LoginInterface } from "@/interfaces/login.interface";
@@ -23,7 +24,8 @@ export default defineComponent({
     LandingNavbar, 
     UserOutlined,
     BankOutlined,
-    ContactUsModal
+    ContactUsModal,
+    ChangePasswordModal
    },
   data() {
     return {
@@ -123,15 +125,15 @@ export default defineComponent({
                   ) Iniciar sesión
 
               a-form-item
-                .text-align__center
-                  a-button(
-                    type="link",
-                  ) Recuperar Contraseña
-
-                  a-button(
-                    type="link",
-                    @click="() => $router.push({ name: 'Register', params: { register_type: loginType } })"
-                  ) Registrate aquí
+                a-row(justify="center")
+                  a-col
+                    div
+                      ChangePasswordModal
+                  a-col
+                    a-button(
+                      type="link",
+                      @click="() => $router.push({ name: 'Register', params: { register_type: loginType } })"
+                    ) Registrate aquí
   a-row().login__footer
     a-col(:xl="{ span: 14, offset: 5 }", :lg="{ span: 12, offset: 6 }", :sm="{ span: 24, offset: 0 }")
       ContactUsModal

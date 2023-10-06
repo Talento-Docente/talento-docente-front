@@ -48,7 +48,7 @@ export default defineComponent({
     a-modal(v-model:visible="modalContactUs" okText="Enviar" cancelText="Cancelar" @ok="handleOk")
       template(#title)
         h2.text-align__center.margin-top__10 Formulario de contacto
-      h4 Escribenos y nos contactaremos contigo a la brevedad.
+      h4.text-align__center Escribenos y nos contactaremos a la brevedad.
       a-form( :label-col="labelCol" :wrapper-col="wrapperCol").margin-top__30
 
         a-form-item(:wrapper-col="{ span: 10 }"
